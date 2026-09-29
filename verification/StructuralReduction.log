@@ -1,0 +1,2 @@
+'AmicableManuscript.structuralReduction' depends on axioms: [propext, Classical.choice, Quot.sound]
+'AmicableManuscript.amicableUpperBound' depends on axioms: [propext, Classical.choice, Quot.sound]

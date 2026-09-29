@@ -1,0 +1,168 @@
+/-
+Adapted from Arend Mellendijk's SelbergBounds.lean in PrimeNumberTheoremAnd,
+commit 650d31264be65f4cd6e70c45d8b25d86d482a761, Apache-2.0.
+The modification restricts the lower sum to integers supported on the sieving primes.
+-/
+import PrimeNumberTheoremAnd.Mathlib.NumberTheory.Sieve.SelbergBounds
+import Mathlib.Tactic
+import HarmonicCoprime
+
+open scoped Nat ArithmeticFunction BigOperators Classical ArithmeticFunction.zeta
+open BoundingSieve SelbergSieve Sieve
+namespace AmicableSieve
+
+theorem sieveDenominatorSupport (s : SelbergSieve)
+  (hnu : CompletelyMultiplicative s.nu) (hnu_nonneg : ∀ n, 0 ≤ s.nu n) (hnu_lt : ∀ p, p.Prime → p ∣ s.prodPrimes → s.nu p < 1):
+    s.selbergBoundingSum ≥ ∑ m ∈ (Finset.Icc 1 (Nat.floor <| Real.sqrt s.level)).filter (fun m => ∀ p ∈ m.primeFactors, p ∣ s.prodPrimes), s.nu m := by
+  unfold selbergBoundingSum
+  calc ∑ l ∈ s.prodPrimes.divisors, (if l ^ 2 ≤ s.level then selbergTerms _ l else 0)
+     ≥ ∑ l ∈ s.prodPrimes.divisors.filter (fun (l:ℕ) => l^2 ≤ s.level),
+        ∑ m ∈ (l^(Nat.floor s.level)).divisors.filter (l ∣ ·), s.nu m         := ?_
+   _ ≥ ∑ m ∈ (Finset.Icc 1 (Nat.floor <| Real.sqrt s.level)).filter (fun m => ∀ p ∈ m.primeFactors, p ∣ s.prodPrimes), s.nu m           := ?_
+  · rw [←Finset.sum_filter]; apply Finset.sum_le_sum; intro l hl
+    rw [Finset.mem_filter, Nat.mem_divisors] at hl
+    have hlsq : Squarefree l := Squarefree.squarefree_of_dvd hl.1.1 s.prodPrimes_squarefree
+    trans (∏ p ∈ l.primeFactors, ∑ n ∈ Finset.Icc 1 (Nat.floor s.level), s.nu (p^n))
+    · rw [prod_factors_sum_pow_compMult (Nat.floor s.level) _ s.nu]
+      · exact hnu
+      · exact hlsq
+      · rw [ne_eq, Nat.floor_eq_zero, not_lt]
+        exact s.one_le_level
+    rw [selbergTerms_apply _ l]
+    apply prod_factors_one_div_compMult_ge _ _ hnu _ _ hlsq
+    · intro p hpp hpl
+      apply hnu_lt p hpp (Trans.trans hpl hl.1.1)
+    · exact hnu_nonneg
+
+  rw [←Finset.sum_biUnion]
+  · apply Finset.sum_le_sum_of_subset_of_nonneg ?_ (fun _ _ _ => hnu_nonneg _)
+    intro m hm
+    obtain ⟨hm, hsupport⟩ := Finset.mem_filter.mp hm
+    have hprod_pos : 0 < (∏ p ∈ m.primeFactors, p) := by
+      apply Finset.prod_pos;
+      intro p hp; exact Nat.pos_of_mem_primeFactorsList <| List.mem_toFinset.mp hp
+    have hprod_ne_zero :  (∏ p ∈ m.primeFactors, p) ^ ⌊s.level⌋₊ ≠ 0 := by
+      apply pow_ne_zero; apply ne_of_gt; apply hprod_pos
+    rw [Finset.mem_biUnion]; simp_rw [Finset.mem_filter, Nat.mem_divisors]
+    rw [Finset.mem_Icc, Nat.le_floor_iff] at hm
+    · have hm_ne_zero : m ≠ 0 := by
+        exact ne_of_gt <| Nat.succ_le_iff.mp hm.1
+      use ∏ p ∈ m.primeFactors, p
+      constructor; constructor; constructor
+      · apply prod_primes_dvd_of_dvd <;> intro p hp
+        · exact hsupport p hp
+        exact Nat.prime_of_mem_primeFactors hp
+      · exact prodPrimes_ne_zero
+      · rw [←Real.sqrt_le_sqrt_iff (by linarith only [s.one_le_level]), Real.sqrt_sq]
+        · trans (m:ℝ)
+          · norm_cast; apply Nat.le_of_dvd (Nat.succ_le_iff.mp hm.1)
+            exact Nat.prod_primeFactors_dvd m
+          exact hm.2
+        apply le_of_lt; norm_cast
+      constructor; constructor
+      · rw [←Nat.factorization_le_iff_dvd _ hprod_ne_zero, Nat.factorization_pow]
+        · intro p
+          have hy_mul_prod_nonneg : 0 ≤ ⌊s.level⌋₊ * (Nat.factorization (∏ p ∈ m.primeFactors, p)) p := by
+            apply mul_nonneg
+            · apply Nat.le_floor; norm_cast; linarith only [s.one_le_level]
+            · norm_num
+          trans (Nat.factorization m) p * 1
+          · rw [mul_one]
+          rw [Finsupp.smul_apply, smul_eq_mul]
+          by_cases hpp : p.Prime
+          swap
+          · rw [Nat.factorization_eq_zero_of_not_prime _ hpp, zero_mul]; exact hy_mul_prod_nonneg
+          by_cases hpdvd : p ∣ m
+          swap
+          · rw [Nat.factorization_eq_zero_of_not_dvd hpdvd, zero_mul]; exact hy_mul_prod_nonneg
+          apply mul_le_mul
+          · trans m
+            · apply le_of_lt <| Nat.factorization_lt _ _
+              apply hm_ne_zero
+            apply Nat.le_floor
+            refine le_trans hm.2 ?_
+            apply sqrt_le_self _ s.one_le_level
+          · rw [←Nat.Prime.pow_dvd_iff_le_factorization hpp <| ne_of_gt hprod_pos, pow_one]
+            apply Finset.dvd_prod_of_mem
+            rw [Nat.mem_primeFactors]
+            exact ⟨hpp, hpdvd, hm_ne_zero⟩
+          · norm_num
+          · norm_num
+        exact hm_ne_zero
+      · exact hprod_ne_zero
+      · exact Nat.prod_primeFactors_dvd m
+    · apply Real.sqrt_nonneg
+  · intro i hi j hj hij t hti htj x hx
+    simp only [Finset.bot_eq_empty, Finset.notMem_empty]
+    specialize hti hx
+    specialize htj hx
+    simp_rw [Finset.mem_coe, Finset.mem_filter, Nat.mem_divisors] at *
+    have h : ∀ i j {n}, i ∣ s.prodPrimes → i ∣ x → x ∣ j ^ n → i ∣ j := by
+      intro i j n hiP hix hij
+      apply Nat.squarefree_dvd_pow i j n (squarefree_of_dvd_prodPrimes hiP)
+      exact Trans.trans hix hij
+    have hidvdj : i ∣ j := by
+      apply h i j hi.1.1 hti.2 htj.1.1
+    have hjdvdi : j ∣ i := by
+      apply h j i hj.1.1 htj.2 hti.1.1
+    exact hij <| Nat.dvd_antisymm hidvdj hjdvdi
+
+
+theorem sieveDenominatorCoprime (s : SelbergSieve) (d : ℕ) (hd : 0 < d)
+    (hnu : s.nu = (ArithmeticFunction.zeta : ArithmeticFunction ℝ).pdiv .id)
+    (hP : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ s.level → ¬p ∣ d → p ∣ s.prodPrimes) :
+    (d.totient : ℝ) / d * (Real.log s.level / 2) ≤ s.selbergBoundingSum := by
+  classical
+  let I := Finset.Icc 1 ⌊Real.sqrt s.level⌋₊
+  let C := I.filter (fun m => m.Coprime d)
+  let F := I.filter (fun m => ∀ p ∈ m.primeFactors, p ∣ s.prodPrimes)
+  have hCF : C ⊆ F := by
+    intro m hm
+    obtain ⟨hmI, hmC⟩ := Finset.mem_filter.mp hm
+    refine Finset.mem_filter.mpr ⟨hmI, fun p hp => ?_⟩
+    apply hP p (Nat.prime_of_mem_primeFactors hp)
+    · have hpm : (p : ℝ) ≤ m := by exact_mod_cast Nat.le_of_mem_primeFactors hp
+      have hmlevel : (m : ℝ) ≤ Real.sqrt s.level :=
+        (Nat.le_floor_iff (Real.sqrt_nonneg _)).mp (Finset.mem_Icc.mp hmI).2
+      exact hpm.trans (hmlevel.trans (Sieve.sqrt_le_self _ s.one_le_level))
+    · intro hpd
+      exact (Nat.Prime.not_coprime_iff_dvd.mpr
+        ⟨p, Nat.prime_of_mem_primeFactors hp, Nat.dvd_of_mem_primeFactors hp, hpd⟩) hmC
+  have hcomp : CompletelyMultiplicative s.nu := by
+    rw [hnu]
+    exact CompletelyMultiplicative.zeta.pdiv CompletelyMultiplicative.id
+  have hnonneg : ∀ n, 0 ≤ s.nu n := by
+    intro n
+    rw [hnu]
+    apply div_nonneg
+    · by_cases hn : n = 0 <;> simp [hn]
+    · simp
+  have hlt : ∀ p, p.Prime → p ∣ s.prodPrimes → s.nu p < 1 := s.nu_lt_one_of_prime
+  have hden := sieveDenominatorSupport s hcomp hnonneg hlt
+  have heq : ∀ m ∈ F, s.nu m = 1 / (m : ℝ) := by
+    intro m hm
+    have hm0 : m ≠ 0 := by
+      have hh := (Finset.mem_Icc.mp (Finset.mem_filter.mp hm).1).1
+      omega
+    simp [hnu, ArithmeticFunction.pdiv_apply, ArithmeticFunction.zeta_apply_ne hm0]
+  have hsum : ∑ m ∈ C, (1 : ℝ) / m ≤ s.selbergBoundingSum := by
+    calc
+      _ ≤ ∑ m ∈ F, (1 : ℝ) / m := Finset.sum_le_sum_of_subset_of_nonneg hCF
+        (fun _ _ _ => by positivity)
+      _ = ∑ m ∈ F, s.nu m := Finset.sum_congr rfl (fun m hm => (heq m hm).symm)
+      _ ≤ _ := hden
+  have hh := AmicableHarmonic.coprimeHarmonicLower ⌊Real.sqrt s.level⌋₊ d hd
+  have hsqrt : 1 ≤ Real.sqrt s.level := by
+    rw [Real.le_sqrt (by norm_num) (by linarith [s.one_le_level])]
+    simpa using s.one_le_level
+  have hlog := Aux.log_le_sum_inv (Real.sqrt s.level) hsqrt
+  have hlog' : Real.log s.level / 2 ≤ ∑ n ∈ I, (1 : ℝ) / n := by
+    rw [Real.log_sqrt (by linarith [s.one_le_level])] at hlog
+    simpa only [one_div] using hlog
+  exact ((mul_le_mul_of_nonneg_left hlog' (by positivity)).trans hh).trans hsum
+
+#print axioms sieveDenominatorCoprime
+#print axioms sieveDenominatorSupport
+#print axioms SelbergSieve.selberg_bound_simple
+#print axioms Sieve.rem_sum_le_of_const
+end AmicableSieve

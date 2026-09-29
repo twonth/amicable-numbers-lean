@@ -1,0 +1,144 @@
+import MomentEuler
+import RankinParameters
+
+namespace AmicableTechnical
+open Filter AmicableWeight AmicableMoment AmicableParameters AmicableManuscript
+open scoped Topology BigOperators
+
+theorem shiftedPrimeMoment : ∀ᶠ t : ℝ in atTop,
+    ∀ P : Finset ℕ, (∀ q ∈ P, q.Prime) →
+      ∑ q ∈ P, H (Real.exp t) (q + 1) ^ eta t / (q : ℝ) ^ (1 + delta t) ≤
+        3 * Real.exp (t / 2) := by
+  obtain ⟨C, hC⟩ := uniformMomentBound
+  have hpow : Tendsto (fun t : ℝ => (2 : ℝ) ^ (1 + delta t)) atTop (𝓝 2) := by
+    have hc : Continuous (fun u : ℝ => (2 : ℝ) ^ (1 + u)) := by fun_prop
+    have hh := hc.continuousAt.tendsto.comp (delta_tendsto.mono_right nhdsWithin_le_nhds)
+    simpa only [Function.comp_def, add_zero, Real.rpow_one] using hh
+  filter_upwards [delta_tendsto.eventually hC, eta_eventually_admissible,
+    momentExponent_eventually (C + Real.log 2) quadraticConstant,
+    hpow.eventually (gt_mem_nhds (by norm_num : (2 : ℝ) < 3)),
+    eventually_gt_atTop (1 : ℝ)] with t htM hteta htE ht2 ht
+  intro P hP
+  have hy : 2 ≤ Real.exp t := by linarith [Real.add_one_le_exp t]
+  have hd : 0 ≤ delta t := by unfold delta; positivity
+  obtain ⟨hsum, hbound⟩ := htM (Real.exp t) (eta t) hy hteta.1.le hteta.2
+  have hbound' : (∑' n : ℕ, term (Real.exp t) (eta t) (delta t) n) ≤
+      Real.exp (t / 2) := by
+    apply hbound.trans
+    apply Real.exp_le_exp.mpr
+    rw [exp_rpow_eta ht, Real.log_exp]
+    simp only [delta, one_div, inv_inv]
+    convert htE using 1 <;> ring
+  have hshift := primeShiftBound (Real.exp_pos t) hd hsum P hP
+  exact hshift.trans (mul_le_mul ht2.le hbound'
+    (tsum_nonneg (term_nonneg (Real.exp_pos t) (eta t) (delta t))) (by norm_num))
+
+theorem finiteExceptionalBound (k : ℝ) : ∀ᶠ t : ℝ in atTop,
+    ∀ (Y : ℝ) (B : Finset ℕ), 0 < Y → Y ≤ Real.exp (Real.exp t + t) →
+      (∀ b ∈ B, Squarefree b ∧ (b : ℝ) ≤ Y ∧
+        k * Real.exp t < Real.log (H (Real.exp t) (sigma b))) →
+      (B.card : ℝ) ≤ Y * Real.exp ((-k + error k t) * scale t) := by
+  filter_upwards [shiftedPrimeMoment, eta_eventually_admissible,
+    eventually_gt_atTop (1 : ℝ)] with t htM hteta ht
+  intro Y B hY hYX hB
+  let P := B.biUnion Nat.primeFactors
+  have hP : ∀ b ∈ B, b.primeFactors ⊆ P := by
+    intro b hb q hq
+    exact Finset.mem_biUnion.mpr ⟨b, hb, hq⟩
+  have hPprime : ∀ q ∈ P, q.Prime := by
+    intro q hq
+    obtain ⟨b, hb, hqb⟩ := Finset.mem_biUnion.mp hq
+    exact Nat.prime_of_mem_primeFactors hqb
+  have hd : 0 < delta t := by unfold delta; positivity
+  have hRK := weightedSigmaRankinFinite (Real.exp_pos t) B P Y
+    (Real.exp (k * Real.exp t)) (eta t) (delta t) hY
+    (Real.exp_pos _) hteta.1 hd (fun b hb => ⟨(hB b hb).1,
+      (hB b hb).2.1, by
+        have hh := Real.exp_lt_exp.mpr (hB b hb).2.2
+        rwa [Real.exp_log (H_pos (Real.exp_pos t) _)] at hh⟩) hP
+  have hlogY : Real.log Y ≤ Real.exp t + t := by
+    have hh := Real.log_le_log hY hYX
+    simpa only [Real.log_exp] using hh
+  have hYpow : Y ^ (1 + delta t) = Y * Real.exp (Real.log Y / t) := by
+    rw [Real.rpow_add hY, Real.rpow_one, Real.rpow_def_of_pos hY]
+    congr 2
+    unfold delta
+    ring
+  have hKpow : (Real.exp (k * Real.exp t)) ^ (-eta t) =
+      Real.exp (-k * Real.exp t * eta t) := by
+    rw [Real.rpow_def_of_pos (Real.exp_pos _), Real.log_exp]
+    congr 1
+    ring
+  rw [hYpow, hKpow] at hRK
+  have hm := htM P hPprime
+  calc
+    (B.card : ℝ) ≤ Y * Real.exp (Real.log Y / t) *
+        Real.exp (-k * Real.exp t * eta t) *
+        Real.exp (∑ q ∈ P, H (Real.exp t) (q + 1) ^ eta t /
+          (q : ℝ) ^ (1 + delta t)) := hRK
+    _ = Y * Real.exp (Real.log Y / t - k * Real.exp t * eta t +
+        ∑ q ∈ P, H (Real.exp t) (q + 1) ^ eta t /
+          (q : ℝ) ^ (1 + delta t)) := by
+      rw [mul_assoc Y, ← Real.exp_add, mul_assoc Y, ← Real.exp_add]
+      congr 2
+      ring
+    _ ≤ Y * Real.exp ((Real.exp t + t) / t - k * Real.exp t * eta t +
+        3 * Real.exp (t / 2)) := by
+      apply mul_le_mul_of_nonneg_left _ hY.le
+      apply Real.exp_le_exp.mpr
+      have hh := div_le_div_of_nonneg_right hlogY (by linarith : 0 ≤ t)
+      linarith
+    _ = _ := by rw [exponentIdentity ht]
+
+noncomputable def exceptionalSet (k x Y : ℝ) : Finset ℕ := by
+  classical
+  exact (Finset.range (⌊Y⌋₊ + 1)).filter (fun b => Squarefree b ∧
+    k * Real.log x < Real.log (smallPart (Real.log x) (sigma b)) +
+      Real.log (Real.log x) * (roughOmega (Real.log x) (sigma b) : ℝ))
+
+noncomputable def errorX (k x : ℝ) : ℝ := error k (Real.log (Real.log x))
+
+theorem errorX_tendsto (k : ℝ) : Tendsto (errorX k) atTop (𝓝 0) :=
+  (error_tendsto k).comp (Real.tendsto_log_atTop.comp Real.tendsto_log_atTop)
+
+theorem technicalLemma (k : ℝ) : ∀ᶠ x : ℝ in atTop,
+    ∀ Y : ℝ, 1 ≤ Y → Y ≤ x * Real.log x →
+      ((exceptionalSet k x Y).card : ℝ) ≤
+        Y * L x ^ (-k + errorX k x) := by
+  have htend : Tendsto (fun x : ℝ => Real.log (Real.log x)) atTop atTop :=
+    Real.tendsto_log_atTop.comp Real.tendsto_log_atTop
+  filter_upwards [htend.eventually (finiteExceptionalBound k),
+    eventually_gt_atTop (1 : ℝ)] with x hx hx1
+  intro Y hY hYX
+  have hx0 : 0 < x := by linarith
+  have hlogx : 0 < Real.log x := Real.log_pos hx1
+  have he : Real.exp (Real.log (Real.log x)) = Real.log x := Real.exp_log hlogx
+  have hupper : x * Real.log x =
+      Real.exp (Real.exp (Real.log (Real.log x)) + Real.log (Real.log x)) := by
+    rw [he, Real.exp_add, Real.exp_log hx0, Real.exp_log hlogx]
+  have hs : scale (Real.log (Real.log x)) = S x := by
+    unfold scale S
+    rw [he]
+  have hbound := hx Y (exceptionalSet k x Y) (by linarith) (by rwa [← hupper])
+  have hB : ∀ b ∈ exceptionalSet k x Y,
+      Squarefree b ∧ (b : ℝ) ≤ Y ∧
+        k * Real.exp (Real.log (Real.log x)) <
+          Real.log (H (Real.exp (Real.log (Real.log x))) (sigma b)) := by
+    intro b hb
+    simp only [exceptionalSet, Finset.mem_filter, Finset.mem_range] at hb
+    refine ⟨hb.2.1, ?_, ?_⟩
+    · exact (Nat.cast_le.mpr (by omega : b ≤ ⌊Y⌋₊)).trans (Nat.floor_le (by linarith))
+    · rw [he, log_H hlogx]
+      exact hb.2.2
+  have hh := hbound hB
+  rw [hs] at hh
+  unfold L
+  rw [Real.rpow_def_of_pos (Real.exp_pos _), Real.log_exp]
+  convert hh using 1 <;> unfold errorX <;> ring
+
+#print axioms errorX_tendsto
+#print axioms technicalLemma
+#print axioms finiteExceptionalBound
+#print axioms shiftedPrimeMoment
+end AmicableTechnical
+

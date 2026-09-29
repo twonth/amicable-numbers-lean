@@ -1,0 +1,80 @@
+import RegularPair
+import CaseOneWitness
+import CaseTwoPairWitness
+
+namespace AmicableCases
+open AmicableManuscript AmicableStructure Filter
+open scoped Topology
+
+theorem regularAlternatives (C : ℝ) {e : ℝ} (he : 0 < e) (he1 : e < 1 / 10) :
+    ∀ᶠ x : ℝ in atTop, ∀ n n' : ℕ, RegularPair x C n n' →
+      (∃ m R d p : ℕ, CaseOneData x e n' m R d p) ∨
+      (∃ b : ℕ, b ∣ n ∧ b ∈ AmicableTechnical.exceptionalSet (1 / 2 - 4 * e) x (x * Real.log x)) ∨
+      ∃ m R d V : ℕ, CaseTwoData x e n m R d V := by
+  let delta := selectionGap e / 8
+  have hdpos : 0 < delta := by dsimp [delta]; exact div_pos (selectionGap_pos he he1) (by norm_num)
+  have hd : delta ≤ selectionGap e / 4 := by dsimp [delta]; nlinarith [selectionGap_pos he he1]
+  have hgapupper : selectionGap e < 1 := by dsimp [selectionGap]; nlinarith [sq_nonneg e, mul_nonneg he.le (sq_nonneg e)]
+  have heta : 0 < delta / 4 := by positivity
+  have heta1 : delta / 4 < 1 := by dsimp [delta]; linarith
+  filter_upwards [caseOneWitness he he1, caseTwoPairWitness he he1 hdpos hd,
+    regularSizeBounds C heta heta1,
+    AmicableScale.L_power_subpower C (by norm_num : (0 : ℝ) < 1 / 200),
+    eventually_gt_atTop (1 : ℝ)] with x hcaseI hcaseII hsize hL hx
+  intro n n' hreg
+  obtain ⟨a,a',B,B',hn,hn',hsf,hsf',hBA,hBA',han',ha'n,halo,ha'lo,hB,hB',hporder,hpupper⟩ := hreg.factors
+  have hapos : 0 < a := Nat.pos_of_ne_zero hsf.ne_zero
+  have ha'pos : 0 < a' := Nat.pos_of_ne_zero hsf'.ne_zero
+  have hBpos : 0 < B := by
+    by_contra hh
+    have : B = 0 := by omega
+    have hnp := hreg.pair.1
+    simp [hn,this] at hnp
+  have hB'pos : 0 < B' := by
+    by_contra hh
+    have : B' = 0 := by omega
+    have hnp := hreg.pair.2.1
+    simp [hn',this] at hnp
+  have haX : (a : ℝ) ≤ x * Real.log x :=
+    (by exact_mod_cast Nat.le_mul_of_pos_left a hBpos : (a : ℝ) ≤ B * a).trans
+      (by simpa only [hn, Nat.cast_mul] using hreg.bound)
+  have ha'X : (a' : ℝ) ≤ x * Real.log x :=
+    (by exact_mod_cast Nat.le_mul_of_pos_left a' hB'pos : (a' : ℝ) ≤ B' * a').trans
+      (by simpa only [hn', Nat.cast_mul] using hreg.bound')
+  have hsa := hsize a B halo haX hB hBpos
+  have hsa' := hsize a' B' ha'lo ha'X hB' hB'pos
+  let p := a.maxPrimeFac
+  have hp : p.Prime := Nat.prime_maxPrimeFac_of_one_lt hsa.1
+  have hpa : p ∣ a := Nat.maxPrimeFac_dvd
+  by_cases hlarge : x ^ (e ^ 2) < (p : ℝ)
+  · left
+    have ha'power : x ^ (199 / 200 : ℝ) ≤ (a' : ℝ) := by
+      calc
+        _ = x / x ^ (1 / 200 : ℝ) := by
+          simpa only [show (1 : ℝ) - 1 / 200 = 199 / 200 by norm_num, Real.rpow_one] using
+            Real.rpow_sub (by linarith : 0 < x) (1 : ℝ) (1 / 200 : ℝ)
+        _ ≤ x / L x ^ C := div_le_div_of_nonneg_left (by linarith)
+          (Real.rpow_pos_of_pos (Real.exp_pos _) _) hL
+        _ ≤ _ := ha'lo
+    obtain ⟨m0,hnp,hpcop,hpsigma⟩ := primeUnitaryFactor hn hsf hBA hp hpa
+    obtain ⟨m,R,d,hw⟩ := hcaseI n n' a' B' p hreg.pair hreg.bound hreg.bound' hn' hsf' hBA' ha'n
+      ha'power hp (hpa.trans (hn ▸ dvd_mul_left _ _)) (han'.of_dvd_left hpa) hpsigma
+      hlarge.le hpupper (by
+        intro q hq
+        exact (Nat.le_maxPrimeFac hsf'.ne_zero (Nat.prime_of_mem_primeFactors hq) (Nat.dvd_of_mem_primeFactors hq)).trans_lt hporder)
+    exact ⟨m,R,d,p,hw⟩
+  · right
+    have hsmall : (p : ℝ) ≤ x ^ (e ^ 2) := le_of_not_gt hlarge
+    apply hcaseII n n' a a' B B' hreg.pair hn hn' hsf hsf' hBA hBA' han' ha'n hreg.bound hreg.bound'
+    · intro q hq
+      exact (by exact_mod_cast Nat.le_maxPrimeFac hsf.ne_zero (Nat.prime_of_mem_primeFactors hq) (Nat.dvd_of_mem_primeFactors hq) : (q : ℝ) ≤ p).trans hsmall
+    · intro q hq
+      have hqp := (Nat.le_maxPrimeFac hsf'.ne_zero (Nat.prime_of_mem_primeFactors hq) (Nat.dvd_of_mem_primeFactors hq)).trans hporder.le
+      exact (by exact_mod_cast hqp : (q : ℝ) ≤ p).trans hsmall
+    · exact hsa.2.1
+    · exact hsa'.2.1
+    · exact hsa'.2.2.1
+    · exact hsa'.2.2.2
+
+#print axioms regularAlternatives
+end AmicableCases

@@ -1,0 +1,570 @@
+    \documentclass[11pt]{amsart}
+    \usepackage[a4paper,margin=25mm]{geometry}
+    \usepackage{amsmath,amssymb,amsthm}
+    \usepackage{parskip}
+    \usepackage{needspace}
+    \newtheorem{theorem}{Theorem}
+    \newtheorem{lemma}{Lemma}
+    \newtheorem{proposition}[lemma]{Proposition}
+    \usepackage[T1]{fontenc}
+    \usepackage{lmodern}
+    \usepackage{microtype}
+    \usepackage[hidelinks]{hyperref}
+    \setlength{\emergencystretch}{2em}
+    \begin{document}
+    
+    \section{Introduction}\label{sec:introduction}
+    
+    \begin{theorem}\label{thm:main}
+    Let $A(x)$ denote the number of positive integers not exceeding $x$ that belong to an amicable pair. Then, as $x\to\infty$,
+    \[
+     A(x)\le x\exp\left\{-\left(\frac12+o(1)\right)
+     \frac{\log x\,\log_3 x}{\log_2 x}\right\}.
+    \]
+    \end{theorem}
+
+\subsection*{Notation} The letters $p,q,\ell$, with primes or subscripts attached, always denote prime numbers. We write $\Omega(n)$ for the number of prime factors of $n$, counted with multiplicity. We let $P^{+}(n)$ denote the largest prime factor of $n$, setting $P^{+}(1):=1$. For $n\ge1$ and $y\ge2$, we let $n_{\le y}$ and $n_{>y}$ denote the \textsf{$y$-smooth} and \textsf{$y$-rough} parts of $n$, respectively. That is,
+\[ n_{\le y}:=\prod_{\substack{q^e\parallel n\\q\le y}}q^e, \qquad
+ n_{>y}:=\prod_{\substack{q^e\parallel n\\q>y}}q^e,
+\]
+where empty products are taken to be $1$. Thus $n_{>y}=n/n_{\le y}$.
+
+    \section{Proof of Theorem \ref{thm:main}}\label{sec:main-proof}
+    
+    We first isolate two lemmas needed for the proof of Theorem \ref{thm:main}. 
+    The first of these, Lemma \ref{lem:pollack}, appears as \cite[Theorem 1.1]{Pollack2011}. 
+    
+    \begin{lemma}\label{lem:pollack}
+    Fix $\beta>0$. There is a constant $\rho=\rho(\beta)>0$ for which the following holds. For all $X>X_0(\beta)$, and all $G>\exp((\log\log X)^\beta)$,
+    \[
+     \#\{n\le X:\gcd(n,\sigma(n))>G\}\le X/G^\rho.
+    \]
+    \end{lemma}
+    
+
+\begin{lemma}\label{lem:technical-A}
+Fix $\kappa>0$. Let $x$ be large, and set $X:=x\log x$ and $y:=\log x$. Uniformly for $1\le Y\le X$, we have
+\[
+ \#\{b\le Y:b\text{ squarefree},\ 
+ \log(\sigma(b)_{\le y})+(\log_2 x)\Omega(\sigma(b)_{>y})>\kappa\log x\}
+ \le YL(x)^{-\kappa+o(1)}.
+\]
+Here $o(1)$ denotes a quantity tending to $0$ as $x\to\infty$.
+\end{lemma}
+
+\begin{proof}
+We apply Rankin's trick. Put $H(v):=v_{\le y}y^{\Omega(v_{>y})}$. For any choice of $\eta,\delta>0$, the number in question is at most
+\begin{align*}
+ Y^{1+\delta}x^{-\kappa\eta}
+ \sum_{\substack{b\le Y\\b\text{ squarefree}}}
+ \frac{H(\sigma(b))^\eta}{b^{1+\delta}}
+ &\le Y^{1+\delta}x^{-\kappa\eta}
+ \prod_q\left(1+\frac{H(q+1)^\eta}{q^{1+\delta}}\right)\\
+ &\le Y^{1+\delta}x^{-\kappa\eta}
+ \exp\left\{\sum_q\frac{H(q+1)^\eta}{q^{1+\delta}}\right\}.
+\end{align*}
+We let
+\[
+ A:=\frac{\log_2 x}{(\log_3 x)^2},\qquad
+ \eta:=\frac{\log A}{\log_2 x},\qquad
+ \delta:=\frac1{\log_2 x}.
+\]
+Then $Y^{\delta}\le X^{\delta}\le L(x)^{o(1)}$ and $x^{-\kappa\eta}=L(x)^{-\kappa+o(1)}$. So it suffices to show that the displayed sum on $q$ is $o(\log L(x))$. Crudely,
+\[
+ \sum_q\frac{H(q+1)^\eta}{q^{1+\delta}}
+ \le 2^{1+\delta}\sum_q\frac{H(q+1)^\eta}{(q+1)^{1+\delta}}
+ <3\sum_{v\ge1}\frac{H(v)^\eta}{v^{1+\delta}},
+\]
+where the sum is on all positive integers $v$. Continuing, since $y^\eta=A$,
+\begin{align*}
+ \sum_{v\ge1}\frac{H(v)^\eta}{v^{1+\delta}}
+ &=\prod_{p\le y}(1-p^{-1-\delta+\eta})^{-1}
+   \prod_{p>y}(1-Ap^{-1-\delta})^{-1}\\
+ &\le\exp\left\{\sum_{p\le y}p^{-1-\delta+\eta}
+       +A\sum_{p>y}p^{-1-\delta}+O(1)\right\}\\
+ &\le\exp\left\{A\sum_{p\le y}p^{-1}
+       +A\sum_{p>y}p^{-1-\delta}+O(1)\right\}.
+\end{align*}
+Here the higher degree terms in the logarithmic expansion have been absorbed into the $O(1)$, using that $\eta,\delta=o(1)$ and $A^2/y=o(1)$.
+
+Now, by Mertens' theorem \cite[Theorem 2.7(d), p.~50]{MontgomeryVaughan2007},
+\[
+ A\sum_{p\le y}p^{-1}\le(1+o(1))A\log_2 y
+ =(1+o(1))\log_2 x/\log_3 x,
+\]
+while the Euler product and standard bounds for $\zeta(s)$ \cite[Corollaries 1.11 and 1.14, pp.~23, 25]{MontgomeryVaughan2007} give
+\[
+ \sum_{p>y}p^{-1-\delta}\le\sum_p p^{-1-\delta}
+ \le\log\zeta(1+\delta)+O(1)
+ \le\log\frac1\delta+O(1)=\log_3 x+O(1).
+\]
+Collecting estimates, we conclude that the above sum on $q$ is at most $\exp\{(2+o(1))\log_2 x/\log_3 x\}\allowbreak=(\log x)^{o(1)}$, which is comfortably $o(\log L(x))$.
+\end{proof}
+
+    The next proposition reduces the proof of Theorem \ref{thm:main} to handling pairs whose members have large, relatively prime squarefree divisors with controlled large prime factors. 
+    The proof borrows several ideas from the preliminary reduction steps in Pomerance's paper \cite{Pomerance2015}; see the start of \S3 there (compare also \S2 of \cite{Pomerance1981}). 
+
+    \begin{proposition}\label{prop:structural}
+    Let $x$ be large. Let $n,n'$ be an amicable pair with at least one member not exceeding $x$. Either the pair $\{n,n'\}$ belongs to a negligible exceptional set, or after possibly interchanging $n$ and $n'$ we can factor
+    \[
+     n=Ba,\qquad n'=B'a',
+    \]
+    where
+    \[
+    \begin{gathered}
+     B,B'\le L(x)^{O(1)},\qquad a,a'=x/L(x)^{O(1)},\\
+     a,a'\text{ squarefree}\\
+     \gcd(a,B)=1,\qquad \gcd(a',B')=1\\
+     \gcd(a,n')=\gcd(a',n)=1,\\
+     P^{+}(a')<P^{+}(a)\le x^{4/5}.
+    \end{gathered}
+    \]
+    \end{proposition}
+    Here and below, ``negligible exceptional set'' means a set of size at most $xL(x)^{-1/2+o(1)}$.
+    
+    \begin{proof}
+    Throughout the proof, we assume that $x$ is sufficiently large. We put
+    \[
+     X:=x\log x,\quad Y:=L(x)^{1/2}.
+    \]
+    At least one member of the pair $n, n'$ does not exceed $x$. If (without loss of generality) $n\le x$, then $n'=s(n)\le\sigma(n)\le X$. Hence, both $n,n'\le X$. Here we use the standard bound $\sigma(v)\ll v\log_2(3v)$ for $v\ge1$ \cite[Theorem 323, p.~350]{HardyWright2008}. Let $\rho:=\rho(1/2)$ be the constant of Lemma~\ref{lem:pollack} corresponding to $\beta=1/2$. Then we may assume that
+    \[
+     (n,n')\le Y^{1/\rho}.
+    \]
+    Indeed, $(n,n')=(n,\sigma(n)-n)=(n,\sigma(n))$, while Lemma~\ref{lem:pollack}, with $G:=Y^{1/\rho}$, bounds the number of $n\le X$ with $(n,n')>Y^{1/\rho}$ by $XY^{-1}$. This is $xL(x)^{-1/2+o(1)}$ and so negligible for us.
+    
+    We may also assume that $n,n'>XY^{-1}$ and that $n,n'$ both have squarefull part at most $Y^2$, since the count of exceptions in $[1,X]$ to either condition is $O(XY^{-1})$.
+    
+    Let $B$ be the product of all prime powers $q^e\parallel n$ with $e\ge 2$, along with all primes $q\parallel n$ that divide $n'$. Define $B'$ analogously. Then
+    \[
+     B,B'\le Y^2\cdot Y^{1/\rho}=L(x)^{O(1)}.
+    \]
+    Writing $n=Ba$ and $n'=B'a'$, we see that $a,a'$ are squarefree, $(a,B)=(a',B')=1$, and $(a,n')=(a',n)=1$. Moreover,
+    \[
+     X\ge a=n/B\ge\frac{X/Y}{L(x)^{O(1)}}=x/L(x)^{O(1)},
+    \]
+    so that $a=X/L(x)^{O(1)}$, with the same estimate holding for $a'$.
+    
+    Since $(a,n')=1$, we have $(a,a')=1$, and so $P^{+}(a)$ and $P^{+}(a')$ are distinct. Without loss of generality, we may assume that $P^{+}(a')<P^{+}(a)$. It remains to show that $P^{+}(a)\le x^{4/5}$, apart from a negligible exceptional set.
+    
+    Write $n=mp$ and $n'=m'p'$, where $p:=P^{+}(a)$ and $p':=P^{+}(a')$. The relations $n'=s(n)$ and $n=s(n')$ give 
+    \begin{align*}
+     m'p'&=ps(m)+\sigma(m),\\
+     mp&=p's(m')+\sigma(m').
+    \end{align*}
+    We eliminate $p$ from the two equations: multiply the first equation by $m$, the second by $s(m)$, and then substitute the second into the first. We find that
+    \[
+     p'(mm'-s(m)s(m'))=m\sigma(m)+s(m)\sigma(m')>0,
+    \]
+    so that $m,m'$ determine $p'$, and hence also determine $n=pm$. Hence, the number of pairs where $mm'\le XY^{-1}$ is $O(XY^{-1}\log x)$, which is negligible for us. So we assume in what follows that $mm'>XY^{-1}$.
+    
+Suppose that $p>x^{4/5}$. Then
+    \[
+     m\le X/p\le x^{1/5+o(1)}.
+    \]
+    Furthermore, as $mm'\ge XY^{-1}$, we have that $m'\ge XY^{-1}m^{-1}\ge x^{4/5+o(1)}$, so that
+    \[
+     p'\le x^{1/5+o(1)}.
+    \]
+    Let $D$ be the smallest divisor of $a'$ exceeding $x^{1/2}$. Then
+    \[
+     x^{1/2}<D\le x^{7/10+o(1)}.
+    \]
+    Write $n'=DM$. Then $(D,M)=1$. Furthermore,
+    \[
+     (D,\sigma(D))\mid(D,\sigma(n'))=(D,n+n')=(D,n)\mid(a',n)=1,
+    \]
+    so that $(D,\sigma(D))=1$. We count the possible $n$ for fixed $D$ and $m$, then sum over $D,m$.
+    
+    The relations $n'=s(n)$ and $\sigma(n')=n+n'$ give us that
+    \begin{align*}
+     DM&=ps(m)+\sigma(m),\\
+     \sigma(D)\sigma(M)&=pm+DM.
+    \end{align*}
+    Eliminating $p$ (as above), we find that
+    \[
+     s(m)\sigma(D)\sigma(M)=\sigma(m)DM-m\sigma(m).
+    \]
+    Looking modulo $\sigma(D)$,
+    \[
+     \sigma(m)DM\equiv m\sigma(m)\pmod{\sigma(D)}.
+    \] 
+    Since $(D,\sigma(D))=1$, the last congruence places $\sigma(m)M$ in a unique residue class modulo $\sigma(D)$, determined by $D,m$. Hence, $M$ is placed in a unique residue class modulo $\sigma(D)/(\sigma(D),\sigma(m))$. Since $M\le X/D$, the number of possibilities for $n'=DM$ given $m,D$ is at most
+    \[
+     1+\frac{X/D}{\sigma(D)/(\sigma(D),\sigma(m))}
+     \le1+\frac{X\sigma(m)}{D^2}.
+    \]
+    For large $x$, we have both $m\le x^{0.21}$ and $D\le x^{0.71}$ (say). Consequently, the number of $n$ that arise this way is at most
+    \[
+    \begin{aligned}
+     \sum_{m\le x^{0.21}}\sum_{x^{1/2}<D\le x^{0.71}}
+     \left(1+\frac{X\sigma(m)}{D^2}\right)
+     &\ll x^{0.92}+X\cdot(x^{0.21})^2x^{-1/2}\\
+     &\ll x^{0.92}\log x,
+    \end{aligned}
+    \]
+    and this is again negligible.
+    \end{proof}
+    
+
+\Needspace{7\baselineskip}
+We may now complete the proof of Theorem \ref{thm:main}.
+
+\begin{proof}[Proof of Theorem \ref{thm:main}]
+We continue to take $X:=x\log x$, so that both $n,n'\le X$. We discard the exceptional set of Proposition \ref{prop:structural} and assume $n=Ba$ and $n'=B'a'$ with $a,a', B, B'$ as described there. Fix $0<\varepsilon<1/10$. We will prove that
+\[
+ A(x)\le xL(x)^{-1/2+4\varepsilon+o(1)}, 
+\]
+as $x\to\infty$. Since $\varepsilon$ can be taken arbitrarily small, this proves Theorem \ref{thm:main}. 
+
+Throughout this proof, constants and $o(1)$ terms may depend on $\varepsilon$.
+
+Here is a brief roadmap of the proof. In both cases, we write one member of the pair as $mR$ and
+choose a factor $v$ of the other member.\footnote{For readers
+returning to this outline after reading the proof, $v=p$ in
+Case I and $v=V$ in Case II.}
+The choice is made so that $\sigma(m)$ and $\sigma(v)$ have
+a large common divisor $d$. We count by fixing $m$ first.
+There are few choices for $d$, and for each such choice,
+the divisibility $d\mid\sigma(v)$ and the size restrictions
+on $v$ limit the number of possible $v$. Finally, for fixed
+$m,v$, the amicable relations allow at most two admissible
+values of $R$.
+
+\medskip
+\Needspace{5\baselineskip}
+\noindent\textbf{Case I: $P^{+}(a)>x^{\varepsilon^2}$.}
+
+Put $p:=P^{+}(a)$. Then $p\parallel n$, and $p+1 \mid \sigma(n) = \sigma(n') = \sigma(B') \sigma(a')$. Hence, 
+\[ r:= \frac{p+1}{g} \mid \sigma(a'), \quad\text{where we set}\quad g:=\gcd(p+1,\sigma(B')).\]
+Since 
+\[ r \mid \sigma(a') = \prod_{q \mid a'} (q+1), \]
+we can factor
+\[ r = \prod_{q \mid a'} e_q, \quad\text{where each}\quad e_q \mid q+1.\]
+(Here we allow the possibility that some $e_q=1$.)
+
+Let $r_0$ denote the product of those $q \mid a'$ for which $e_q \le q^{9/10}$. Then 
+\[ r_0 = a' \Bigg(\prod_{\substack{q\mid a' \\ e_q > q^{9/10}}} q\Bigg)^{-1} \ge a' \Bigg(\prod_{q\mid a'} e_q^{10/9}\Bigg)^{-1} = a'/r^{10/9}.\]
+Now $a' = x^{1+o(1)}$, while $r \mid p+1$, where $p \le x^{4/5}$. Hence,
+\[ r_0 \ge x^{1+o(1)}/x^{4/5 \cdot 10/9} > x^{1/10}.\]
+
+Put $\alpha:=\varepsilon^2/10$. If there is a prime divisor of $r_0$ exceeding $x^\alpha$, we let $R = P^{+}(r_0)$. Since $R$ is a prime dividing $a'$, we then have
+\begin{equation}\label{eq:firstkind} x^{\alpha} < R < p.
+\end{equation}
+Otherwise, we let $R$ be the smallest divisor of $r_0$ exceeding $x^{\alpha}$ (which certainly exists by the above lower bound on $r_0$). In that case, 
+\begin{equation}\label{eq:secondkind} x^{\alpha} < R \le x^{2\alpha}.\end{equation}
+Note that we always have $R \mid r_0 \mid a'\mid n'$, while 
+\[ \prod_{q\mid R} e_q \le R^{9/10}.\] 
+
+% it as $R$; then $R<p$. Otherwise, multiply such primes until their product first reaches $x^\alpha$, obtaining $x^\alpha\le R<x^{2\alpha}$. In either case, $R\mid a'$ and $\prod_{q\mid R}e_q\le R^{9/10}$.
+
+Write $n'=mR$. Then $(m,R)=1$. Set
+\[
+ d:=\frac{p+1}{\prod_{q\mid R}e_q} = g 
+ \prod_{q\mid a'/R} e_q.
+\]
+Since $g$ divides $\sigma(B')$ and $\prod_{q\mid a'/R} e_q$ divides $\prod_{q\mid a'/R} (q+1) = \sigma(a'/R)$,
+we have that
+\[ d \mid \sigma(B') \sigma(a'/R) = \sigma(n'/R) = \sigma(m). \]
+Moreover,
+\[ d > p/R^{9/10}. \]
+We count possible values of $n'=mR$ by first fixing $m$, then counting corresponding values of $d,p$, and $R$. 
+
+We say that \(R\) is of Type I if \(R\) is prime and \(R<p\), and of Type II if \(x^\alpha<R\le x^{2\alpha}\). Note that $R$ may be of both types.
+
+For fixed $m,p$, there is at most one $R$ of Type I. Indeed, $p\mid n=s(mR)$ gives \begin{equation}\label{eq:Rsmcong} Rs(m)+\sigma(m)\equiv0\pmod p.\end{equation} If a solution exists, $(p,s(m))=1$: Otherwise $p\mid\sigma(m)$ and hence $p\mid \sigma(m)-s(m)=m$, contrary to $(a,n')=1$. The congruence \eqref{eq:Rsmcong} then places the prime $R<p$ into a single residue class modulo $p$, determined by $m,p$.
+
+There is also at most one $R$ of Type II. We have $(R,\sigma(R))=1$. Indeed, 
+\[ (R,\sigma(R)) \mid \sigma(m)\sigma(R)-mR = n, \quad (R,\sigma(R))\mid R \mid a', \]
+and $\gcd(a',n)=1$. Moreover, $(p,mR)=1$, using that $a$ and $n'$ are relatively prime. The condition $p\mid n$ can be written as the congruence
+\begin{equation}\label{eq:sigmamR}
+ \sigma(m)\sigma(R)\equiv mR\pmod p.
+\end{equation}
+If this congruence has a solution, then $(p,\sigma(m))=1$, allowing us to rewrite it in the suggestive form
+\[ \frac{\sigma(R)}{R} \equiv \frac{m}{\sigma(m)}\pmod{p}.\]
+So if we have two solutions $R=R_1, R_2$, then $\frac{\sigma(R_1)}{R_1} \equiv \frac{\sigma(R_2)}{R_2} \pmod{p}$, implying that 
+\[
+ \sigma(R_1)R_2-\sigma(R_2)R_1\equiv0\pmod p.
+\]
+But if $R_1, R_2$ are of Type II, the absolute value of the left-hand side is at most $x^{4\alpha+o(1)}<p$. Hence, it vanishes, and $\frac{\sigma(R_1)}{R_1} = \frac{\sigma(R_2)}{R_2}$. But the fractions $\sigma(R_i)/R_i$ are reduced, so we must have $R_1=R_2$.
+
+To finish up, we place $p,R$ in dyadic ranges $P\le p<2P$, $U\le R<2U$, where $P,U$ are powers of $2$ with $U > x^{\alpha}/2$. For each $m\le X/U$, there are at most $\tau(\sigma(m))=x^{o(1)}$ choices of $d$ \cite[Theorem 315, p.~343]{HardyWright2008}. Each satisfies $d\ge P/(2U)^{9/10}$, and $p\equiv-1\pmod d$, so there are $O(U^{9/10})$ possible $p$ in the range. As we have just seen, each $m,p$ gives at most two possible $R$. The number of pairs in these ranges is therefore at most
+\[
+ \frac XU x^{o(1)}U^{9/10}
+ \le x^{1-\alpha/10+o(1)}.
+\]
+There are $O((\log x)^2)$ ranges, so Case I saves a power of $x$.
+
+\medskip
+\Needspace{5\baselineskip}
+\noindent\textbf{Case II: $P^{+}(a)\le x^{\varepsilon^2}$.}
+
+Since $a$ is of size $x^{1+o(1)}$, we may choose a divisor $R$ of $a$ with
+\[
+ x^\varepsilon\le R\le x^{\varepsilon+\varepsilon^2}.
+\]
+We write $a=Rb$, so that
+\[
+ n=RBb.
+\]
+By Lemma \ref{lem:technical-A}, we can assume that
+\begin{equation}\label{eq:case-II-mass}
+ \log(\sigma(b)_{\le y})+(\log_2 x)\Omega(\sigma(b)_{>y})
+ \le(1/2-4\varepsilon)\log x,
+ \quad \text{where~} y:=\log x.
+\end{equation}
+Indeed, given $b$ there are at most $X/b$ possibilities for $n$. Lemma \ref{lem:technical-A} with $\kappa:=1/2-4\varepsilon$ and partial summation show that the number of exceptions is at most
+\[
+ (X\log X)\,L(x)^{-1/2+4\varepsilon+o(1)}
+ =xL(x)^{-1/2+4\varepsilon+o(1)}.
+\]
+
+Since $b$ is a unitary divisor of $n$, we have that $\sigma(b)\mid \sigma(n) = \sigma(n') = \sigma(a')\sigma(B')$. So if we set
+\[
+ r:=\frac{(\sigma(b))_{>y}}{g}, \quad\text{where}\quad g:= (\sigma(b)_{>y}, \sigma(B')),
+\]
+then $r$ divides both $\sigma(b)$ and $\sigma(a')$.
+
+Our plan is to choose divisors $V\mid a'$ and $d\mid r$ with
+$d\mid\sigma(V)$. Writing $m:=Bb$ (so that $n=mR$), we then have
+$d\mid\sigma(m)$, so there are few choices for $d$ once
+$m$ is fixed. The estimate \eqref{eq:reciprocal-b} below
+will allow us to count $V$, provided 
+$(V/d)(\log x)^{\Omega(d)}$ is sufficiently small.
+We will also show that fixed $m,V$ determine at most one
+admissible $R$. We proceed now to construct the required $V,d$.
+
+We can factor
+\[
+ a'=V_0V_1\cdots V_t,\qquad
+ V_0\le x^{2\varepsilon+3\varepsilon^2},\qquad
+ x^{2\varepsilon+3\varepsilon^2}<V_i
+ \le x^{2\varepsilon+4\varepsilon^2}\quad(1\le i\le t).
+\]
+To determine $V_1,\dots, V_t$, we successively multiply primes in $a'$ until their product  first exceeds $x^{2\varepsilon+3\varepsilon^2}$, and we let $V_0 := a'/(V_1\cdots V_t)$.
+Since $r\mid\sigma(a')$, there is a decomposition
+\[
+ r=d_0\cdots d_t, \quad\text{where each}\quad d_i\mid\sigma(V_i).
+\]
+
+With some malice aforethought, we look for an index $i\ge 1$ for which $(V_i/d_i) (\log{x})^{\Omega(d_i)}$ is small. Such an $i$ can be obtained by averaging. Notice that
+\[
+ \sum_{i=0}^t
+ \{\log(V_i/d_i)+(\log_2 x)\Omega(d_i)\}
+ =\log(a'/r)+(\log_2 x)\Omega(r).
+\]
+By the definition of $r$,
+\[
+\begin{aligned}
+ \log(a'/r)
+ &=\log\frac{a'}{\sigma(b)}
+   +\log(\sigma(b)_{\le y})
+   +\log{g}\\
+ &\le\log(a'/b)+\log(\sigma(b)_{\le y})
+   +\log\sigma(B').
+\end{aligned}
+\]
+Also, $\Omega(r)\le\Omega(\sigma(b)_{>y})$. Thus
+\eqref{eq:case-II-mass} gives
+\[
+ \log(a'/r)+(\log_2 x)\Omega(r)
+ \le\log(a'/b)+\log\sigma(B')
+    +(1/2-4\varepsilon)\log x.
+\]
+Now $\log\sigma(B')=o(\log x)$.  Furthermore, writing $b=a/R$, we see that
+\[ \log(a'/b)=\log(a'/a)+\log R
+ \le(\varepsilon+\varepsilon^2+o(1))\log x.
+\]
+(We use here that $a, a'$ are both of size $x^{1+o(1)}$, so that $a/a'= x^{o(1)}$.) 
+Consequently,
+\begin{equation}\label{eq:total-cost}
+ \sum_{i=0}^t
+ \{\log(V_i/d_i)+(\log_2 x)\Omega(d_i)\}
+ \le(1/2-3\varepsilon+\varepsilon^2+o(1))\log x.
+\end{equation}
+
+Equation \eqref{eq:total-cost} forces the existence of $i\ge1$ for which
+\begin{equation}\label{eq:choice-dV}
+ \log(V_i/d_i)+(\log_2 x)\Omega(d_i)
+ \le(1/2-\varepsilon)\log V_i.
+\end{equation}
+Otherwise,
+\begin{equation}
+\begin{aligned}
+ \sum_{i=1}^t
+ \{\log(V_i/d_i)+(\log_2 x)\Omega(d_i)\}
+ &>(1/2-\varepsilon)\sum_{i=1}^t\log V_i\\
+ &=(1/2-\varepsilon)\log(a'/V_0)\\
+ &\ge\{(1/2-\varepsilon)(1-2\varepsilon-3\varepsilon^2)
+       +o(1)\}\log x.\label{eq:contradict1}
+\end{aligned}
+\end{equation}
+On the other hand, the term for $i=0$ in \eqref{eq:total-cost}
+is at least $-\log(\sigma(V_0)/V_0)$, which is at least $-\log_2{x}$ for large $x$. So we get from \eqref{eq:total-cost} that
+\begin{equation}\label{eq:contradict2}
+ \sum_{i=1}^t
+ \{\log(V_i/d_i)+(\log_2 x)\Omega(d_i)\}
+ \le(1/2-3\varepsilon+\varepsilon^2+o(1))\log x.
+\end{equation}
+But \eqref{eq:contradict1} and \eqref{eq:contradict2} are incompatible for large $x$, since
+\[
+ (1/2-\varepsilon)(1-2\varepsilon-3\varepsilon^2)
+ >1/2-3\varepsilon+\varepsilon^2.
+\]
+
+Choose $i$ satisfying \eqref{eq:choice-dV} and put $d:=d_i$, $V:=V_i$, and $J:=\Omega(d)$.
+Then $d>1$, $d\mid\sigma(b)$, $d\mid\sigma(V)$. Furthermore, \eqref{eq:choice-dV} gives
+\begin{equation}\label{eq:dVstuff}
+ \frac Vd \exp(J\log_2{x})\le x^{\varepsilon-4\varepsilon^3}.
+\end{equation}
+Here we used that $V \le x^{2\varepsilon + 4\varepsilon^2}$, while 
+$(1/2-\varepsilon)(2\varepsilon+4\varepsilon^2)
+=\varepsilon-4\varepsilon^3$.
+
+Writing \(n=mR\), we have \(n'=s(n)=\sigma(m)\sigma(R)-mR\). As \(V\mid n'\),
+\begin{equation}\label{eq:congruence-R}
+ \sigma(m)\sigma(R)\equiv mR\pmod V.
+\end{equation}
+
+We first show that fixed $m,V$ determine at most one admissible
+value of $R$, and hence at most one possibility for $n=mR$.
+To see why, first observe that $(R,\sigma(R))=1$. This coprimality is proved exactly as in Case I: We have that $R\mid a$ and that $(R,\sigma(R)) \mid \sigma(m)\sigma(R)-mR = n'$, while $\gcd(a,n')=1$.
+We also have that $(R,V)=1$: indeed, $R\mid n$
+while $V\mid a'$ and $(n,a')=1$. Furthermore, if there is a
+solution $R$ to \eqref{eq:congruence-R}, then
+$(\sigma(m),V)=1$, since
+\[
+ (\sigma(m),V)\mid(\sigma(m)\sigma(R),V)
+ =(mR,V)=(n,V)\mid(n,a')=1.
+\]
+Hence, each solution $R$ to \eqref{eq:congruence-R} satisfies
+\[
+ \frac{\sigma(R)}R\equiv\frac{m}{\sigma(m)}\pmod V.
+\]
+If $R=R_1,R_2$ are two solutions, taking a difference and clearing denominators shows that
+\[
+ \sigma(R_1)R_2-\sigma(R_2)R_1\equiv0\pmod V.
+\]
+But $R_1, R_2 \le x^{\varepsilon+\varepsilon^2}$, so that
+\[
+ |\sigma(R_1)R_2-\sigma(R_2)R_1| \le x^{2\varepsilon+2\varepsilon^2+o(1)},
+ \]
+while $V>x^{2\varepsilon+3\varepsilon^2}$. It follows (as in Case I) that $R_1= R_2$.
+
+We now fix $m$ and count the possible $d,V$. If an admissible
+$R$ exists, then $mx^\varepsilon\le mR=n\le X$, and so
+$m\le Xx^{-\varepsilon}$. Since $b$ is a unitary divisor of
+$m=Bb$ and $d\mid\sigma(b)$, we have $d\mid\sigma(m)$.
+Thus, there are at most $x^{o(1)}$ choices of $d$. Moreover,
+\eqref{eq:case-II-mass} gives
+\[
+ J=\Omega(d)\le\Omega(\sigma(b)_{>y})
+ \le\frac{\log x}{\log_2 x}.
+\]
+
+For fixed $d$, we estimate $\sum 1/V$ over squarefree $V\le X$
+with $d\mid\sigma(V)$. We use a standard consequence of the
+Brun--Titchmarsh inequality \cite[Theorem 3.9, p.~90]{MontgomeryVaughan2007}: For all $a\ge 1$ and real $X\ge 3$,
+\begin{equation}\label{eq:prime-reciprocals}
+ \sum_{\substack{\ell\le X\\\ell\equiv-1\pmod a}}\frac1\ell
+ \ll\frac{\log_2 X}{\phi(a)}.
+\end{equation}
+
+Write the prime factorization of $V$ in the form
+$V=\ell_1\cdots\ell_k$, so that
+$\sigma(V)=(\ell_1+1)\cdots(\ell_k+1)$. Since $d\mid\sigma(V)$,
+we can write
+\[
+ d=d_1\cdots d_k,
+\]
+where each $d_i\mid\ell_i+1$. We can assume, after relabeling, that
+\[
+ d_1\ge\cdots\ge d_h>1=d_{h+1}=\cdots=d_k.
+\]
+Then $d_1d_2\cdots d_h$ is a multiplicative partition of $d$.\footnote{Recall that a \textsf{multiplicative partition} of a positive integer $n$ is an expression of $n$ as a product of integers larger than $1$, where two partitions are identified if they differ only in the order of the factors.}
+Fixing $d_1,\ldots,d_h$, we see that for the corresponding
+$V=\ell_1\cdots\ell_hu$,
+\[
+\begin{aligned}
+ \sum\frac1V
+ &\le\Bigg\{\sum_{u\le X}\frac1u\Bigg\}
+ \prod_{i=1}^h
+ \Bigg\{\sum_{\substack{\ell_i\le X\\
+                       \ell_i\equiv-1\pmod{d_i}}}\frac1{\ell_i}\Bigg\}\\
+ &\ll\frac{(\log X)(C\log_2 X)^h}
+          {\phi(d_1)\cdots\phi(d_h)}\\
+ &\le\frac{(\log X)(C\log_2 X)^h\exp\{2J/y\}}d,
+\end{aligned}
+\]
+where $C$ is a positive absolute constant. To go from the second to the third line, we used that every prime factor of $d$ exceeds $y$, so that each $\phi(d_i) = d_i \prod_{p \mid d_i}(1-1/p) \ge d_i \exp(-2\sum_{p_i \mid d_i} 1/p_i) \ge d_i \exp(-2\Omega(d_i)/y)$.
+
+We have $h\le\Omega(d)=J$, and the number of multiplicative
+partitions of $d$ is at most $\Omega(d)^{\Omega(d)}=J^J$:
+each partition is obtained in at least one way by partitioning the
+$\Omega(d)$ prime factors of $d$, with occurrences
+distinguished, into nonempty groups.
+Since $J\le\log x/\log_2 x$, we have
+\[
+ \log\{(\log X)(C\log_2 X)^J J^J\exp\{2J/y\}\}
+ \le J\log_2 x+O(J+\log_2 x).
+\]
+Consequently,
+\begin{equation}\label{eq:reciprocal-b}
+ \sum_{\substack{V\le X\\V\text{ squarefree}\\d\mid\sigma(V)}}\frac1V
+ \le\frac{\exp\{J\log_2 x+O(J+\log_2 x)\}}d.
+\end{equation}
+
+By \eqref{eq:dVstuff}, all the admissible $V$ are at most
+$d\,x^{\varepsilon-4\varepsilon^3}\exp\{-J\log_2 x\}$. Hence their number is at most
+\[ \sum_{V} \frac{d\,x^{\varepsilon-4\varepsilon^3}\exp\{-J\log_2 x\}}{V} \le x^{\varepsilon-4\varepsilon^3+o(1)},
+\]
+where the sum is over admissible $V$.
+
+Each $m,V$ gives at most one admissible $R$, and hence at most
+one $n$. For fixed $m,d$, we have just seen that the number of corresponding $V$ is bounded by $x^{\varepsilon-4\varepsilon^3+o(1)}$.
+Thus, it remains to sum over $m\le Xx^{-\varepsilon}$ and
+$d\mid\sigma(m)$. For each $m$, there are at most
+$\tau(\sigma(m))=x^{o(1)}$ choices of $d$, uniformly in this range.
+Consequently, the number of nonexceptional $n$ in Case II is at most
+\[
+ Xx^{-\varepsilon}\cdot x^{o(1)}
+ \cdot x^{\varepsilon-4\varepsilon^3+o(1)}
+ =x^{1-4\varepsilon^3+o(1)},
+\]
+which is negligible.
+
+Finally, each of our amicable pairs contributes at most two
+amicable numbers to $A(x)$, so
+$A(x)\le xL(x)^{-1/2+4\varepsilon+o(1)}$.
+Since this holds for every fixed $0<\varepsilon<1/10$,
+the theorem follows.
+\end{proof}
+
+    \begin{thebibliography}{9}
+    \bibitem{Pollack2011}
+    P. Pollack,
+    \href{https://www.pollack-math.net/combined3.pdf}{\emph{On the greatest common divisor of a number and its sum of divisors}},
+    Michigan Math. J. \textbf{60} (2011), 199--214.
+    \bibitem{Pomerance2015}
+C. Pomerance,
+\href{https://math.dartmouth.edu/~carlp/amicablesv3.pdf}{\emph{On amicable numbers}},
+in \emph{Analytic Number Theory},
+Springer, Cham, 2015, 321--327.
+    \bibitem{Pomerance1981}
+C. Pomerance,
+\href{https://math.dartmouth.edu/~carlp/Amicable2.pdf}{\emph{On the distribution of amicable numbers. II}},
+J. reine angew. Math. \textbf{325} (1981), 183--188.
+\bibitem{MontgomeryVaughan2007}
+H. L. Montgomery and R. C. Vaughan,
+\href{https://websites.umich.edu/~hlm/mnt1.html}{\emph{Multiplicative Number Theory I. Classical Theory}},
+Cambridge Studies in Advanced Mathematics \textbf{97},
+Cambridge University Press, Cambridge, 2007.
+\bibitem{HardyWright2008}
+G. H. Hardy and E. M. Wright,
+\href{https://academic.oup.com/book/54489}{\emph{An Introduction to the Theory of Numbers}},
+6th ed.,
+Oxford University Press, Oxford, 2008.
+    \end{thebibliography}
+    
+    \end{document}
+    

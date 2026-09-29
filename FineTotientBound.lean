@@ -1,0 +1,82 @@
+import TotientBounds
+
+namespace AmicableTotient
+open scoped BigOperators
+
+theorem roughPrimeTotient {p : ℕ} (hp : p.Prime) {y : ℝ} (hy : 2 ≤ y) (hyp : y ≤ (p : ℝ)) :
+    (p : ℝ) ≤ Real.exp (2 / y) * p.totient := by
+  have hp2 := hp.two_le
+  have hphi : (p.totient : ℝ) = (p : ℝ) - 1 := by rw [Nat.totient_prime hp, Nat.cast_sub (by omega), Nat.cast_one]
+  have hpR : (2 : ℝ) ≤ p := by exact_mod_cast hp2
+  have hz : 1 / ((p : ℝ) - 1) ≤ 2 / y := by
+    apply (div_le_div_iff₀ (by linarith : 0 < (p : ℝ) - 1) (by linarith : 0 < y)).mpr
+    nlinarith
+  have he := Real.add_one_le_exp (2 / y)
+  have hm := mul_le_mul_of_nonneg_right (show 1 + 1 / ((p : ℝ) - 1) ≤ Real.exp (2 / y) by linarith)
+    (show 0 ≤ (p : ℝ) - 1 by linarith)
+  have hid : (1 + 1 / ((p : ℝ) - 1)) * ((p : ℝ) - 1) = p := by
+    field_simp [show (p : ℝ) - 1 ≠ 0 by linarith]
+    ring
+  rw [hid] at hm
+  simpa only [hphi] using hm
+
+theorem roughPrimeListTotient (l : List ℕ) {y : ℝ} (hy : 2 ≤ y)
+    (hl : ∀ p ∈ l, p.Prime ∧ y ≤ (p : ℝ)) :
+    (l.prod : ℝ) ≤ Real.exp (2 * l.length / y) * l.prod.totient := by
+  induction l with
+  | nil => simp
+  | cons p l ih =>
+    have hp := hl p (by simp)
+    have ht := ih (fun q hq => hl q (by simp [hq]))
+    have hprime := roughPrimeTotient hp.1 hy hp.2
+    have hsuper : (p.totient : ℝ) * l.prod.totient ≤ (p * l.prod).totient := by
+      exact_mod_cast Nat.totient_super_multiplicative p l.prod
+    simp only [List.prod_cons, List.length_cons, Nat.cast_mul, Nat.cast_add, Nat.cast_one]
+    calc
+      _ ≤ (Real.exp (2 / y) * p.totient) * (Real.exp (2 * l.length / y) * l.prod.totient) :=
+        mul_le_mul hprime ht (Nat.cast_nonneg _) (by positivity)
+      _ = Real.exp (2 * ((l.length : ℝ) + 1) / y) * ((p.totient : ℝ) * l.prod.totient) := by
+        rw [show 2 * ((l.length : ℝ) + 1) / y = 2 / y + 2 * l.length / y by ring, Real.exp_add]
+        ring
+      _ ≤ _ := mul_le_mul_of_nonneg_left hsuper (Real.exp_pos _).le
+
+theorem roughTotient {n : ℕ} (hn : 0 < n) {y : ℝ} (hy : 2 ≤ y)
+    (hprimes : ∀ p ∈ n.primeFactors, y ≤ (p : ℝ)) :
+    (n : ℝ) ≤ Real.exp (2 * (ArithmeticFunction.cardFactors n : ℝ) / y) * n.totient := by
+  have hh := roughPrimeListTotient n.primeFactorsList hy (by
+    intro p hp
+    exact ⟨Nat.prime_of_mem_primeFactorsList hp,hprimes p (by simpa using hp)⟩)
+  simpa only [Nat.prod_primeFactorsList hn.ne', ArithmeticFunction.cardFactors_apply] using hh
+
+theorem roughFactorTotient (l : List ℕ) {y : ℝ} (hy : 2 ≤ y)
+    (hl : ∀ a ∈ l, 0 < a)
+    (hprimes : ∀ p ∈ l.prod.primeFactors, y ≤ (p : ℝ)) :
+    (l.prod : ℝ) ≤ Real.exp (2 * (ArithmeticFunction.cardFactors l.prod : ℝ) / y) * (l.map Nat.totient).prod := by
+  induction l with
+  | nil => simp
+  | cons a l ih =>
+    have ha := hl a (by simp)
+    have hlpos : 0 < l.prod := List.prod_pos (fun b hb => hl b (by simp [hb]))
+    have hleft : ∀ p ∈ a.primeFactors, y ≤ (p : ℝ) := by
+      intro p hp
+      exact hprimes p (Nat.mem_primeFactors.mpr ⟨Nat.prime_of_mem_primeFactors hp,
+        (Nat.dvd_of_mem_primeFactors hp).trans (dvd_mul_right a l.prod), by simpa only [List.prod_cons] using mul_ne_zero ha.ne' hlpos.ne'⟩)
+    have hright : ∀ p ∈ l.prod.primeFactors, y ≤ (p : ℝ) := by
+      intro p hp
+      exact hprimes p (Nat.mem_primeFactors.mpr ⟨Nat.prime_of_mem_primeFactors hp,
+        (Nat.dvd_of_mem_primeFactors hp).trans (dvd_mul_left l.prod a), by simpa only [List.prod_cons] using mul_ne_zero ha.ne' hlpos.ne'⟩)
+    have ht := ih (fun b hb => hl b (by simp [hb])) hright
+    have hh := roughTotient ha hy hleft
+    simp only [List.prod_cons, List.map_cons, ArithmeticFunction.cardFactors_mul ha.ne' hlpos.ne', Nat.cast_add, Nat.cast_mul]
+    calc
+      _ ≤ (Real.exp (2 * (ArithmeticFunction.cardFactors a : ℝ) / y) * a.totient) *
+          (Real.exp (2 * (ArithmeticFunction.cardFactors l.prod : ℝ) / y) * (l.map Nat.totient).prod) :=
+        mul_le_mul hh ht (Nat.cast_nonneg _) (by positivity)
+      _ = _ := by rw [show 2 * ((ArithmeticFunction.cardFactors a : ℝ) + ArithmeticFunction.cardFactors l.prod) / y =
+          2 * (ArithmeticFunction.cardFactors a : ℝ) / y + 2 * (ArithmeticFunction.cardFactors l.prod : ℝ) / y by ring, Real.exp_add]; ring
+
+#print axioms roughPrimeTotient
+#print axioms roughPrimeListTotient
+#print axioms roughTotient
+#print axioms roughFactorTotient
+end AmicableTotient

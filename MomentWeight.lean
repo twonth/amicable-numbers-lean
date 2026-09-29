@@ -1,0 +1,132 @@
+import WeightArithmetic
+import Mathlib.NumberTheory.EulerProduct.Basic
+import Mathlib.Analysis.PSeries
+
+namespace AmicableMoment
+open AmicableWeight
+
+noncomputable def term (y eta delta : ℝ) (n : ℕ) : ℝ :=
+  if n = 0 then 0 else H y n ^ eta / (n : ℝ) ^ (1 + delta)
+
+theorem term_zero (y eta delta : ℝ) : term y eta delta 0 = 0 := by simp [term]
+
+theorem term_of_pos (y eta delta : ℝ) {n : ℕ} (hn : 0 < n) :
+    term y eta delta n = H y n ^ eta / (n : ℝ) ^ (1 + delta) := by
+  simp [term, hn.ne']
+
+theorem term_nonneg {y : ℝ} (hy : 0 < y) (eta delta : ℝ) (n : ℕ) :
+    0 ≤ term y eta delta n := by
+  unfold term
+  split_ifs
+  · positivity
+  · exact div_nonneg (Real.rpow_nonneg (H_pos hy _).le _)
+      (Real.rpow_nonneg (Nat.cast_nonneg _) _)
+
+noncomputable def termHom {y : ℝ} (hy : 0 < y) (eta delta : ℝ) : ℕ →*₀ ℝ where
+  toFun := term y eta delta
+  map_zero' := term_zero y eta delta
+  map_one' := by simp [term, H_one]
+  map_mul' m n := by
+    by_cases hm : m = 0
+    · simp [hm, term_zero]
+    by_cases hn : n = 0
+    · simp [hn, term_zero]
+    simp only [term, hm, hn, mul_eq_zero, or_self, ite_false]
+    rw [H_mul y hm hn, Real.mul_rpow (H_pos hy m).le (H_pos hy n).le,
+      Nat.cast_mul, Real.mul_rpow (Nat.cast_nonneg m) (Nat.cast_nonneg n)]
+    ring
+
+theorem primeWeight_le {y : ℝ} (hy : 0 < y) (p : ℕ) :
+    primeWeight y p ≤ (p : ℝ) := by
+  unfold primeWeight
+  split_ifs with h
+  · rfl
+  · linarith
+
+theorem primeWeight_le_y (y : ℝ) (p : ℕ) : primeWeight y p ≤ y := by
+  unfold primeWeight
+  split_ifs with h
+  · exact h
+  · rfl
+
+theorem term_prime_le_rpow {y eta delta : ℝ} (hy : 0 < y)
+    (he0 : 0 ≤ eta) (he : eta ≤ 1 / 4) (hd : 0 ≤ delta)
+    {p : ℕ} (hp : p.Prime) :
+    term y eta delta p ≤ (p : ℝ) ^ (-(3 / 4 : ℝ)) := by
+  rw [term_of_pos y eta delta hp.pos, H_prime y hp]
+  have hp0 : (0 : ℝ) < p := by exact_mod_cast hp.pos
+  have hp1 : (1 : ℝ) ≤ p := by exact_mod_cast hp.one_le
+  calc
+    _ ≤ (p : ℝ) ^ eta / (p : ℝ) ^ (1 + delta) := by
+      apply div_le_div_of_nonneg_right _ (Real.rpow_nonneg hp0.le _)
+      apply Real.rpow_le_rpow _ (primeWeight_le hy p) he0
+      unfold primeWeight
+      split_ifs <;> positivity
+    _ = (p : ℝ) ^ (eta - (1 + delta)) := (Real.rpow_sub hp0 _ _).symm
+    _ ≤ _ := Real.rpow_le_rpow_of_exponent_le hp1 (by linarith)
+
+theorem term_prime_lt_one {y eta delta : ℝ} (hy : 0 < y)
+    (he0 : 0 ≤ eta) (he : eta ≤ 1 / 4) (hd : 0 ≤ delta)
+    {p : ℕ} (hp : p.Prime) :
+    ‖termHom hy eta delta p‖ < 1 := by
+  change ‖term y eta delta p‖ < 1
+  rw [Real.norm_eq_abs, abs_of_nonneg (term_nonneg hy eta delta p)]
+  apply (term_prime_le_rpow hy he0 he hd hp).trans_lt
+  exact Real.rpow_lt_one_of_one_lt_of_neg (by exact_mod_cast hp.one_lt) (by norm_num)
+
+theorem term_prime_le_y_rpow {y eta delta : ℝ} (hy : 0 < y)
+    (he0 : 0 ≤ eta) {p : ℕ} (hp : p.Prime) :
+    term y eta delta p ≤ y ^ eta / (p : ℝ) ^ (1 + delta) := by
+  rw [term_of_pos y eta delta hp.pos, H_prime y hp]
+  apply div_le_div_of_nonneg_right _ (Real.rpow_nonneg (Nat.cast_nonneg _) _)
+  apply Real.rpow_le_rpow _ (primeWeight_le_y y p) he0
+  unfold primeWeight
+  split_ifs <;> positivity
+
+theorem term_prime_le_y_rpow_div {y eta delta : ℝ} (hy : 0 < y)
+    (he0 : 0 ≤ eta) (hd : 0 ≤ delta) {p : ℕ} (hp : p.Prime) :
+    term y eta delta p ≤ y ^ eta / (p : ℝ) := by
+  apply (term_prime_le_y_rpow hy he0 hp).trans
+  apply div_le_div_of_nonneg_left (Real.rpow_nonneg hy.le _) (by exact_mod_cast hp.pos)
+  conv_lhs => rw [← Real.rpow_one (p : ℝ)]
+  exact Real.rpow_le_rpow_of_exponent_le (by exact_mod_cast hp.one_le) (by linarith)
+
+theorem primeTermSquareSumBound {y eta delta : ℝ} (hy : 0 < y)
+    (he0 : 0 ≤ eta) (he : eta ≤ 1 / 4) (hd : 0 ≤ delta)
+    (P : Finset ℕ) (hP : ∀ p ∈ P, p.Prime) :
+    ∑ p ∈ P, (term y eta delta p) ^ 2 ≤
+      ∑' n : ℕ, (n : ℝ) ^ (-(3 / 2 : ℝ)) := by
+  have hsum : Summable (fun n : ℕ => (n : ℝ) ^ (-(3 / 2 : ℝ))) :=
+    Real.summable_nat_rpow.mpr (by norm_num)
+  calc
+    _ ≤ ∑ p ∈ P, (p : ℝ) ^ (-(3 / 2 : ℝ)) := by
+      apply Finset.sum_le_sum
+      intro p hp
+      have hh := term_prime_le_rpow hy he0 he hd (hP p hp)
+      have hsquare := pow_le_pow_left₀ (term_nonneg hy eta delta p) hh 2
+      have hpow : ((p : ℝ) ^ (-(3 / 4 : ℝ))) ^ 2 = (p : ℝ) ^ (-(3 / 2 : ℝ)) := by
+        rw [← Real.rpow_natCast, ← Real.rpow_mul (Nat.cast_nonneg p)]
+        norm_num
+      exact hpow ▸ hsquare
+    _ ≤ _ := hsum.sum_le_tsum P (fun n _ => Real.rpow_nonneg (Nat.cast_nonneg n) _)
+
+theorem primeTermUniformLtOne {y eta delta : ℝ} (hy : 0 < y)
+    (he0 : 0 ≤ eta) (he : eta ≤ 1 / 4) (hd : 0 ≤ delta)
+    {p : ℕ} (hp : p.Prime) :
+    term y eta delta p ≤ (2 : ℝ) ^ (-(3 / 4 : ℝ)) := by
+  apply (term_prime_le_rpow hy he0 he hd hp).trans
+  exact Real.rpow_le_rpow_of_nonpos (by norm_num) (by exact_mod_cast hp.two_le) (by norm_num)
+
+#print axioms term_zero
+#print axioms term_of_pos
+#print axioms term_nonneg
+#print axioms termHom
+#print axioms primeWeight_le
+#print axioms primeWeight_le_y
+#print axioms term_prime_le_rpow
+#print axioms term_prime_lt_one
+#print axioms term_prime_le_y_rpow
+#print axioms term_prime_le_y_rpow_div
+#print axioms primeTermSquareSumBound
+#print axioms primeTermUniformLtOne
+end AmicableMoment

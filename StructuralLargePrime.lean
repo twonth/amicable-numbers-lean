@@ -1,0 +1,93 @@
+import UnitaryFactors
+import DivisorSelection
+import LinearCongruenceCount
+
+namespace AmicableStructure
+open AmicableManuscript AmicableSelection
+
+theorem structuralEliminationCongruence {n n' p m D M : ℕ}
+    (hpair : Amicable n n') (hn : n = p * m) (hn' : n' = D * M)
+    (hp : p.Prime) (hpm : p.Coprime m) (hDM : D.Coprime M) :
+    Nat.ModEq (sigma D) (sigma m * D * M) (m * sigma m) := by
+  have h1 : D * M = p * s m + sigma m := by
+    rw [← hn', ← hpair.2.2.2.1, hn, s_mul_prime hp hpm]
+  have h2 : sigma D * sigma M = p * m + D * M := by
+    rw [← sigma_mul hDM, ← hn', (amicable_sigma hpair).2, hn, hn']
+  have heq : sigma m * D * M = s m * sigma D * sigma M + m * sigma m := by
+    have hh := sigma_eq_s_add_self m
+    nlinarith
+  rw [heq]
+  exact (Nat.ModEq.refl (m * sigma m)).add_left (s m * sigma D * sigma M) |>.trans (by
+    simp [Nat.ModEq, Nat.add_mod, Nat.mul_mod])
+
+theorem structuralLargePrimeWitness {x Y : ℝ} {n n' p p' m m' a' B' : ℕ}
+    (hx : 1 < x) (hY : 0 < Y) (hYupper : Y ≤ x ^ (1 / 200 : ℝ))
+    (hlog : Real.log x ≤ x ^ (1 / 200 : ℝ))
+    (hpair : Amicable n n') (hnX : (n : ℝ) ≤ x * Real.log x) (hn'X : (n' : ℝ) ≤ x * Real.log x)
+    (hn : n = p * m) (hn' : n' = p' * m') (hna : n' = B' * a')
+    (hp : p.Prime) (hpm : p.Coprime m)
+    (hsf : Squarefree a') (hBA : B'.Coprime a') (hacross : a'.Coprime n)
+    (hprimes : ∀ q ∈ a'.primeFactors, q ≤ p')
+    (ha : x ^ (1 / 2 : ℝ) < (a' : ℝ))
+    (hprod : x * Real.log x / Y < (m : ℝ) * m')
+    (hpbig : x ^ (4 / 5 : ℝ) < (p : ℝ)) :
+    (m : ℝ) ≤ x ^ (21 / 100 : ℝ) ∧
+    ∃ D M : ℕ, n' = D * M ∧ x ^ (1 / 2 : ℝ) < (D : ℝ) ∧
+      (D : ℝ) ≤ x ^ (71 / 100 : ℝ) ∧ (M : ℝ) ≤ x * Real.log x / D ∧
+      D.Coprime (sigma D) ∧ Nat.ModEq (sigma D) (sigma m * D * M) (m * sigma m) := by
+  have hx0 : 0 < x := by linarith
+  have hlog0 : 0 < Real.log x := Real.log_pos hx
+  have hp0 : (0 : ℝ) < p := by exact_mod_cast hp.pos
+  have hmpos : 0 < m := by
+    by_contra hh
+    have : m = 0 := by omega
+    have hh := hpair.1
+    simp [hn,this] at hh
+  have hm'pos : 0 < m' := by
+    by_contra hh
+    have : m' = 0 := by omega
+    have hh := hpair.2.1
+    simp [hn',this] at hh
+  have hnreal : (n : ℝ) = (p : ℝ) * m := by exact_mod_cast hn
+  have hn'real : (n' : ℝ) = (p' : ℝ) * m' := by exact_mod_cast hn'
+  have hmupper : (m : ℝ) ≤ x ^ (41 / 200 : ℝ) := by
+    calc
+      (m : ℝ) ≤ x * Real.log x / p := (le_div_iff₀ hp0).mpr (by nlinarith)
+      _ ≤ x * x ^ (1 / 200 : ℝ) / x ^ (4 / 5 : ℝ) := by gcongr
+      _ = _ := by
+        calc
+          _ = x ^ (1 : ℝ) * x ^ (1 / 200 : ℝ) / x ^ (4 / 5 : ℝ) := by rw [Real.rpow_one]
+          _ = _ := by rw [← Real.rpow_add hx0, ← Real.rpow_sub hx0]; norm_num
+  have hp'upper : (p' : ℝ) ≤ x ^ (21 / 100 : ℝ) := by
+    have hprod' := (div_lt_iff₀ hY).mp hprod
+    have hpp : (p' : ℝ) ≤ Y * m := by
+      have hm'R : (0 : ℝ) < m' := by exact_mod_cast hm'pos
+      nlinarith
+    calc
+      _ ≤ Y * m := hpp
+      _ ≤ x ^ (1 / 200 : ℝ) * x ^ (41 / 200 : ℝ) := by gcongr
+      _ = _ := by rw [← Real.rpow_add hx0]; norm_num
+  refine ⟨hmupper.trans (Real.rpow_le_rpow_of_exponent_le hx.le (by norm_num)), ?_⟩
+  obtain ⟨D,hDa,hDlo,hDhi⟩ := squarefreeDivisorCrossing hsf
+    (Real.one_le_rpow hx.le (by norm_num : (0 : ℝ) ≤ 1 / 2)) ha (by
+      intro q hq
+      exact (by exact_mod_cast hprimes q hq : (q : ℝ) ≤ p').trans hp'upper)
+  obtain ⟨M,hneq,hcop,hsigdiv⟩ := unitarySquarefreeDivisor hna hsf hBA hDa
+  have hnDM : n' = D * M := by simpa only [mul_comm] using hneq
+  have hDpos : 0 < D := Nat.pos_of_dvd_of_pos hDa (Nat.pos_of_ne_zero hsf.ne_zero)
+  have hcross : D.Coprime n := hacross.of_dvd_left hDa
+  have hDcop : D.Coprime (sigma D) := by
+    have hDn' : D ∣ n' := hnDM ▸ dvd_mul_right _ _
+    have hh : D.Coprime (sigma n') := by
+      rw [(amicable_sigma hpair).2, Nat.add_comm]
+      exact (Nat.coprime_add_iff_right hDn').mpr hcross
+    exact hh.of_dvd_right hsigdiv
+  refine ⟨D,M,hnDM,hDlo,?_,?_,hDcop,structuralEliminationCongruence hpair hn hnDM hp hpm hcop.symm⟩
+  · simpa only [← Real.rpow_add hx0, show (1 / 2 : ℝ) + 21 / 100 = 71 / 100 by norm_num] using hDhi
+  · apply (le_div_iff₀ (by exact_mod_cast hDpos : (0 : ℝ) < D)).mpr
+    have heq : (n' : ℝ) = (D : ℝ) * M := by exact_mod_cast hnDM
+    nlinarith
+
+#print axioms structuralEliminationCongruence
+#print axioms structuralLargePrimeWitness
+end AmicableStructure

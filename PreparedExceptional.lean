@@ -1,0 +1,82 @@
+import PreparedPrimeData
+import StructuralLargePrime
+import StructuralPowerCount
+import SmallProductSaving
+import SavingComparison
+
+namespace AmicableStructure
+open AmicableManuscript Filter
+open scoped Topology
+
+theorem preparedExceptional (C c : ℝ) (hc : c < 1 / 2) :
+    ∀ᶠ x : ℝ in atTop, ∀ F : Finset ℕ,
+      (∀ n ∈ F, PreparedPair x C n (s n) ∧ ¬ RegularPair x C n (s n)) →
+      (F.card : ℝ) ≤ x * L x ^ (-c) := by
+  classical
+  let c' := (c + 1 / 2) / 2
+  have hcc : c < c' := by dsimp [c']; linarith
+  have hc' : c' < 1 / 2 := by dsimp [c']; linarith
+  filter_upwards [preparedPrimeData C, smallProductSaving c' hc', structuralPowerCount,
+    AmicableScale.L_power_subpower (1 / 2) (by norm_num : (0 : ℝ) < 1 / 200),
+    AmicableAbsorption.constantLogAbsorb 1 (by norm_num : (0 : ℝ) < 1 / 200),
+    AmicableScale.powerSavingL c' (by norm_num : (0 : ℝ) < 1 / 20),
+    AmicableScale.combineSavings hcc 2 (by norm_num),
+    eventually_gt_atTop (1 : ℝ)] with x hdata hsmall hlarge hY hlog hpower hcombine hx
+  intro F hF
+  have hchoice : ∀ n ∈ F, ∃ m m' p p' a B : ℕ, PreparedPrimeData x C n (s n) m m' p p' a B := by
+    intro n hn
+    exact hdata n (s n) (hF n hn).1 (hF n hn).2
+  choose! m m' p p' a B hw using hchoice
+  let P := fun n => (m n : ℝ) * m' n ≤ x * Real.log x / L x ^ (1 / 2 : ℝ)
+  let F1 := F.filter P
+  let F2 := F.filter (fun n => ¬ P n)
+  have h1 : (F1.card : ℝ) ≤ x * L x ^ (-c') := by
+    apply hsmall F1 m m'
+    · intro n hn
+      have h := hw n (Finset.mem_filter.mp hn).1
+      exact ⟨h.mpos,h.m'pos⟩
+    · intro n hn
+      exact (Finset.mem_filter.mp hn).2
+    · intro n1 hn1 n2 hn2 heqm heqm'
+      have h1 := hw n1 (Finset.mem_filter.mp hn1).1
+      have h2 := hw n2 (Finset.mem_filter.mp hn2).1
+      have hpairs1 : Amicable (p n1 * m n1) (p' n1 * m' n1) := by
+        rw [← h1.eqn, ← h1.eqn']; exact h1.pair
+      have hpairs2 : Amicable (p n2 * m n1) (p' n2 * m' n1) := by
+        rw [heqm,heqm',← h2.eqn,← h2.eqn']; exact h2.pair
+      have hpeq := pairPrimeReconstruction h1.mpos h1.prime h2.prime h1.prime' h2.prime'
+        h1.cop (heqm ▸ h2.cop) h1.cop' (heqm' ▸ h2.cop') hpairs1 hpairs2
+      rw [h1.eqn,h2.eqn,hpeq,heqm]
+  have h2 : (F2.card : ℝ) ≤ x * L x ^ (-c') := by
+    have hchoice2 : ∀ n ∈ F2, ∃ D M : ℕ, (m n : ℝ) ≤ x ^ (21 / 100 : ℝ) ∧
+        s n = D * M ∧ x ^ (1 / 2 : ℝ) < (D : ℝ) ∧ (D : ℝ) ≤ x ^ (71 / 100 : ℝ) ∧
+        (M : ℝ) ≤ x * Real.log x / D ∧ D.Coprime (sigma D) ∧
+        Nat.ModEq (sigma D) (sigma (m n) * D * M) (m n * sigma (m n)) := by
+      intro n hn
+      obtain ⟨hnF,hnP⟩ := Finset.mem_filter.mp hn
+      have h := hw n hnF
+      have hL0 : 0 < L x := Real.exp_pos _
+      obtain ⟨hm,D,M,hs,hDlo,hDhi,hM,hcop,hcong⟩ := structuralLargePrimeWitness hx
+        (Real.rpow_pos_of_pos hL0 _) hY (by linarith : Real.log x ≤ x ^ (1 / 200 : ℝ))
+        h.pair h.bound h.bound' h.eqn h.eqn' h.eqna h.prime h.cop h.sf h.copBa h.cross h.primes h.lower
+        (lt_of_not_ge hnP) h.large
+      exact ⟨D,M,hm,hs,hDlo,hDhi,hM,hcop,hcong⟩
+    choose! D M hm hsn hDlo hDhi hM hcop hcong using hchoice2
+    have hh := hlarge F2 m D M
+      (fun n hn => ⟨(hw n (Finset.mem_filter.mp hn).1).mpos,hm n hn⟩)
+      (fun n hn => ⟨hDlo n hn,hDhi n hn⟩) hM hcop hcong (by
+        intro n hn
+        have hp := (hw n (Finset.mem_filter.mp hn).1).pair
+        rw [← hsn n hn]
+        exact hp.2.2.2.2.symm)
+    have hid : (19 / 20 : ℝ) = 1 - 1 / 20 := by norm_num
+    rw [hid] at hh
+    exact hh.trans hpower
+  have hcard := Finset.card_filter_add_card_filter_not (s := F) P
+  have hsum : (F.card : ℝ) ≤ 2 * (x * L x ^ (-c')) := by
+    have hh : (F1.card : ℝ) + F2.card = F.card := by exact_mod_cast hcard
+    linarith
+  exact hsum.trans hcombine
+
+#print axioms preparedExceptional
+end AmicableStructure

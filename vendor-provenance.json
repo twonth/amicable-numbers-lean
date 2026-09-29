@@ -1,0 +1,29 @@
+{
+  "MertensUpper.lean": {
+    "repository": "https://github.com/AxiomMath/PrimeGapsLib",
+    "revision": "1faa7b14e82ddebc2772dfb9153922f01b106477",
+    "sources": [
+      "prime-gaps-source\\PrimeGapsTheory\\NumberTheory\\PrimeSumEstimates.lean",
+      "prime-gaps-source\\PrimeGapsTheory\\Arithmetic\\Mertens\\TauK.lean"
+    ],
+    "changes": [
+      "Extracted required theorem section only",
+      "Combined into standalone mathlib-only file",
+      "Changed outer namespace for extracted TauK section; retained foundation namespace"
+    ],
+    "status": "Checked against pinned mathlib; axiom report contains only standard foundational axioms"
+  },
+  "PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve": {
+    "repository": "https://github.com/AlexKontorovich/PrimeNumberTheoremAnd",
+    "revision": "650d31264be65f4cd6e70c45d8b25d86d482a761",
+    "files": [
+      "AuxResults.lean",
+      "Basic.lean",
+      "Selberg.lean",
+      "SelbergBounds.lean"
+    ],
+    "changes": "None in copied files; SieveSupport.lean separately adapts a theorem to restricted prime support.",
+    "status": "All four copied files compile with pinned mathlib. Transitive axiom checks in SieveSupport.lean.",
+    "license": "vendor-licenses/PrimeNumberTheoremAnd-LICENSE"
+  }
+}

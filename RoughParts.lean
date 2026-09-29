@@ -1,0 +1,113 @@
+import WeightArithmetic
+
+namespace AmicableWeight
+open AmicableManuscript
+open scoped BigOperators
+
+noncomputable def roughPart (y : ℝ) (n : ℕ) : ℕ :=
+  n.factorization.prod fun p e => if (p : ℝ) ≤ y then 1 else p ^ e
+
+theorem roughPart_pos (y : ℝ) (n : ℕ) : 0 < roughPart y n := by
+  unfold roughPart Finsupp.prod
+  apply Finset.prod_pos
+  intro p hp
+  have hprime : p.Prime := Nat.prime_of_mem_primeFactors (by simpa using hp)
+  dsimp only
+  split_ifs
+  · exact Nat.one_pos
+  · exact pow_pos hprime.pos _
+
+theorem small_mul_rough (y : ℝ) {n : ℕ} (hn : n ≠ 0) :
+    smallPart y n * roughPart y n = n := by
+  unfold smallPart roughPart Finsupp.prod
+  rw [← Finset.prod_mul_distrib]
+  have hh : (∏ p ∈ n.factorization.support,
+      (if (p : ℝ) ≤ y then p ^ n.factorization p else 1) *
+      (if (p : ℝ) ≤ y then 1 else p ^ n.factorization p)) =
+      ∏ p ∈ n.factorization.support, p ^ n.factorization p := by
+    apply Finset.prod_congr rfl
+    intro p hp
+    split_ifs <;> simp
+  rw [hh]
+  exact Nat.prod_factorization_pow_eq_self hn
+
+theorem roughPart_dvd (y : ℝ) {n : ℕ} (hn : n ≠ 0) : roughPart y n ∣ n := by
+  exact (dvd_mul_left (roughPart y n) (smallPart y n)).trans (small_mul_rough y hn).dvd
+
+theorem roughPart_primes (y : ℝ) (n : ℕ) {p : ℕ} (hp : p.Prime) (hpn : p ∣ roughPart y n) :
+    y < (p : ℝ) := by
+  classical
+  unfold roughPart Finsupp.prod at hpn
+  obtain ⟨q, hq, hpq⟩ := hp.prime.dvd_finsetProd_iff _ |>.mp hpn
+  have hqprime : q.Prime := Nat.prime_of_mem_primeFactors (by simpa using hq)
+  dsimp only at hpq
+  split_ifs at hpq with hsmall
+  · exact False.elim (hp.not_dvd_one hpq)
+  · have heq : p = q := (Nat.prime_dvd_prime_iff_eq hp hqprime).mp (hp.dvd_of_dvd_pow hpq)
+    simpa only [heq] using lt_of_not_ge hsmall
+
+theorem omegaProduct {ι : Type*} (I : Finset ι) (f : ι → ℕ) (hf : ∀ i ∈ I, f i ≠ 0) :
+    ArithmeticFunction.cardFactors (∏ i ∈ I, f i) = ∑ i ∈ I, ArithmeticFunction.cardFactors (f i) := by
+  classical
+  induction I using Finset.induction_on with
+  | empty => simp
+  | @insert i I hi ih =>
+    rw [Finset.prod_insert hi, Finset.sum_insert hi, ArithmeticFunction.cardFactors_mul
+      (hf i (Finset.mem_insert_self _ _)) (Finset.prod_ne_zero_iff.mpr (fun j hj => hf j (Finset.mem_insert_of_mem hj))),
+      ih (fun j hj => hf j (Finset.mem_insert_of_mem hj))]
+
+theorem omegaRoughPart (y : ℝ) (n : ℕ) :
+    ArithmeticFunction.cardFactors (roughPart y n) = roughOmega y n := by
+  unfold roughPart roughOmega Finsupp.prod Finsupp.sum
+  rw [omegaProduct _ _ (by
+    intro p hp
+    have hpp : p.Prime := Nat.prime_of_mem_primeFactors (by simpa using hp)
+    dsimp only
+    split_ifs <;> simp_all [hpp.ne_zero])]
+  apply Finset.sum_congr rfl
+  intro p hp
+  have hpp : p.Prime := Nat.prime_of_mem_primeFactors (by simpa using hp)
+  dsimp only
+  split_ifs <;> simp [ArithmeticFunction.cardFactors_apply_prime_pow hpp]
+
+theorem omegaDivisor {d n : ℕ} (hn : n ≠ 0) (hdn : d ∣ n) :
+    ArithmeticFunction.cardFactors d ≤ ArithmeticFunction.cardFactors n := by
+  have hd : d ≠ 0 := ne_zero_of_dvd_ne_zero hn hdn
+  have heq := Nat.mul_div_cancel' hdn
+  have hquot : n / d ≠ 0 := by
+    intro h0
+    simp [h0] at heq
+    exact hn heq.symm
+  rw [← heq, ArithmeticFunction.cardFactors_mul hd hquot]
+  omega
+
+theorem omegaLogBound {d : ℕ} (hd : 0 < d) {y : ℝ} (hy : 1 < y)
+    (hprimes : ∀ p ∈ d.primeFactors, y ≤ (p : ℝ)) :
+    (ArithmeticFunction.cardFactors d : ℝ) ≤ Real.log d / Real.log y := by
+  have hsum : ArithmeticFunction.cardFactors d = ∑ p ∈ d.primeFactors, d.factorization p := by
+    rw [ArithmeticFunction.cardFactors_eq_sum_factorization]
+    simp only [Finsupp.sum, Nat.support_factorization]
+  have hpower : y ^ ArithmeticFunction.cardFactors d ≤ (d : ℝ) := by
+    rw [hsum, ← Finset.prod_pow_eq_pow_sum]
+    have hh : (∏ p ∈ d.primeFactors, (p : ℝ) ^ d.factorization p) = (d : ℝ) := by
+      have heq := Nat.prod_factorization_pow_eq_self hd.ne'
+      simp only [Finsupp.prod, Nat.support_factorization] at heq
+      exact_mod_cast heq
+    rw [← hh]
+    exact Finset.prod_le_prod₀ (fun _ _ => pow_nonneg (by linarith) _)
+      (fun p hp => pow_le_pow_left₀ (by linarith) (hprimes p hp) _)
+  have hh := Real.log_le_log (pow_pos (by linarith : 0 < y) _) hpower
+  rw [Real.log_pow] at hh
+  exact (le_div_iff₀ (Real.log_pos hy)).mpr hh
+
+#print axioms roughPart_pos
+#print axioms small_mul_rough
+#print axioms roughPart_dvd
+#print axioms roughPart_primes
+#print axioms omegaProduct
+#print axioms omegaRoughPart
+#print axioms omegaDivisor
+#print axioms omegaLogBound
+end AmicableWeight
+
+

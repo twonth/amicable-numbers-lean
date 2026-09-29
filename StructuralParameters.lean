@@ -1,0 +1,96 @@
+import PollackTheorem
+import LogarithmicFactors
+import SigmaBounds
+
+namespace AmicableStructure
+open AmicableManuscript Filter
+open scoped Topology
+
+theorem X_tendsto : Tendsto (fun x : ℝ => x * Real.log x) atTop atTop :=
+  tendsto_id.atTop_mul_atTop₀ Real.tendsto_log_atTop
+
+theorem sigmaBelowX : ∀ᶠ x : ℝ in atTop, ∀ n : ℕ, (n : ℝ) ≤ x →
+    (sigma n : ℝ) ≤ x * Real.log x := by
+  obtain ⟨C,hC,hbound⟩ := AmicableSigmaBounds.sigmaLogLog
+  have hll : Tendsto (fun x : ℝ => Real.log (Real.log x) / Real.log x) atTop (𝓝 0) :=
+    Real.isLittleO_log_id_atTop.tendsto_div_nhds_zero.comp Real.tendsto_log_atTop
+  have hi : Tendsto (fun x : ℝ => (Real.log x)⁻¹) atTop (𝓝 0) := Real.tendsto_log_atTop.inv_tendsto_atTop
+  have hlim : Tendsto (fun x : ℝ => C * (Real.log 2 + Real.log (Real.log x)) / Real.log x) atTop (𝓝 0) := by
+    simpa [div_eq_mul_inv, add_mul, mul_add, mul_assoc] using ((hi.const_mul (Real.log 2)).add hll).const_mul C
+  filter_upwards [hlim.eventually (gt_mem_nhds (by norm_num : (0 : ℝ) < 1)),
+    eventually_gt_atTop (3 : ℝ)] with x hxlim hx
+  intro n hn
+  by_cases hn0 : n = 0
+  · simp only [hn0, sigma]
+    simpa using mul_nonneg (show 0 ≤ x by linarith) (Real.log_nonneg (show 1 ≤ x by linarith))
+  have hnpos : (0 : ℝ) < n := by exact_mod_cast Nat.pos_of_ne_zero hn0
+  have hx0 : 0 < x := by linarith
+  have hx1 : 1 < x := by linarith
+  have hlogx : 0 < Real.log x := Real.log_pos hx1
+  have hboundlog : Real.log (Real.log (3 * (n : ℝ))) ≤ Real.log 2 + Real.log (Real.log x) := by
+    have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast Nat.one_le_iff_ne_zero.mpr hn0
+    have hlogn : 0 < Real.log (3 * (n : ℝ)) := Real.log_pos (by linarith)
+    have hnx : 3 * (n : ℝ) ≤ x ^ 2 := by nlinarith
+    have hh := Real.log_le_log (by positivity : 0 < 3 * (n : ℝ)) hnx
+    rw [Real.log_pow] at hh
+    have hhh := Real.log_le_log hlogn hh
+    norm_num only [Nat.cast_ofNat] at hhh
+    simpa only [Real.log_mul (by norm_num : (2 : ℝ) ≠ 0) hlogx.ne'] using hhh
+  have hcoef : C * (Real.log 2 + Real.log (Real.log x)) ≤ Real.log x :=
+    by simpa only [one_mul] using ((div_lt_iff₀ hlogx).mp hxlim).le
+  calc
+    (sigma n : ℝ) ≤ C * n * Real.log (Real.log (3 * (n : ℝ))) := hbound n
+    _ ≤ C * n * (Real.log 2 + Real.log (Real.log x)) := by gcongr
+    _ ≤ (n : ℝ) * Real.log x := by nlinarith [mul_le_mul_of_nonneg_left hcoef hnpos.le]
+    _ ≤ _ := mul_le_mul_of_nonneg_right hn hlogx.le
+
+theorem partnerBelowX : ∀ᶠ x : ℝ in atTop, ∀ n n' : ℕ, Amicable n n' →
+    (n : ℝ) ≤ x → (n : ℝ) ≤ x * Real.log x ∧ (n' : ℝ) ≤ x * Real.log x := by
+  filter_upwards [sigmaBelowX, eventually_gt_atTop (Real.exp 1)] with x hx hxlarge
+  intro n n' hpair hn
+  have hlog : 1 < Real.log x := by
+    have hh := Real.log_lt_log (Real.exp_pos 1) hxlarge
+    simpa using hh
+  have hx0 : 0 < x := (Real.exp_pos 1).trans hxlarge
+  constructor
+  · nlinarith
+  · have hsig := hx n hn
+    have hh := (amicable_sigma hpair).1
+    have hle : n' ≤ sigma n := by omega
+    exact (by exact_mod_cast hle : (n' : ℝ) ≤ sigma n).trans hsig
+
+theorem pollackThreshold {rho : ℝ} (hrho : 0 < rho) : ∀ᶠ x : ℝ in atTop,
+    Real.exp ((Real.log (Real.log (x * Real.log x))) ^ (1 / 2 : ℝ)) < L x ^ (1 / (2 * rho)) := by
+  have hC : 0 < 1 / (2 * rho) := by positivity
+  filter_upwards [AmicableScale.constantLogPowerL 4 1 (by norm_num) hC,
+    ((Real.tendsto_log_atTop.comp Real.tendsto_log_atTop).comp X_tendsto).eventually (eventually_ge_atTop (1 : ℝ)),
+    eventually_gt_atTop (Real.exp 2)] with x hL ht1 hx
+  have hx1 : 1 < x := (Real.one_lt_exp_iff.mpr (by norm_num : (0 : ℝ) < 2)).trans hx
+  have hx0 : 0 < x := by linarith
+  have hlog : 2 < Real.log x := by
+    have hh := Real.log_lt_log (Real.exp_pos 2) hx
+    simpa using hh
+  have hlogX : Real.log (x * Real.log x) ≤ 2 * Real.log x := by
+    rw [Real.log_mul hx0.ne' (by linarith : Real.log x ≠ 0)]
+    have hh := Real.log_le_sub_one_of_pos (by linarith : 0 < Real.log x)
+    linarith
+  have hlogXlo : 2 < Real.log (x * Real.log x) := by
+    have hh := Real.log_le_log hx0 (show x ≤ x * Real.log x by nlinarith)
+    linarith
+  have hsqrt : (Real.log (Real.log (x * Real.log x))) ^ (1 / 2 : ℝ) ≤
+      Real.log (Real.log (x * Real.log x)) := by
+    calc
+      _ ≤ (Real.log (Real.log (x * Real.log x))) ^ (1 : ℝ) :=
+        Real.rpow_le_rpow_of_exponent_le ht1 (by norm_num)
+      _ = _ := Real.rpow_one _
+  have hexp := Real.exp_le_exp.mpr hsqrt
+  rw [Real.exp_log (by linarith : 0 < Real.log (x * Real.log x))] at hexp
+  have hlogpow : 4 * Real.log x ≤ L x ^ (1 / (2 * rho)) := by simpa only [Real.rpow_one] using hL
+  exact (hexp.trans hlogX).trans_lt ((mul_lt_mul_of_pos_right (by norm_num : (2 : ℝ) < 4)
+    (by linarith : 0 < Real.log x)).trans_le hlogpow)
+
+#print axioms pollackThreshold
+#print axioms sigmaBelowX
+#print axioms partnerBelowX
+end AmicableStructure
+

@@ -1,0 +1,51 @@
+import StructuralReduction
+import CaseOneCountingSharp
+import FineTotientBound
+
+/-!
+# Certificate for the exponent-1/2 amicable-number bound
+
+This is the entry point. `verify.ps1` rebuilds its entire local dependency chain.
+No structural or analytic theorem is a premise of the result below.
+
+The manuscript's asymptotic assertion is expressed without an unspecified error
+function: every fixed coefficient strictly below 1/2 is valid eventually.
+
+`s n` is the sum of the proper positive divisors of n, as defined in
+ManuscriptArithmetic.lean. The predicate in the count is expanded below so that
+positivity, distinctness, and both amicable equations are visible in the statement.
+-/
+
+namespace AmicableCertificate
+open AmicableManuscript
+
+theorem amicable_count_upper_bound (c : ℝ) (hc : c < 1 / 2) :
+    ∃ x₀ : ℝ, ∀ x : ℝ, x₀ ≤ x →
+      (A x : ℝ) ≤ x * Real.exp (-c * (Real.log x * Real.log (Real.log (Real.log x)) / Real.log (Real.log x))) :=
+  amicableUpperBound c hc
+
+noncomputable def amicableCountExplicit (x : ℝ) : ℕ := by
+  classical
+  exact ((Finset.range (⌊x⌋₊ + 1)).filter (fun n => ∃ m : ℕ,
+    0 < n ∧ 0 < m ∧ n ≠ m ∧ s n = m ∧ s m = n)).card
+
+theorem explicit_count_upper_bound (c : ℝ) (hc : c < 1 / 2) :
+    ∃ x₀ : ℝ, ∀ x : ℝ, x₀ ≤ x →
+      (amicableCountExplicit x : ℝ) ≤
+        x * Real.exp (-c * (Real.log x * Real.log (Real.log (Real.log x)) / Real.log (Real.log x))) := by
+  classical
+  obtain ⟨x0,hx0⟩ := amicable_count_upper_bound c hc
+  refine ⟨x0,fun x hx => ?_⟩
+  have heq : amicableCountExplicit x = A x := by
+    unfold amicableCountExplicit A
+    congr 1
+  rw [heq]
+  exact hx0 x hx
+
+#print axioms amicable_count_upper_bound
+#print axioms explicit_count_upper_bound
+#print axioms AmicableTechnical.technicalLemma
+#print axioms AmicablePollack.pollack
+#print axioms AmicableProgressions.brunTitchmarshUniform
+#print axioms AmicablePrimeReciprocals.primeReciprocalUniform
+end AmicableCertificate

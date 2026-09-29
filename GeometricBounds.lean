@@ -1,0 +1,50 @@
+import Mathlib.NumberTheory.EulerProduct.Basic
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Tactic
+
+namespace AmicableGeometric
+open scoped BigOperators
+
+theorem neg_log_one_sub_le {u theta : ℝ} (hu : 0 ≤ u)
+    (hut : u ≤ theta) (ht : theta < 1) :
+    -Real.log (1 - u) ≤ u + u ^ 2 / (1 - theta) := by
+  have h1u : 0 < 1 - u := by linarith
+  have h1t : 0 < 1 - theta := by linarith
+  have hlog := Real.log_le_sub_one_of_pos (inv_pos.mpr h1u)
+  rw [Real.log_inv] at hlog
+  have hfrac : (1 - u)⁻¹ - 1 = u + u ^ 2 / (1 - u) := by
+    field_simp
+    ring
+  rw [hfrac] at hlog
+  apply hlog.trans
+  gcongr
+
+theorem finiteGeometricBound {ι : Type*} (P : Finset ι) (f : ι → ℝ)
+    (theta B C : ℝ) (ht : theta < 1)
+    (hf : ∀ p ∈ P, 0 ≤ f p ∧ f p ≤ theta)
+    (hB : ∑ p ∈ P, f p ≤ B) (hC : ∑ p ∈ P, (f p) ^ 2 ≤ C) :
+    ∏ p ∈ P, (1 - f p)⁻¹ ≤ Real.exp (B + C / (1 - theta)) := by
+  have heach : ∀ p ∈ P, (1 - f p)⁻¹ ≤
+      Real.exp (f p + (f p) ^ 2 / (1 - theta)) := by
+    intro p hp
+    have hpos : 0 < (1 - f p)⁻¹ := inv_pos.mpr (by linarith [(hf p hp).2])
+    rw [← Real.exp_log hpos]
+    apply Real.exp_le_exp.mpr
+    rw [Real.log_inv]
+    exact neg_log_one_sub_le (hf p hp).1 (hf p hp).2 ht
+  calc
+    _ ≤ ∏ p ∈ P, Real.exp (f p + (f p) ^ 2 / (1 - theta)) := by
+      apply Finset.prod_le_prod₀
+      · intro p hp
+        exact inv_nonneg.mpr (by linarith [(hf p hp).2])
+      · exact heach
+    _ = Real.exp (∑ p ∈ P, (f p + (f p) ^ 2 / (1 - theta))) :=
+      (Real.exp_sum _ _).symm
+    _ ≤ _ := by
+      apply Real.exp_le_exp.mpr
+      rw [Finset.sum_add_distrib, ← Finset.sum_div]
+      exact add_le_add hB (div_le_div_of_nonneg_right hC (by linarith))
+
+#print axioms neg_log_one_sub_le
+#print axioms finiteGeometricBound
+end AmicableGeometric

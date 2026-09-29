@@ -1,0 +1,83 @@
+import GcdDecomposition
+import SquarefreeGcd
+
+namespace AmicablePollack
+open AmicableManuscript AmicableSquarefull
+open scoped BigOperators
+
+theorem squarefreeFactorCount (F : Finset ℕ) (N : ℕ) (T E : ℝ) (hE : 0 ≤ E)
+    (hcount : ∀ (M : ℕ) (B : Finset ℕ), M ≤ N →
+      (∀ a ∈ B, Squarefree a ∧ a ≤ M ∧ T < (Nat.gcd a (sigma a) : ℝ)) →
+      (B.card : ℝ) ≤ M * E)
+    (hF : ∀ n ∈ F, 0 < n ∧ n ≤ N ∧ ∃ a b : ℕ,
+      n = a * b ∧ Squarefree a ∧ Squarefull b ∧ T < (Nat.gcd a (sigma a) : ℝ)) :
+    (F.card : ℝ) ≤ (N : ℝ) * E * (1 + tailConstant) := by
+  classical
+  let D := (Finset.range (N + 1)).filter Squarefull
+  let B := fun b : ℕ => (Finset.range (N / b + 1)).filter
+    (fun a : ℕ => Squarefree a ∧ T < (Nat.gcd a (sigma a) : ℝ))
+  have hsub : F ⊆ D.biUnion (fun b => (B b).image (fun a => a * b)) := by
+    intro n hn
+    obtain ⟨hn0, hnN, a, b, hnab, ha, hb, hg⟩ := hF n hn
+    have hbpos := Nat.pos_of_ne_zero hb.1
+    have hapos := Nat.pos_of_ne_zero ha.ne_zero
+    refine Finset.mem_biUnion.mpr ⟨b, ?_, Finset.mem_image.mpr ⟨a, ?_, hnab.symm⟩⟩
+    · exact Finset.mem_filter.mpr ⟨Finset.mem_range.mpr (Nat.lt_succ_of_le
+        ((Nat.le_mul_of_pos_left b hapos).trans (hnab ▸ hnN))), hb⟩
+    · exact Finset.mem_filter.mpr ⟨Finset.mem_range.mpr (Nat.lt_succ_of_le
+        ((Nat.le_div_iff_mul_le hbpos).mpr (hnab ▸ hnN))), ha, hg⟩
+  have hB : ∀ b ∈ D, ((B b).card : ℝ) ≤ (N : ℝ) * E * (1 / b) := by
+    intro b hb
+    have hbpos := Nat.pos_of_ne_zero (Finset.mem_filter.mp hb).2.1
+    have hh := hcount (N / b) (B b) (Nat.div_le_self N b) (by
+      intro a ha
+      obtain ⟨haN, hasf, hag⟩ := Finset.mem_filter.mp ha
+      exact ⟨hasf, Nat.le_of_lt_succ (Finset.mem_range.mp haN), hag⟩)
+    have hdiv : ((N / b : ℕ) : ℝ) ≤ (N : ℝ) / b := by
+      apply (le_div_iff₀ (by exact_mod_cast hbpos : (0 : ℝ) < b)).mpr
+      exact_mod_cast Nat.div_mul_le_self N b
+    exact hh.trans ((mul_le_mul_of_nonneg_right hdiv hE).trans_eq (by ring))
+  have hc : F.card ≤ ∑ b ∈ D, (B b).card :=
+    (Finset.card_le_card hsub).trans (Finset.card_biUnion_le.trans
+      (Finset.sum_le_sum (fun b _ => Finset.card_image_le)))
+  calc
+    (F.card : ℝ) ≤ ∑ b ∈ D, ((B b).card : ℝ) := by exact_mod_cast hc
+    _ ≤ ∑ b ∈ D, (N : ℝ) * E * (1 / b) := Finset.sum_le_sum hB
+    _ = (N : ℝ) * E * ∑ b ∈ D, (1 : ℝ) / b := by rw [Finset.mul_sum]
+    _ ≤ _ := mul_le_mul_of_nonneg_left
+      (squarefullReciprocalBound D (fun b hb => (Finset.mem_filter.mp hb).2)) (by positivity)
+
+theorem gcdLift (F : Finset ℕ) (N : ℕ) {G E : ℝ} (hG : 0 < G) (hE : 0 ≤ E)
+    (hcount : ∀ (M : ℕ) (B : Finset ℕ), M ≤ N →
+      (∀ a ∈ B, Squarefree a ∧ a ≤ M ∧ G ^ (1 / 4 : ℝ) < (Nat.gcd a (sigma a) : ℝ)) →
+      (B.card : ℝ) ≤ M * E)
+    (hF : ∀ n ∈ F, 0 < n ∧ n ≤ N ∧ G < (Nat.gcd n (sigma n) : ℝ)) :
+    (F.card : ℝ) ≤ (N : ℝ) * tailConstant * G ^ (-(1 / 8 : ℝ)) +
+      (N : ℝ) * E * (1 + tailConstant) := by
+  classical
+  let P := fun n : ℕ => ∃ b : ℕ, Squarefull b ∧ b ∣ n ∧ G ^ (1 / 4 : ℝ) < (b : ℝ)
+  let F1 := F.filter P
+  let F2 := F.filter (fun n => ¬ P n)
+  have h1 := largeSquarefullDivisorCount F1 N (Real.rpow_pos_of_pos hG _) (by
+    intro n hn
+    obtain ⟨hnF, hp⟩ := Finset.mem_filter.mp hn
+    exact ⟨(hF n hnF).1, (hF n hnF).2.1, hp⟩)
+  have h2 := squarefreeFactorCount F2 N (G ^ (1 / 4 : ℝ)) E hE hcount (by
+    intro n hn
+    obtain ⟨hnF, hnP⟩ := Finset.mem_filter.mp hn
+    obtain ⟨a, b, hnab, ha, hb, hab, hbig | hsmall⟩ :=
+      gcdDecomposition n (hF n hnF).1 hG (hF n hnF).2.2
+    · exact False.elim (hnP ⟨b, hb, hnab ▸ dvd_mul_left b a, hbig⟩)
+    · exact ⟨(hF n hnF).1, (hF n hnF).2.1, a, b, hnab, ha, hb, hsmall⟩)
+  have hc : F1.card + F2.card = F.card := Finset.card_filter_add_card_filter_not P
+  have hid : (G ^ (1 / 4 : ℝ)) ^ (-(1 / 2 : ℝ)) = G ^ (-(1 / 8 : ℝ)) := by
+    rw [← Real.rpow_mul hG.le]; norm_num
+  rw [hid] at h1
+  have hc' : (F1.card : ℝ) + (F2.card : ℝ) = F.card := by exact_mod_cast hc
+  linarith
+
+#print axioms squarefreeFactorCount
+#print axioms gcdLift
+end AmicablePollack
+
+

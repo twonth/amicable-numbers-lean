@@ -1,0 +1,84 @@
+import CountFibres
+import Mathlib.Data.Nat.Log
+import AsymptoticAbsorption
+
+namespace AmicableCounting
+open scoped BigOperators
+
+theorem dyadicRange {n : ℕ} (hn : 0 < n) :
+    (2 : ℝ) ^ Nat.log 2 n ≤ (n : ℝ) ∧ (n : ℝ) ≤ 2 * (2 : ℝ) ^ Nat.log 2 n := by
+  constructor
+  · exact_mod_cast Nat.pow_log_le_self 2 hn.ne'
+  · have hh := (Nat.lt_pow_succ_log_self (by norm_num : 1 < (2 : ℕ)) n).le
+    rw [pow_succ] at hh
+    rw [mul_comm] at hh
+    exact_mod_cast hh
+
+theorem dyadicIndexBound {n : ℕ} {X : ℝ} (hn : 0 < n) (hnX : (n : ℝ) ≤ X) :
+    Nat.log 2 n < ⌊Real.log X / Real.log 2⌋₊ + 1 := by
+  have hp : 0 < (2 : ℝ) ^ Nat.log 2 n := by positivity
+  have hh := Real.log_le_log hp ((dyadicRange hn).1.trans hnX)
+  rw [Real.log_pow] at hh
+  have hl : 0 < Real.log 2 := Real.log_pos (by norm_num)
+  have hle := Nat.le_floor ((le_div_iff₀ hl).mpr hh)
+  omega
+
+theorem dyadicPairsCount (F : Finset ℕ) (p R : ℕ → ℕ) (X B : ℝ)
+    (hpos : ∀ n ∈ F, 0 < p n ∧ 0 < R n)
+    (hbound : ∀ n ∈ F, (p n : ℝ) ≤ X ∧ (R n : ℝ) ≤ X)
+    (hfibre : ∀ j k : ℕ,
+      ((F.filter (fun n => Nat.log 2 (p n) = j ∧ Nat.log 2 (R n) = k)).card : ℝ) ≤ B) :
+    (F.card : ℝ) ≤ (⌊Real.log X / Real.log 2⌋₊ + 1 : ℕ) ^ 2 * B := by
+  classical
+  let K := ⌊Real.log X / Real.log 2⌋₊ + 1
+  have hh := countFibres F ((Finset.range K).product (Finset.range K))
+    (fun n => (Nat.log 2 (p n), Nat.log 2 (R n))) B (by
+      intro n hn
+      exact Finset.mem_product.mpr ⟨Finset.mem_range.mpr (dyadicIndexBound (hpos n hn).1 (hbound n hn).1),
+        Finset.mem_range.mpr (dyadicIndexBound (hpos n hn).2 (hbound n hn).2)⟩) (by
+      rintro ⟨j,k⟩ _
+      simpa only [Prod.mk.injEq] using hfibre j k)
+  simpa [K, Finset.card_product, pow_two] using hh
+
+open Filter
+open scoped Topology
+
+theorem dyadicPairsAbsorb {a : ℝ} (ha : 0 < a) :
+    ∀ᶠ x : ℝ in atTop,
+      (⌊Real.log (x * Real.log x) / Real.log 2⌋₊ + 1 : ℕ) ^ 2 ≤ x ^ a := by
+  have hl2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
+  let C : ℝ := 2 + 8 / (Real.log 2) ^ 2
+  filter_upwards [AmicableAbsorption.constantLogPowerAbsorb C 2 ha,
+    eventually_gt_atTop (Real.exp 1)] with x hc hx
+  have hx1 : 1 < x := (Real.one_lt_exp_iff.mpr (by norm_num : (0 : ℝ) < 1)).trans hx
+  have hx0 : 0 < x := by linarith
+  have hlog : 1 < Real.log x := by
+    have hh := Real.log_lt_log (Real.exp_pos 1) hx
+    simpa using hh
+  have hX : 1 ≤ x * Real.log x := by nlinarith
+  have hlogX : Real.log (x * Real.log x) ≤ 2 * Real.log x := by
+    rw [Real.log_mul hx0.ne' (by linarith : Real.log x ≠ 0)]
+    have hh := Real.log_le_sub_one_of_pos (by linarith : 0 < Real.log x)
+    linarith
+  have hfloor := Nat.floor_le (div_nonneg (Real.log_nonneg hX) hl2.le)
+  have hK : (⌊Real.log (x * Real.log x) / Real.log 2⌋₊ + 1 : ℕ) ≤
+      2 * Real.log x / Real.log 2 + 1 := by
+    push_cast
+    simpa only [add_comm] using add_le_add_right (hfloor.trans (div_le_div_of_nonneg_right hlogX hl2.le)) 1
+  have hK0 : (0 : ℝ) ≤ (⌊Real.log (x * Real.log x) / Real.log 2⌋₊ + 1 : ℕ) := by positivity
+  have hs := pow_le_pow_left₀ hK0 hK 2
+  have hc' : C * (1 + (Real.log x) ^ 2) ≤ x ^ a := by simpa only [Real.rpow_two] using hc
+  apply le_trans hs
+  apply le_trans _ hc'
+  dsimp [C]
+  have hsquare := sq_nonneg (2 * Real.log x / Real.log 2 - 1)
+  have hden : 0 < (Real.log 2) ^ 2 := sq_pos_of_pos hl2
+  field_simp
+  nlinarith [sq_nonneg (2 * Real.log x - Real.log 2),
+    mul_nonneg (sq_nonneg (Real.log 2)) (sq_nonneg (Real.log x))]
+
+#print axioms dyadicRange
+#print axioms dyadicIndexBound
+#print axioms dyadicPairsCount
+#print axioms dyadicPairsAbsorb
+end AmicableCounting

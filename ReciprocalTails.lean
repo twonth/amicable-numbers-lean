@@ -1,0 +1,54 @@
+import SigmaCounting
+
+namespace AmicableTails
+open scoped BigOperators
+
+theorem inverseSquareStep {t : ℝ} (ht : 0 < t) :
+    1 / (t + 1) ^ 2 ≤ 1 / t - 1 / (t + 1) := by
+  have ht1 : 0 < t + 1 := by linarith
+  field_simp
+  nlinarith
+
+theorem reciprocalSquareTailNat (F : Finset ℕ) (N : ℕ) (hN : 0 < N)
+    (hF : ∀ n ∈ F, N < n) :
+    ∑ n ∈ F, (1 : ℝ) / (n : ℝ) ^ 2 ≤ 1 / (N : ℝ) := by
+  classical
+  let M := F.sup id
+  have hsub : F ⊆ Finset.Ico (N + 1) (M + 1) := by
+    intro n hn
+    exact Finset.mem_Ico.mpr ⟨by have := hF n hn; omega,
+      Nat.lt_succ_of_le (Finset.le_sup (f := id) hn)⟩
+  calc
+    _ ≤ ∑ n ∈ Finset.Ico (N + 1) (M + 1), (1 : ℝ) / (n : ℝ) ^ 2 :=
+      Finset.sum_le_sum_of_subset_of_nonneg hsub (by intros; positivity)
+    _ = ∑ k ∈ Finset.range (M + 1 - (N + 1)), (1 : ℝ) / ((N + 1 + k : ℕ) : ℝ) ^ 2 :=
+      Finset.sum_Ico_eq_sum_range _ _ _
+    _ ≤ ∑ k ∈ Finset.range (M + 1 - (N + 1)), ((1 : ℝ) / (N + k : ℕ) - 1 / (N + (k + 1) : ℕ)) := by
+      apply Finset.sum_le_sum
+      intro k hk
+      have hh := inverseSquareStep (t := (N + k : ℕ)) (by exact_mod_cast (show 0 < N + k by omega))
+      simpa only [Nat.cast_add, Nat.cast_one, add_assoc, add_comm, add_left_comm] using hh
+    _ = 1 / (N : ℝ) - 1 / (N + (M + 1 - (N + 1)) : ℕ) := by
+      simpa using Finset.sum_range_sub' (fun k => (1 : ℝ) / (N + k : ℕ)) (M + 1 - (N + 1))
+    _ ≤ _ := sub_le_self _ (one_div_nonneg.mpr (Nat.cast_nonneg _))
+
+theorem reciprocalSquareTail (F : Finset ℕ) (T : ℝ) (hT : 2 ≤ T)
+    (hF : ∀ n ∈ F, T < (n : ℝ)) :
+    ∑ n ∈ F, (1 : ℝ) / (n : ℝ) ^ 2 ≤ 2 / T := by
+  have hfloor : 1 ≤ ⌊T⌋₊ := (Nat.le_floor_iff (by linarith : 0 ≤ T)).mpr (by norm_num; linarith)
+  have hNpos : 0 < ⌊T⌋₊ := by omega
+  have hh := reciprocalSquareTailNat F ⌊T⌋₊ hNpos (by
+    intro n hn
+    have hle := Nat.floor_le (by linarith : 0 ≤ T)
+    have hlt := hF n hn
+    exact_mod_cast (lt_of_le_of_lt hle hlt))
+  refine hh.trans ?_
+  apply (div_le_div_iff₀ (by exact_mod_cast hNpos : (0 : ℝ) < ⌊T⌋₊) (by linarith : 0 < T)).mpr
+  have hlt := Nat.lt_floor_add_one T
+  have hfloorR : (1 : ℝ) ≤ ⌊T⌋₊ := by exact_mod_cast hfloor
+  nlinarith
+
+#print axioms inverseSquareStep
+#print axioms reciprocalSquareTailNat
+#print axioms reciprocalSquareTail
+end AmicableTails

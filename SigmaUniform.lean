@@ -1,0 +1,75 @@
+import SigmaBounds
+import AsymptoticAbsorption
+
+namespace AmicableSigmaBounds
+open AmicableManuscript Filter
+open scoped Topology
+
+theorem sigmaUniformRatio {e : ℝ} (he : 0 < e) :
+    ∀ᶠ x : ℝ in atTop, ∀ n : ℕ, (n : ℝ) ≤ x * Real.log x →
+      (sigma n : ℝ) ≤ (n : ℝ) * x ^ e := by
+  obtain ⟨C, hC, hbound⟩ := sigmaLogLog
+  filter_upwards [AmicableAbsorption.constantLogAbsorb (3 * C) he,
+    eventually_ge_atTop (3 : ℝ)] with x hxC hx
+  intro n hn
+  by_cases hn0 : n = 0
+  · simp [hn0, sigma]
+  have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast (Nat.one_le_iff_ne_zero.mpr hn0)
+  have hx0 : 0 < x := by linarith
+  have hn0R : (0 : ℝ) < n := by linarith
+  have hlog3n : 0 < Real.log (3 * (n : ℝ)) := Real.log_pos (by linarith)
+  have hll : Real.log (Real.log (3 * (n : ℝ))) ≤ Real.log (3 * (n : ℝ)) :=
+    (Real.log_le_sub_one_of_pos hlog3n).trans (by linarith)
+  have hnxx : (n : ℝ) ≤ x ^ 2 := by
+    have hh := Real.log_le_sub_one_of_pos hx0
+    nlinarith
+  have hlog : Real.log (3 * (n : ℝ)) ≤ 3 * Real.log x := by
+    have hh := Real.log_le_log (by positivity : 0 < 3 * (n : ℝ))
+      (show 3 * (n : ℝ) ≤ 3 * x ^ 2 by nlinarith)
+    rw [Real.log_mul (by norm_num) (pow_ne_zero _ hx0.ne'), Real.log_pow] at hh
+    have h3 := Real.log_le_log (by norm_num : (0 : ℝ) < 3) hx
+    norm_num at hh
+    linarith
+  calc
+    (sigma n : ℝ) ≤ C * n * Real.log (Real.log (3 * (n : ℝ))) := hbound n
+    _ ≤ C * n * (3 * Real.log x) := mul_le_mul_of_nonneg_left (hll.trans hlog) (by positivity)
+    _ ≤ (n : ℝ) * x ^ e := by
+      have hh := mul_le_mul_of_nonneg_left hxC hn0R.le
+      nlinarith
+
+/-- The determinant estimate used in both reconstruction arguments. -/
+theorem determinantUniform {e : ℝ} (he : 0 < e) :
+    ∀ᶠ x : ℝ in atTop, ∀ (R1 R2 : ℕ) (U : ℝ),
+      0 < U → (R1 : ℝ) ≤ U → (R2 : ℝ) ≤ U → U ≤ x * Real.log x →
+      |(sigma R1 : ℤ) * (R2 : ℤ) - (sigma R2 : ℤ) * (R1 : ℤ)| <
+        U ^ 2 * x ^ (2 * e) := by
+  filter_upwards [sigmaUniformRatio he, eventually_gt_atTop (1 : ℝ)] with x hx hx1
+  intro R1 R2 U hUpos hR1 hR2 hU
+  have h1 := hx R1 (hR1.trans hU)
+  have h2 := hx R2 (hR2.trans hU)
+  have hb : |(sigma R1 : ℝ) * R2 - (sigma R2 : ℝ) * R1| ≤ U ^ 2 * x ^ e := by
+    have hu1 : (sigma R1 : ℝ) * R2 ≤ U ^ 2 * x ^ e := by
+      calc
+        _ ≤ ((R1 : ℝ) * x ^ e) * R2 := mul_le_mul_of_nonneg_right h1 (Nat.cast_nonneg _)
+        _ = ((R1 : ℝ) * R2) * x ^ e := by ring
+        _ ≤ (U * U) * x ^ e := by gcongr
+        _ = _ := by ring
+    have hu2 : (sigma R2 : ℝ) * R1 ≤ U ^ 2 * x ^ e := by
+      calc
+        _ ≤ ((R2 : ℝ) * x ^ e) * R1 := mul_le_mul_of_nonneg_right h2 (Nat.cast_nonneg _)
+        _ = ((R2 : ℝ) * R1) * x ^ e := by ring
+        _ ≤ (U * U) * x ^ e := by gcongr
+        _ = _ := by ring
+    apply abs_le.mpr
+    constructor <;> nlinarith [
+      mul_nonneg (Nat.cast_nonneg (sigma R1) : (0 : ℝ) ≤ _) (Nat.cast_nonneg R2),
+      mul_nonneg (Nat.cast_nonneg (sigma R2) : (0 : ℝ) ≤ _) (Nat.cast_nonneg R1)]
+  have hp : x ^ e < x ^ (2 * e) := Real.rpow_lt_rpow_of_exponent_lt hx1 (by linarith)
+  have hlt := hb.trans_lt (mul_lt_mul_of_pos_left hp (sq_pos_of_pos hUpos))
+  exact_mod_cast hlt
+
+#print axioms sigmaUniformRatio
+#print axioms determinantUniform
+end AmicableSigmaBounds
+
+

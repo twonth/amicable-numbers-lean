@@ -1,0 +1,132 @@
+import ManyPrimeDivisors
+import GcdCost
+import SigmaReciprocals
+
+namespace AmicablePollack
+open AmicableManuscript AmicableGcdCounting AmicableGcdCost Filter
+open scoped Topology BigOperators
+
+/-- Uniform squarefree gcd estimate. The ambient cutoff enters only through log log N. -/
+theorem squarefreeGcdBound {beta : ℝ} (hb : 0 < beta) :
+    ∃ rho : ℝ, 0 < rho ∧ ∀ᶠ A : ℝ in atTop, ∀ (N : ℕ) (F : Finset ℕ),
+      3 ≤ N → Real.log (Real.log N) ≤ (Real.log A) ^ (1 / beta) →
+      (∀ n ∈ F, Squarefree n ∧ n ≤ N ∧ A < (Nat.gcd n (sigma n) : ℝ)) →
+      (F.card : ℝ) ≤ (N : ℝ) * A ^ (-rho) := by
+  classical
+  obtain ⟨C, hC, hprimeC⟩ := AmicableSigmaCounting.primeReciprocalInput
+  let c := smallConstant beta
+  have hc : 0 < c := smallConstant_pos hb
+  let rho := min (1 / 16 : ℝ) (c / 6)
+  have hrho : 0 < rho := lt_min (by norm_num) (by positivity)
+  refine ⟨rho, hrho, ?_⟩
+  filter_upwards [AmicableGcdReduction.squarefreeGcdAlternatives,
+    manyPrimeDivisorCount hc,
+    AmicableAbsorption.constantLogPowerAbsorb (4 * C) (1 / beta) (by norm_num : (0 : ℝ) < 1 / 8),
+    Real.tendsto_log_atTop.eventually (eventually_ge_atTop (max (Real.exp 1) (4 * C))),
+    (tendsto_rpow_atTop (by norm_num : (0 : ℝ) < 1 / 6)).eventually (eventually_ge_atTop (2 : ℝ)),
+    (tendsto_rpow_atTop hrho).eventually (eventually_ge_atTop (4 : ℝ)),
+    eventually_gt_atTop (1 : ℝ)] with A hAlt hMany hAbs hLog hRoot hFour hA
+  intro N F hN hu hF
+  let K := C * (1 + Real.log (Real.log (N : ℝ)))
+  let H := c * Real.log A / Real.log (Real.log A)
+  have hlogN : 1 < Real.log (N : ℝ) := by
+    have hh := Real.log_lt_log (Real.exp_pos 1)
+      (Real.exp_one_lt_three.trans_le (show (3 : ℝ) ≤ (N : ℝ) by exact_mod_cast hN))
+    simpa only [Real.log_exp] using hh
+  have hu0 : 0 ≤ Real.log (Real.log (N : ℝ)) := (Real.log_pos hlogN).le
+  have hK : 1 ≤ K := by dsimp [K]; nlinarith
+  have hprime := hprimeC N hN
+  have hKupper : 4 * K ≤ A ^ (1 / 8 : ℝ) := by
+    have hh := mul_le_mul_of_nonneg_left (add_le_add_left hu 1) (show 0 ≤ 4 * C by positivity)
+    dsimp [K]
+    nlinarith
+  have hrootHalf : 2 ≤ A ^ (1 / 2 : ℝ) := hRoot.trans
+    (Real.rpow_le_rpow_of_exponent_le hA.le (by norm_num))
+  let P := fun n : ℕ => ∃ p : ℕ, p.Prime ∧ A ^ (1 / 2 : ℝ) < p ∧ p ∣ n ∧ p ∣ sigma (n / p)
+  let Q := fun n : ℕ => ∃ d : ℕ, A ^ (1 / 6 : ℝ) < d ∧ (d : ℝ) ≤ A ∧ Squarefree d ∧
+    (d.primeFactors.card : ℝ) ≤ H ∧ d ∣ n ∧ d ∣ sigma (n / d)
+  let F1 := F.filter P
+  let F2 := F.filter Q
+  let F3 := F.filter (fun n => ¬P n ∧ ¬Q n)
+  have hcover : F ⊆ F1 ∪ F2 ∪ F3 := by
+    intro n hn
+    by_cases hp : P n
+    · exact Finset.mem_union_left _ (Finset.mem_union_left _ (Finset.mem_filter.mpr ⟨hn, hp⟩))
+    by_cases hq : Q n
+    · exact Finset.mem_union_left _ (Finset.mem_union_right _ (Finset.mem_filter.mpr ⟨hn, hq⟩))
+    · exact Finset.mem_union_right _ (Finset.mem_filter.mpr ⟨hn, hp, hq⟩)
+  have hcard : (F.card : ℝ) ≤ (F1.card : ℝ) + F2.card + F3.card := by
+    have hc0 := Finset.card_le_card hcover
+    have hc1 : (F1 ∪ F2).card ≤ F1.card + F2.card := Finset.card_union_le _ _
+    have hc2 : (F1 ∪ F2 ∪ F3).card ≤ (F1 ∪ F2).card + F3.card := Finset.card_union_le _ _
+    exact_mod_cast (show F.card ≤ F1.card + F2.card + F3.card by omega)
+  have hF1 : (F1.card : ℝ) ≤ (N : ℝ) * A ^ (-(3 / 8 : ℝ)) := by
+    let D := (Nat.primesBelow (N + 1)).filter (fun p : ℕ => A ^ (1 / 2 : ℝ) < (p : ℝ))
+    have hh := primeDivisorFamilyCount F1 D N K (A ^ (1 / 2 : ℝ)) hK hrootHalf (by
+      intro p hp
+      obtain ⟨hpN, hpA⟩ := Finset.mem_filter.mp hp
+      exact ⟨(Nat.mem_primesBelow.mp hpN).2, hpA⟩) hprime (by
+        intro n hn
+        obtain ⟨hnF, p, hp, hpA, hpn, hps⟩ := Finset.mem_filter.mp hn
+        refine ⟨(hF n hnF).1, (hF n hnF).2.1, p, ?_, hpn, hps⟩
+        exact Finset.mem_filter.mpr ⟨Nat.mem_primesBelow.mpr
+          ⟨Nat.lt_succ_of_le ((Nat.le_of_dvd (Nat.pos_of_ne_zero (hF n hnF).1.ne_zero) hpn).trans (hF n hnF).2.1), hp⟩, hpA⟩)
+    have hmult := mul_le_mul_of_nonneg_right hKupper (Nat.cast_nonneg N)
+    have hh' := div_le_div_of_nonneg_right hmult (Real.rpow_nonneg (by linarith : 0 ≤ A) (1 / 2 : ℝ))
+    have hid : A ^ (1 / 8 : ℝ) * (N : ℝ) / A ^ (1 / 2 : ℝ) = (N : ℝ) * A ^ (-(3 / 8 : ℝ)) := by
+      rw [mul_comm, mul_div_assoc, ← Real.rpow_sub (by linarith : 0 < A)]
+      norm_num
+    exact hh.trans (hid ▸ hh')
+  have hF2 : (F2.card : ℝ) ≤ 2 * (N : ℝ) * A ^ (-(1 / 8 : ℝ)) := by
+    let D := (Finset.range (⌊A⌋₊ + 1)).filter (fun d : ℕ => A ^ (1 / 6 : ℝ) < (d : ℝ) ∧
+      Squarefree d ∧ (d.primeFactors.card : ℝ) ≤ H)
+    have hh := boundedCostFamilyCount F2 D N K (A ^ (1 / 6 : ℝ)) (A ^ (1 / 24 : ℝ))
+      hK hRoot (Real.rpow_nonneg (by linarith : 0 ≤ A) _) (by
+        intro d hd
+        obtain ⟨hdA, hdT, hdsf, hdH⟩ := Finset.mem_filter.mp hd
+        refine ⟨hdT, ?_⟩
+        have hcst := costBound hb hC (le_max_left _ _ |>.trans hLog) (le_max_right _ _ |>.trans hLog)
+          hu0 hu d (by simpa only [omegaSquarefree hdsf] using hdH)
+        simpa only [K, Real.rpow_def_of_pos (by linarith : 0 < A), div_eq_mul_inv, one_mul] using hcst)
+      hprime (by
+        intro n hn
+        obtain ⟨hnF, d, hdT, hdA, hdsf, hdH, hdn, hds⟩ := Finset.mem_filter.mp hn
+        exact ⟨(hF n hnF).1, (hF n hnF).2.1, d,
+          Finset.mem_filter.mpr ⟨Finset.mem_range.mpr (Nat.lt_succ_of_le (Nat.le_floor hdA)), hdT, hdsf, hdH⟩, hdn, hds⟩)
+    have hid : 2 * (N : ℝ) * A ^ (1 / 24 : ℝ) / A ^ (1 / 6 : ℝ) =
+        2 * (N : ℝ) * A ^ (-(1 / 8 : ℝ)) := by
+      rw [mul_div_assoc, ← Real.rpow_sub (by linarith : 0 < A)]
+      norm_num
+    exact hid ▸ hh
+  have hF3 : (F3.card : ℝ) ≤ (N : ℝ) * A ^ (-c / 3) := by
+    apply hMany N F3
+    intro n hn
+    obtain ⟨hnF, hnP, hnQ⟩ := Finset.mem_filter.mp hn
+    obtain hlarge | ⟨d, hdT, hdA, hdn, hdcop, hds⟩ := hAlt n (hF n hnF).1 (hF n hnF).2.2
+    · exact False.elim (hnP hlarge)
+    have hdsf := (hF n hnF).1.squarefree_of_dvd hdn
+    have hdH : H < (d.primeFactors.card : ℝ) := by
+      by_contra h
+      exact hnQ ⟨d, hdT, hdA, hdsf, le_of_not_gt h, hdn, hds⟩
+    exact ⟨Nat.pos_of_ne_zero (hF n hnF).1.ne_zero, (hF n hnF).2.1, d, hdn,
+      Nat.pos_of_ne_zero hdsf.ne_zero, hdA, hdH.le⟩
+  have hr1 : rho ≤ 1 / 16 := min_le_left _ _
+  have hr2 : rho ≤ c / 6 := min_le_right _ _
+  have hp1 := Real.rpow_le_rpow_of_exponent_le hA.le (show -(3 / 8 : ℝ) ≤ -2 * rho by linarith)
+  have hp2 := Real.rpow_le_rpow_of_exponent_le hA.le (show -(1 / 8 : ℝ) ≤ -2 * rho by linarith)
+  have hp3 := Real.rpow_le_rpow_of_exponent_le hA.le (show -c / 3 ≤ -2 * rho by linarith)
+  have hsum : (F.card : ℝ) ≤ 4 * (N : ℝ) * A ^ (-2 * rho) := by
+    have h1 := mul_le_mul_of_nonneg_left hp1 (Nat.cast_nonneg N)
+    have h2 := mul_le_mul_of_nonneg_left hp2 (show 0 ≤ 2 * (N : ℝ) by positivity)
+    have h3 := mul_le_mul_of_nonneg_left hp3 (Nat.cast_nonneg N)
+    linarith
+  have hfin := mul_le_mul_of_nonneg_right hFour (show 0 ≤ (N : ℝ) * A ^ (-2 * rho) by positivity)
+  have hid : A ^ rho * ((N : ℝ) * A ^ (-2 * rho)) = (N : ℝ) * A ^ (-rho) := by
+    rw [← mul_assoc, mul_comm (A ^ rho), mul_assoc, ← Real.rpow_add (by linarith : 0 < A)]
+    congr 2
+    ring
+  exact hsum.trans (by simpa only [hid, mul_assoc] using hfin)
+
+#print axioms squarefreeGcdBound
+end AmicablePollack
+

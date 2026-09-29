@@ -1,0 +1,115 @@
+import RankinFinite
+import AnalyticInputs
+import Mathlib.Data.Nat.ModEq
+
+namespace AmicableOmega
+open scoped BigOperators
+
+theorem subsetDivisorCount (F P : Finset ℕ) (N : ℕ)
+    (hF : ∀ n ∈ F, 0 < n ∧ n ≤ N) (hP : ∀ p ∈ P, p.Prime) :
+    (((F.filter (fun n => P ⊆ n.primeFactors)).card) : ℝ) ≤
+      (N : ℝ) / ∏ p ∈ P, (p : ℝ) := by
+  classical
+  let d := ∏ p ∈ P, p
+  have hdpos : 0 < d := Finset.prod_pos (fun p hp => (hP p hp).pos)
+  have hsub : F.filter (fun n => P ⊆ n.primeFactors) ⊆
+      (Finset.range (N + 1)).filter (fun n => n ≠ 0 ∧ d ∣ n) := by
+    intro n hn
+    obtain ⟨hnF, hPn⟩ := Finset.mem_filter.mp hn
+    have hdvd : d ∣ n := (Finset.prod_dvd_prod_of_subset P n.primeFactors (fun p : ℕ => p) hPn).trans
+      (Nat.prod_primeFactors_dvd n)
+    exact Finset.mem_filter.mpr ⟨Finset.mem_range.mpr (by have := (hF n hnF).2; omega),
+      (hF n hnF).1.ne', hdvd⟩
+  have hcard := Finset.card_le_card hsub
+  rw [Nat.card_multiples'] at hcard
+  have hdiv : ((N / d : ℕ) : ℝ) ≤ (N : ℝ) / d := by
+    apply (le_div_iff₀ (show (0 : ℝ) < d by exact_mod_cast hdpos)).mpr
+    exact_mod_cast Nat.div_mul_le_self N d
+  simpa only [d, Nat.cast_prod] using (Nat.cast_le.mpr hcard).trans hdiv
+
+theorem omegaExpansion (P : Finset ℕ) (n : ℕ) (z : ℝ)
+    (hnP : n.primeFactors ⊆ P) :
+    z ^ n.primeFactors.card =
+      ∑ T ∈ P.powerset, if T ⊆ n.primeFactors then (z - 1) ^ T.card else 0 := by
+  classical
+  have heq : z ^ n.primeFactors.card = ∑ T ∈ n.primeFactors.powerset, (z - 1) ^ T.card := by
+    have hh := Finset.prod_one_add (R := ℝ) (f := fun _ : ℕ => z - 1) n.primeFactors
+    simpa using hh
+  rw [heq, ← Finset.sum_filter]
+  congr 1
+  ext T
+  simp only [Finset.mem_filter, Finset.mem_powerset]
+  exact ⟨fun h => ⟨h.trans hnP, h⟩, fun h => h.2⟩
+
+theorem omegaMoment (F P : Finset ℕ) (N : ℕ) (z : ℝ) (hz : 1 ≤ z)
+    (hF : ∀ n ∈ F, 0 < n ∧ n ≤ N)
+    (hP : ∀ p ∈ P, p.Prime) (hcover : ∀ n ∈ F, n.primeFactors ⊆ P) :
+    ∑ n ∈ F, z ^ n.primeFactors.card ≤
+      (N : ℝ) * Real.exp ((z - 1) * ∑ p ∈ P, (1 : ℝ) / p) := by
+  classical
+  have heq : ∑ n ∈ F, z ^ n.primeFactors.card =
+      ∑ T ∈ P.powerset, ((F.filter (fun n => T ⊆ n.primeFactors)).card : ℝ) * (z - 1) ^ T.card := by
+    calc
+      _ = ∑ n ∈ F, ∑ T ∈ P.powerset, if T ⊆ n.primeFactors then (z - 1) ^ T.card else 0 :=
+        Finset.sum_congr rfl (fun n hn => omegaExpansion P n z (hcover n hn))
+      _ = ∑ T ∈ P.powerset, ∑ n ∈ F, if T ⊆ n.primeFactors then (z - 1) ^ T.card else 0 :=
+        Finset.sum_comm
+      _ = _ := by
+        apply Finset.sum_congr rfl
+        intro T hT
+        rw [← Finset.sum_filter]
+        simp
+  rw [heq]
+  calc
+    _ ≤ ∑ T ∈ P.powerset, ((N : ℝ) / ∏ p ∈ T, (p : ℝ)) * (z - 1) ^ T.card := by
+      apply Finset.sum_le_sum
+      intro T hT
+      exact mul_le_mul_of_nonneg_right (subsetDivisorCount F T N hF
+        (fun p hp => hP p (Finset.mem_powerset.mp hT hp))) (pow_nonneg (by linarith) _)
+    _ = (N : ℝ) * ∏ p ∈ P, (1 + (z - 1) / p) := by
+      rw [Finset.prod_one_add, Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro T hT
+      rw [Finset.prod_div_distrib]
+      simp only [Finset.prod_const]
+      ring
+    _ ≤ _ := by
+      have hh := AmicableRankin.finiteEulerExpBound P (fun p : ℕ => (z - 1) / p)
+        (fun p => div_nonneg (by linarith) (Nat.cast_nonneg p))
+      have hsum : ∑ p ∈ P, (z - 1) / (p : ℝ) = (z - 1) * ∑ p ∈ P, (1 : ℝ) / p := by
+        rw [Finset.mul_sum]
+        apply Finset.sum_congr rfl
+        intros
+        ring
+      rw [hsum] at hh
+      exact mul_le_mul_of_nonneg_left hh (Nat.cast_nonneg N)
+
+#print axioms subsetDivisorCount
+#print axioms omegaExpansion
+#print axioms omegaMoment
+end AmicableOmega
+
+namespace AmicableOmega
+open scoped BigOperators
+
+theorem omegaTailFinite (F P : Finset ℕ) (N : ℕ) (z t M : ℝ) (hz : 1 < z)
+    (hF : ∀ n ∈ F, 0 < n ∧ n ≤ N ∧ t ≤ (n.primeFactors.card : ℝ))
+    (hP : ∀ p ∈ P, p.Prime) (hcover : ∀ n ∈ F, n.primeFactors ⊆ P)
+    (hM : ∑ p ∈ P, (1 : ℝ) / p ≤ M) :
+    (F.card : ℝ) ≤ (N : ℝ) * Real.exp ((z - 1) * M - t * Real.log z) := by
+  have hmoment := omegaMoment F P N z hz.le (fun n hn => ⟨(hF n hn).1, (hF n hn).2.1⟩) hP hcover
+  have hpow : (F.card : ℝ) * Real.exp (t * Real.log z) ≤ ∑ n ∈ F, z ^ n.primeFactors.card := by
+    calc
+      _ = ∑ _ ∈ F, Real.exp (t * Real.log z) := by simp
+      _ ≤ _ := Finset.sum_le_sum (by
+        intro n hn
+        rw [← Real.exp_log (pow_pos (by linarith : 0 < z) _), Real.log_pow]
+        exact Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_right (hF n hn).2.2 (Real.log_pos hz).le))
+  have hupper : (F.card : ℝ) * Real.exp (t * Real.log z) ≤ (N : ℝ) * Real.exp ((z - 1) * M) :=
+    hpow.trans (hmoment.trans (mul_le_mul_of_nonneg_left
+      (Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_left hM (by linarith))) (Nat.cast_nonneg N)))
+  have hh := (le_div_iff₀ (Real.exp_pos (t * Real.log z))).mpr hupper
+  simpa only [Real.exp_sub, mul_div_assoc] using hh
+
+#print axioms omegaTailFinite
+end AmicableOmega

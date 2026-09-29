@@ -1,0 +1,73 @@
+import DivisorPartition
+import RoughParts
+import DivisorAllocation
+
+namespace AmicableSelection
+open AmicableManuscript AmicableWeight
+open scoped BigOperators
+
+theorem indexedSquarefreePartition (a : ℕ) (ha : Squarefree a) {U B : ℝ} (hU : 1 ≤ U)
+    (hprime : ∀ p ∈ a.primeFactors, (p : ℝ) ≤ B) :
+    ∃ k : ℕ, ∃ V : Fin (k + 1) → ℕ, (∏ i, V i) = a ∧ (V 0 : ℝ) ≤ U ∧
+      ∀ i, i ≠ 0 → U < (V i : ℝ) ∧ (V i : ℝ) ≤ U * B := by
+  obtain ⟨V0, Vs, heq, hV0, hVs⟩ := squarefreePartition a ha hU hprime
+  refine ⟨Vs.length, (fun i => Fin.cases V0 Vs.get i), ?_, ?_, ?_⟩
+  · rw [Fin.prod_univ_succ]
+    simp only [Fin.cases_zero, Fin.cases_succ]
+    rw [← List.prod_ofFn, List.ofFn_get]
+    exact heq.symm
+  · simpa only [Fin.cases_zero] using hV0
+  · intro i hi
+    refine Fin.cases (fun h => False.elim (h rfl)) (fun j _ => ?_) i hi
+    exact hVs (Vs.get j) (List.get_mem Vs j)
+
+theorem sigmaProductSquarefree {ι : Type*} (I : Finset ι) (f : ι → ℕ)
+    (hsf : Squarefree (∏ i ∈ I, f i)) : sigma (∏ i ∈ I, f i) = ∏ i ∈ I, sigma (f i) := by
+  classical
+  induction I using Finset.induction_on with
+  | empty => simp [sigma]
+  | @insert i I hi ih =>
+    rw [Finset.prod_insert hi] at hsf ⊢
+    rw [sigma_mul (Nat.coprime_of_squarefree_mul hsf), Finset.prod_insert hi,
+      ih (hsf.squarefree_of_dvd (dvd_mul_left _ _))]
+
+theorem partitionAllocation {ι : Type*} (I : Finset ι) (V : ι → ℕ) {a r : ℕ}
+    (ha : Squarefree a) (hprod : ∏ i ∈ I, V i = a) (hr : r ∣ sigma a) :
+    ∃ d : ι → ℕ, (∏ i ∈ I, d i) = r ∧ ∀ i ∈ I, d i ∣ sigma (V i) := by
+  have heq : sigma a = ∏ i ∈ I, sigma (V i) := by
+    rw [← hprod]
+    exact sigmaProductSquarefree I V (hprod ▸ ha)
+  rw [heq] at hr
+  obtain ⟨d, hd, hdprod⟩ := AmicableAllocation.distributeDivisor I (fun i => sigma (V i)) hr
+  exact ⟨d, hdprod, hd⟩
+
+theorem partitionCostSum {ι : Type*} (I : Finset ι) (V d : ι → ℕ) {a r : ℕ} (t : ℝ)
+    (hV : ∀ i ∈ I, 0 < V i) (hd : ∀ i ∈ I, 0 < d i)
+    (ha : ∏ i ∈ I, V i = a) (hr : ∏ i ∈ I, d i = r) :
+    ∑ i ∈ I, (Real.log ((V i : ℝ) / d i) + t * (ArithmeticFunction.cardFactors (d i) : ℝ)) =
+      Real.log ((a : ℝ) / r) + t * (ArithmeticFunction.cardFactors r : ℝ) := by
+  have hapos : 0 < a := ha ▸ Finset.prod_pos hV
+  have hrpos : 0 < r := hr ▸ Finset.prod_pos hd
+  have hlogV : ∑ i ∈ I, Real.log (V i : ℝ) = Real.log (a : ℝ) := by
+    rw [← Real.log_prod (fun i hi => by exact_mod_cast (hV i hi).ne'), ← Nat.cast_prod, ha]
+  have hlogd : ∑ i ∈ I, Real.log (d i : ℝ) = Real.log (r : ℝ) := by
+    rw [← Real.log_prod (fun i hi => by exact_mod_cast (hd i hi).ne'), ← Nat.cast_prod, hr]
+  have homega : (∑ i ∈ I, (ArithmeticFunction.cardFactors (d i) : ℝ)) =
+      (ArithmeticFunction.cardFactors r : ℝ) := by
+    have hh := omegaProduct I d (fun i hi => (hd i hi).ne')
+    rw [hr] at hh
+    exact_mod_cast hh.symm
+  calc
+    _ = ∑ i ∈ I, (Real.log (V i : ℝ) - Real.log (d i : ℝ) + t * (ArithmeticFunction.cardFactors (d i) : ℝ)) := by
+      apply Finset.sum_congr rfl
+      intro i hi
+      rw [Real.log_div (by exact_mod_cast (hV i hi).ne') (by exact_mod_cast (hd i hi).ne')]
+    _ = _ := by
+      rw [Finset.sum_add_distrib, Finset.sum_sub_distrib, ← Finset.mul_sum, hlogV, hlogd, homega,
+        Real.log_div (by exact_mod_cast hapos.ne') (by exact_mod_cast hrpos.ne')]
+
+#print axioms indexedSquarefreePartition
+#print axioms sigmaProductSquarefree
+#print axioms partitionAllocation
+#print axioms partitionCostSum
+end AmicableSelection

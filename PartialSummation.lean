@@ -1,0 +1,48 @@
+import PrimeReciprocals
+
+namespace AmicablePartialSummation
+open scoped BigOperators
+
+theorem reciprocalFromCount (F : Finset ℕ) (N : ℕ) (E : ℝ) (hE : 0 ≤ E)
+    (hF : ∀ n ∈ F, 0 < n ∧ n ≤ N)
+    (hcount : ∀ T : ℕ, 1 ≤ T → (((F.filter (· ≤ T)).card) : ℝ) ≤ E * T) :
+    ∑ n ∈ F, (1 : ℝ) / n ≤ 2 * E * (⌊Real.log N / Real.log 2⌋₊ + 1 : ℕ) := by
+  classical
+  let K := ⌊Real.log N / Real.log 2⌋₊
+  have hcover : ∀ n ∈ F, ∃ k : ℕ, k ≤ K ∧ 2 ^ k ≤ n ∧ n < 2 ^ (k + 1) := by
+    intro n hn
+    obtain ⟨k, hklo, hkhi⟩ := exists_nat_pow_near (x := (n : ℝ))
+      (by exact_mod_cast (hF n hn).1) (by norm_num : (1 : ℝ) < 2)
+    refine ⟨k, ?_, by exact_mod_cast hklo, by exact_mod_cast hkhi⟩
+    have hh := Real.log_le_log (by positivity : (0 : ℝ) < 2 ^ k)
+      (hklo.trans (show (n : ℝ) ≤ (N : ℝ) by exact_mod_cast (hF n hn).2))
+    rw [Real.log_pow] at hh
+    exact Nat.le_floor ((le_div_iff₀ (Real.log_pos (by norm_num : (1 : ℝ) < 2))).mpr hh)
+  choose! idx hidx using hcover
+  have hsplit := Finset.sum_fiberwise_of_maps_to
+    (fun n hn => Finset.mem_range.mpr (Nat.lt_succ_of_le (hidx n hn).1)) (fun n : ℕ => (1 : ℝ) / n)
+  rw [← hsplit]
+  calc
+    _ ≤ ∑ k ∈ Finset.range (K + 1), 2 * E := by
+      apply Finset.sum_le_sum
+      intro k hk
+      let B := F.filter (fun n => idx n = k)
+      have hsub : B ⊆ F.filter (· ≤ 2 ^ (k + 1)) := by
+        intro n hn
+        obtain ⟨hnF, hnidx⟩ := Finset.mem_filter.mp hn
+        exact Finset.mem_filter.mpr ⟨hnF, (hnidx ▸ (hidx n hnF).2.2).le⟩
+      have hcard := (Nat.cast_le.mpr (Finset.card_le_card hsub)).trans (hcount (2 ^ (k + 1)) (by exact Nat.one_le_pow _ _ (by omega)))
+      calc
+        _ ≤ ∑ _ ∈ B, (1 : ℝ) / 2 ^ k := Finset.sum_le_sum (by
+          intro n hn
+          obtain ⟨hnF, hnidx⟩ := Finset.mem_filter.mp hn
+          exact one_div_le_one_div_of_le (by positivity)
+            (by exact_mod_cast (hnidx ▸ (hidx n hnF).2.1)))
+        _ = (B.card : ℝ) / 2 ^ k := by simp [div_eq_mul_inv]
+        _ ≤ (E * (2 ^ (k + 1) : ℕ)) / (2 : ℝ) ^ k :=
+          div_le_div_of_nonneg_right hcard (by positivity)
+        _ = 2 * E := by push_cast; rw [pow_succ]; field_simp
+    _ = _ := by simp; ring
+
+#print axioms reciprocalFromCount
+end AmicablePartialSummation

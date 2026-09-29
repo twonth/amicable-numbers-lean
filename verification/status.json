@@ -1,0 +1,15 @@
+{
+  "mainTheorem": "AmicableCertificate.amicable_count_upper_bound",
+  "expandedTheorem": "AmicableCertificate.explicit_count_upper_bound",
+  "freshLocalBuild": "passed",
+  "checkedSourceCount": 102,
+  "checkedAtUtc": "2026-09-29T07:09:42.4426407Z",
+  "axioms": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+  ],
+  "kernelReplay": "passed",
+  "manuscriptUnchanged": true,
+  "kernelReplayCompletedAtUtc": "2026-09-29T07:11:13.3900971Z"
+}

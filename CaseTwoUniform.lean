@@ -1,0 +1,75 @@
+import CaseTwoBudget
+import PrimeInputUniform
+
+namespace AmicableCases
+open AmicableManuscript AmicableSigmaCounting Filter
+open scoped Topology BigOperators
+
+theorem caseTwoBudgetUniform {a : ℝ} (ha : 0 < a) :
+    ∀ᶠ x : ℝ in atTop, ∀ (F : Finset ℕ) (d : ℕ) (B : ℝ),
+      0 < d → 0 ≤ B →
+      (ArithmeticFunction.cardFactors d : ℝ) ≤ Real.log x / Real.log (Real.log x) →
+      (∀ V ∈ F, Squarefree V ∧ (V : ℝ) ≤ x * Real.log x ∧ d ∣ sigma V ∧
+        ((V : ℝ) / d) * Real.exp ((ArithmeticFunction.cardFactors d : ℝ) * Real.log (Real.log x)) ≤ B) →
+      (F.card : ℝ) ≤ B * x ^ a := by
+  classical
+  obtain ⟨C, hC, hprime⟩ := primeInputUniform
+  filter_upwards [hprime, partitionErrorAbsorb C (show 0 < a / 2 by positivity),
+    AmicableAbsorption.constantLogAbsorb (4 / Real.log 2 + 2) (show 0 < a / 2 by positivity),
+    eventually_gt_atTop (3 : ℝ)] with x hxprime hxerr hxdy hx3
+  intro F d B hd hB hJ hF
+  let M := ⌊x * Real.log x⌋₊
+  have hx1 : 1 < x := by linarith
+  have hx0 : 0 < x := by linarith
+  have ht : 0 < Real.log (Real.log x) := by linarith [hxprime.1]
+  have hlog1 : 1 < Real.log x := by
+    simpa only [Real.log_exp] using Real.log_lt_log (Real.exp_pos 1)
+      (Real.exp_one_lt_three.trans hx3)
+  have hX : (3 : ℝ) ≤ x * Real.log x := by nlinarith
+  have hM : 3 ≤ M := Nat.le_floor hX
+  have hMX : (M : ℝ) ≤ x * Real.log x := Nat.floor_le (by positivity)
+  let K := C * Real.log (Real.log x)
+  have hK : 1 ≤ K := by dsimp [K]; nlinarith [hxprime.1]
+  have hbound := caseTwoBudgetCount F M d K C (Real.log (Real.log x)) B hK hC ht hB le_rfl hd
+    (by simpa only [Real.exp_log (Real.log_pos hx1)] using hJ)
+    (hxprime.2 M hM hMX) (by
+      intro V hV
+      exact ⟨(hF V hV).1, Nat.le_floor (hF V hV).2.1, (hF V hV).2.2⟩)
+  rw [Real.exp_log (Real.log_pos hx1)] at hbound
+  -- Bound the dyadic factor at M <= x^2 by twice its counterpart at floor(x),
+  -- or directly by a constant times log x.
+  have hMxx : (M : ℝ) ≤ x ^ 2 := by
+    have hh := Real.log_le_sub_one_of_pos hx0
+    nlinarith
+  have hlogM : Real.log (M : ℝ) ≤ 2 * Real.log x := by
+    have hh := Real.log_le_log (by exact_mod_cast (show 0 < M by omega)) hMxx
+    simpa only [Real.log_pow, Nat.cast_ofNat] using hh
+  have hD : 2 * (⌊Real.log M / Real.log 2⌋₊ + 1 : ℕ) ≤
+      (4 / Real.log 2 + 2) * (1 + Real.log x) := by
+    have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
+    have hlogM0 : 0 ≤ Real.log (M : ℝ) := Real.log_nonneg (by exact_mod_cast (show 1 ≤ M by omega))
+    have hf := Nat.floor_le (div_nonneg hlogM0 hlog2.le)
+    have hh := div_le_div_of_nonneg_right hlogM hlog2.le
+    have hi : 0 < 1 / Real.log 2 := one_div_pos.mpr hlog2
+    push_cast
+    simp only [div_eq_mul_inv, one_mul] at hf hh hi ⊢
+    nlinarith
+  -- This constant is absorbed separately below, without an error depending on d.
+  have hfinal : (F.card : ℝ) ≤ B * x ^ (a / 2) *
+      ((4 / Real.log 2 + 2) * (1 + Real.log x)) := by
+    have hh := mul_le_mul_of_nonneg_left hxerr (show 0 ≤ 2 * B by positivity)
+    have hh' := mul_le_mul_of_nonneg_right hh (Nat.cast_nonneg (⌊Real.log M / Real.log 2⌋₊ + 1))
+    have hD' := mul_le_mul_of_nonneg_left hD (show 0 ≤ B * x ^ (a / 2) by positivity)
+    nlinarith
+  -- Filled by the uniform constant-log absorption chosen before fixing F,d,B.
+  exact hfinal.trans (by
+    have hneeded : (4 / Real.log 2 + 2) * (1 + Real.log x) ≤ x ^ (a / 2) := by
+      exact hxdy
+    calc
+      _ ≤ B * x ^ (a / 2) * x ^ (a / 2) := by gcongr
+      _ = _ := by rw [mul_assoc, ← Real.rpow_add hx0]; congr 2; ring)
+
+#print axioms caseTwoBudgetUniform
+end AmicableCases
+
+

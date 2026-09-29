@@ -1,0 +1,254 @@
+import ManuscriptArithmetic
+import Mathlib.Analysis.PSeries
+
+namespace AmicableSquarefull
+open scoped BigOperators
+
+def Squarefull (n : ℕ) : Prop := n ≠ 0 ∧ ∀ p ∈ n.primeFactors, 2 ≤ n.factorization p
+
+theorem exponentDecomposition {e : ℕ} (he : 2 ≤ e) :
+    e = 2 * (e / 2 - e % 2) + 3 * (e % 2) := by omega
+
+theorem squarefullRepresentation {n : ℕ} (hn : Squarefull n) :
+    ∃ a b : ℕ, 0 < a ∧ 0 < b ∧ n = a ^ 2 * b ^ 3 := by
+  let a := ∏ p ∈ n.primeFactors, p ^ (n.factorization p / 2 - n.factorization p % 2)
+  let b := ∏ p ∈ n.primeFactors, p ^ (n.factorization p % 2)
+  refine ⟨a, b, ?_, ?_, ?_⟩
+  · exact Finset.prod_pos (fun p hp => pow_pos (Nat.prime_of_mem_primeFactors hp).pos _)
+  · exact Finset.prod_pos (fun p hp => pow_pos (Nat.prime_of_mem_primeFactors hp).pos _)
+  · have hbase : ∏ p ∈ n.primeFactors, p ^ n.factorization p = n := by
+      simpa only [Finsupp.prod, Nat.support_factorization] using Nat.prod_factorization_pow_eq_self hn.1
+    rw [← hbase]
+    change (∏ p ∈ n.primeFactors, p ^ n.factorization p) =
+      (∏ p ∈ n.primeFactors, p ^ (n.factorization p / 2 - n.factorization p % 2)) ^ 2 *
+      (∏ p ∈ n.primeFactors, p ^ (n.factorization p % 2)) ^ 3
+    rw [← Finset.prod_pow, ← Finset.prod_pow, ← Finset.prod_mul_distrib]
+    apply Finset.prod_congr rfl
+    intro p hp
+    rw [← pow_mul, ← pow_mul, ← pow_add]
+    congr 1
+    have hh := exponentDecomposition (hn.2 p hp)
+    omega
+
+theorem representationBounds {n a b : ℕ} (ha : 0 < a) (hb : 0 < b)
+    (hn : n = a ^ 2 * b ^ 3) : a ≤ n ∧ b ≤ n := by
+  have ha1 : 1 ≤ a := ha
+  have hb1 : 1 ≤ b := hb
+  have ha2 : a ≤ a ^ 2 := by nlinarith
+  have hb3 : b ≤ b ^ 3 := by nlinarith [sq_nonneg (b : ℤ)]
+  constructor
+  · calc
+      a ≤ a ^ 2 := ha2
+      _ ≤ a ^ 2 * b ^ 3 := Nat.le_mul_of_pos_right _ (pow_pos hb _)
+      _ = n := hn.symm
+  · calc
+      b ≤ b ^ 3 := hb3
+      _ ≤ a ^ 2 * b ^ 3 := Nat.le_mul_of_pos_left _ (pow_pos ha _)
+      _ = n := hn.symm
+
+theorem positiveCardBound (B : Finset ℕ) {T : ℝ} (hT : 0 ≤ T)
+    (hB : ∀ a ∈ B, 0 < a ∧ (a : ℝ) ≤ T) : (B.card : ℝ) ≤ T := by
+  have hsub : B ⊆ Finset.Icc 1 ⌊T⌋₊ := by
+    intro a ha
+    exact Finset.mem_Icc.mpr ⟨(hB a ha).1, (Nat.le_floor_iff hT).mpr (hB a ha).2⟩
+  have hh := Finset.card_le_card hsub
+  simp only [Nat.card_Icc, Nat.add_sub_cancel] at hh
+  exact (Nat.cast_le.mpr hh).trans (Nat.floor_le hT)
+
+theorem pairFirstBound {a b N : ℕ} (hb : 0 < b) (h : a ^ 2 * b ^ 3 ≤ N) :
+    (a : ℝ) ≤ (N : ℝ) ^ (1 / 2 : ℝ) * (b : ℝ) ^ (-(3 / 2 : ℝ)) := by
+  have hb0 : (0 : ℝ) < b := by exact_mod_cast hb
+  have hh : (a : ℝ) ^ 2 ≤ (N : ℝ) / (b : ℝ) ^ 3 := by
+    apply (le_div_iff₀ (pow_pos hb0 _)).mpr
+    exact_mod_cast h
+  have hh' := Real.rpow_le_rpow (sq_nonneg (a : ℝ)) hh (by norm_num : (0 : ℝ) ≤ 1 / 2)
+  rw [← Real.rpow_natCast_mul (Nat.cast_nonneg a)] at hh'
+  norm_num at hh'
+  rw [Real.div_rpow (Nat.cast_nonneg N) (pow_nonneg hb0.le _),
+    ← Real.rpow_natCast_mul hb0.le] at hh'
+  norm_num at hh'
+  simpa only [Real.rpow_neg hb0.le, div_eq_mul_inv] using hh'
+
+noncomputable def countConstant : ℝ := ∑' b : ℕ, (b : ℝ) ^ (-(3 / 2 : ℝ))
+
+theorem squarefullCount (B : Finset ℕ) (N : ℕ)
+    (hB : ∀ n ∈ B, Squarefull n ∧ n ≤ N) :
+    (B.card : ℝ) ≤ countConstant * (N : ℝ) ^ (1 / 2 : ℝ) := by
+  classical
+  let I := Finset.Icc 1 N
+  let F := (I ×ˢ I).filter (fun ba : ℕ × ℕ => ba.2 ^ 2 * ba.1 ^ 3 ≤ N)
+  have hsub : B ⊆ F.image (fun ba => ba.2 ^ 2 * ba.1 ^ 3) := by
+    intro n hn
+    obtain ⟨a, b, ha, hb, heq⟩ := squarefullRepresentation (hB n hn).1
+    obtain ⟨han, hbn⟩ := representationBounds ha hb heq
+    apply Finset.mem_image.mpr
+    refine ⟨(b, a), ?_, heq.symm⟩
+    exact Finset.mem_filter.mpr ⟨Finset.mem_product.mpr
+      ⟨Finset.mem_Icc.mpr ⟨hb, hbn.trans (hB n hn).2⟩,
+        Finset.mem_Icc.mpr ⟨ha, han.trans (hB n hn).2⟩⟩, heq ▸ (hB n hn).2⟩
+  have hcard : B.card ≤ F.card :=
+    (Finset.card_le_card hsub).trans Finset.card_image_le
+  have hsplit : F.card = ∑ b ∈ I, (I.filter (fun a => a ^ 2 * b ^ 3 ≤ N)).card := by
+    simp only [F, Finset.card_eq_sum_ones, Finset.sum_filter, Finset.sum_product]
+  have hrow : ∀ b ∈ I, ((I.filter (fun a => a ^ 2 * b ^ 3 ≤ N)).card : ℝ) ≤
+      (N : ℝ) ^ (1 / 2 : ℝ) * (b : ℝ) ^ (-(3 / 2 : ℝ)) := by
+    intro b hb
+    apply positiveCardBound _ (by positivity)
+    intro a ha
+    obtain ⟨haI, hab⟩ := Finset.mem_filter.mp ha
+    exact ⟨(Finset.mem_Icc.mp haI).1,
+      pairFirstBound (Finset.mem_Icc.mp hb).1 hab⟩
+  calc
+    (B.card : ℝ) ≤ F.card := Nat.cast_le.mpr hcard
+    _ = ∑ b ∈ I, ((I.filter (fun a => a ^ 2 * b ^ 3 ≤ N)).card : ℝ) := by
+      rw [hsplit, Nat.cast_sum]
+    _ ≤ ∑ b ∈ I, (N : ℝ) ^ (1 / 2 : ℝ) * (b : ℝ) ^ (-(3 / 2 : ℝ)) :=
+      Finset.sum_le_sum hrow
+    _ ≤ (N : ℝ) ^ (1 / 2 : ℝ) * countConstant := by
+      rw [← Finset.mul_sum]
+      apply mul_le_mul_of_nonneg_left _ (by positivity)
+      exact Summable.sum_le_tsum I (fun b _ => Real.rpow_nonneg (Nat.cast_nonneg b) _)
+        (Real.summable_nat_rpow.mpr (by norm_num))
+    _ = _ := mul_comm _ _
+
+theorem squarefullCountReal (B : Finset ℕ) {Z : ℝ} (hZ : 0 ≤ Z)
+    (hB : ∀ n ∈ B, Squarefull n ∧ (n : ℝ) ≤ Z) :
+    (B.card : ℝ) ≤ countConstant * Z ^ (1 / 2 : ℝ) := by
+  have hh := squarefullCount B ⌊Z⌋₊ (fun n hn =>
+    ⟨(hB n hn).1, (Nat.le_floor_iff hZ).mpr (hB n hn).2⟩)
+  exact hh.trans (mul_le_mul_of_nonneg_left
+    (Real.rpow_le_rpow (Nat.cast_nonneg _) (Nat.floor_le hZ) (by norm_num))
+    (tsum_nonneg (fun n => Real.rpow_nonneg (Nat.cast_nonneg n) _)))
+
+theorem dyadicShellBound (B : Finset ℕ) {T : ℝ} (hT : 0 < T) (k : ℕ)
+    (hB : ∀ n ∈ B, Squarefull n ∧ (2 : ℝ) ^ k * T ≤ n ∧
+      (n : ℝ) ≤ (2 : ℝ) ^ (k + 1) * T) :
+    ∑ n ∈ B, (1 : ℝ) / n ≤
+      countConstant * (2 : ℝ) ^ (1 / 2 : ℝ) * T ^ (-(1 / 2 : ℝ)) *
+        ((2 : ℝ) ^ (-(1 / 2 : ℝ))) ^ k := by
+  have hcard := squarefullCountReal B (by positivity : 0 ≤ (2 : ℝ) ^ (k + 1) * T)
+    (fun n hn => ⟨(hB n hn).1, (hB n hn).2.2⟩)
+  have hsum : ∑ n ∈ B, (1 : ℝ) / n ≤ (B.card : ℝ) / ((2 : ℝ) ^ k * T) := by
+    calc
+      _ ≤ ∑ n ∈ B, (1 : ℝ) / ((2 : ℝ) ^ k * T) := Finset.sum_le_sum (by
+        intro n hn
+        exact one_div_le_one_div_of_le (by positivity) (hB n hn).2.1)
+      _ = _ := by simp [div_eq_mul_inv]
+  refine hsum.trans ((div_le_div_of_nonneg_right hcard (by positivity)).trans_eq ?_)
+  rw [Real.mul_rpow (by positivity) hT.le, Real.rpow_neg hT.le,
+    Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 2)]
+  rw [div_eq_mul_inv, mul_inv_rev, ← Real.rpow_natCast_mul (by norm_num : (0 : ℝ) ≤ 2),
+    inv_pow, ← Real.rpow_mul_natCast (by norm_num : (0 : ℝ) ≤ 2)]
+  have htwo : (2 : ℝ) ^ ((k + 1 : ℕ) * (1 / 2 : ℝ)) =
+      (2 : ℝ) ^ (1 / 2 : ℝ) * (2 : ℝ) ^ ((k : ℝ) * (1 / 2 : ℝ)) := by
+    rw [← Real.rpow_add (by norm_num)]
+    congr 1
+    push_cast
+    ring
+  rw [htwo]
+  have htinv : T ^ (1 / 2 : ℝ) * T⁻¹ = (T ^ (1 / 2 : ℝ))⁻¹ := by
+    have hh : T ^ (1 / 2 : ℝ) * T ^ (1 / 2 : ℝ) = T := by
+      rw [← Real.rpow_add hT]; norm_num
+    field_simp
+    nlinarith [hh]
+  have hk : (2 : ℝ) ^ ((k : ℝ) * (1 / 2 : ℝ)) * ((2 : ℝ) ^ k)⁻¹ =
+      ((2 : ℝ) ^ ((1 / 2 : ℝ) * k))⁻¹ := by
+    rw [← Real.rpow_natCast, ← Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 2),
+      ← Real.rpow_add (by norm_num), ← Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 2)]
+    congr 1
+    ring
+  calc
+    _ = countConstant * (2 : ℝ) ^ (1 / 2 : ℝ) *
+        (T ^ (1 / 2 : ℝ) * T⁻¹) *
+        ((2 : ℝ) ^ ((k : ℝ) * (1 / 2 : ℝ)) * ((2 : ℝ) ^ k)⁻¹) := by ring
+    _ = _ := by rw [htinv, hk]
+
+noncomputable def tailConstant : ℝ :=
+  countConstant * (2 : ℝ) ^ (1 / 2 : ℝ) *
+    (1 - (2 : ℝ) ^ (-(1 / 2 : ℝ)))⁻¹
+
+theorem squarefullReciprocalTail (B : Finset ℕ) {T : ℝ} (hT : 0 < T)
+    (hB : ∀ n ∈ B, Squarefull n ∧ T < (n : ℝ)) :
+    ∑ n ∈ B, (1 : ℝ) / n ≤ tailConstant * T ^ (-(1 / 2 : ℝ)) := by
+  classical
+  have hcover : ∀ n ∈ B, ∃ k : ℕ,
+      (2 : ℝ) ^ k * T ≤ n ∧ (n : ℝ) ≤ (2 : ℝ) ^ (k + 1) * T := by
+    intro n hn
+    obtain ⟨k, hk1, hk2⟩ := exists_nat_pow_near
+      ((le_div_iff₀ hT).mpr (by simpa using (hB n hn).2.le))
+      (by norm_num : (1 : ℝ) < 2)
+    exact ⟨k, (le_div_iff₀ hT).mp hk1, ((div_lt_iff₀ hT).mp hk2).le⟩
+  choose! idx hidx using hcover
+  let K := B.image idx
+  have hsplit : ∑ n ∈ B, (1 : ℝ) / n =
+      ∑ k ∈ K, ∑ n ∈ B.filter (fun n => idx n = k), (1 : ℝ) / n := by
+    exact (Finset.sum_fiberwise_of_maps_to (fun n hn => Finset.mem_image_of_mem idx hn)
+      (fun n : ℕ => (1 : ℝ) / n)).symm
+  have hr0 : 0 ≤ (2 : ℝ) ^ (-(1 / 2 : ℝ)) := by positivity
+  have hr1 : (2 : ℝ) ^ (-(1 / 2 : ℝ)) < 1 :=
+    Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by norm_num)
+  have hc0 : 0 ≤ countConstant * (2 : ℝ) ^ (1 / 2 : ℝ) * T ^ (-(1 / 2 : ℝ)) := by
+    unfold countConstant
+    positivity
+  calc
+    _ = ∑ k ∈ K, ∑ n ∈ B.filter (fun n => idx n = k), (1 : ℝ) / n := hsplit
+    _ ≤ ∑ k ∈ K, countConstant * (2 : ℝ) ^ (1 / 2 : ℝ) * T ^ (-(1 / 2 : ℝ)) *
+        ((2 : ℝ) ^ (-(1 / 2 : ℝ))) ^ k := by
+      apply Finset.sum_le_sum
+      intro k hk
+      apply dyadicShellBound _ hT k
+      intro n hn
+      obtain ⟨hnB, hnk⟩ := Finset.mem_filter.mp hn
+      exact ⟨(hB n hnB).1, hnk ▸ hidx n hnB⟩
+    _ ≤ countConstant * (2 : ℝ) ^ (1 / 2 : ℝ) * T ^ (-(1 / 2 : ℝ)) *
+        (1 - (2 : ℝ) ^ (-(1 / 2 : ℝ)))⁻¹ := by
+      rw [← Finset.mul_sum]
+      apply mul_le_mul_of_nonneg_left _ hc0
+      have hh := (summable_geometric_of_lt_one hr0 hr1).sum_le_tsum K
+        (fun k _ => pow_nonneg hr0 k)
+      rwa [tsum_geometric_of_lt_one hr0 hr1] at hh
+    _ = _ := by unfold tailConstant; ring
+
+theorem largeSquarefullDivisorCount (B : Finset ℕ) (Z : ℕ) {T : ℝ} (hT : 0 < T)
+    (hB : ∀ n ∈ B, 0 < n ∧ n ≤ Z ∧ ∃ q : ℕ, Squarefull q ∧ q ∣ n ∧ T < (q : ℝ)) :
+    (B.card : ℝ) ≤ (Z : ℝ) * tailConstant * T ^ (-(1 / 2 : ℝ)) := by
+  classical
+  let Q := (Finset.range (Z + 1)).filter (fun q => Squarefull q ∧ T < (q : ℝ))
+  let F := fun q => (Finset.range (Z + 1)).filter (fun n => n ≠ 0 ∧ q ∣ n)
+  have hsub : B ⊆ Q.biUnion F := by
+    intro n hn
+    obtain ⟨hn0, hnZ, q, hq, hqn, hqT⟩ := hB n hn
+    apply Finset.mem_biUnion.mpr
+    refine ⟨q, ?_, ?_⟩
+    · exact Finset.mem_filter.mpr ⟨Finset.mem_range.mpr
+        (Nat.lt_succ_of_le ((Nat.le_of_dvd hn0 hqn).trans hnZ)), hq, hqT⟩
+    · exact Finset.mem_filter.mpr ⟨Finset.mem_range.mpr (Nat.lt_succ_of_le hnZ), hn0.ne', hqn⟩
+  have hcard : B.card ≤ ∑ q ∈ Q, Z / q := by
+    have hh := (Finset.card_le_card hsub).trans Finset.card_biUnion_le
+    simpa only [F, Nat.card_multiples'] using hh
+  have htail := squarefullReciprocalTail Q hT (fun q hq => (Finset.mem_filter.mp hq).2)
+  calc
+    (B.card : ℝ) ≤ ∑ q ∈ Q, ((Z / q : ℕ) : ℝ) := by exact_mod_cast hcard
+    _ ≤ ∑ q ∈ Q, (Z : ℝ) * (1 / q) := by
+      apply Finset.sum_le_sum
+      intro q hq
+      have hqpos : 0 < q := Nat.pos_of_ne_zero (Finset.mem_filter.mp hq).2.1.1
+      have hh := Nat.div_mul_le_self Z q
+      have hh' : ((Z / q : ℕ) : ℝ) * q ≤ Z := by exact_mod_cast hh
+      simpa [div_eq_mul_inv] using
+        (le_div_iff₀ (by exact_mod_cast hqpos : (0 : ℝ) < q)).mpr hh'
+    _ ≤ (Z : ℝ) * (tailConstant * T ^ (-(1 / 2 : ℝ))) := by
+      rw [← Finset.mul_sum]
+      exact mul_le_mul_of_nonneg_left htail (Nat.cast_nonneg Z)
+    _ = _ := by ring
+
+#print axioms largeSquarefullDivisorCount
+#print axioms squarefullReciprocalTail
+#print axioms squarefullCountReal
+#print axioms dyadicShellBound
+#print axioms positiveCardBound
+#print axioms pairFirstBound
+#print axioms squarefullCount
+#print axioms squarefullRepresentation
+#print axioms representationBounds
+end AmicableSquarefull

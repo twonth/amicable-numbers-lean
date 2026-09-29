@@ -1,0 +1,131 @@
+import CaseTwoUniform
+import CaseReconstruction
+import CountFibres
+import DivisorBound
+
+namespace AmicableCases
+open AmicableManuscript AmicableCounting Filter
+open scoped Topology
+
+/-- Data supplied by the divisor selection in Case II; this is a predicate, not an axiom. -/
+structure CaseTwoData (x e : ℝ) (n m R d V : ℕ) : Prop where
+  mpos : 0 < m
+  Rpos : 0 < R
+  eqn : n = m * R
+  nbound : (n : ℝ) ≤ x * Real.log x
+  Rlower : x ^ e ≤ (R : ℝ)
+  Rupper : (R : ℝ) ≤ x ^ (e + e ^ 2)
+  coprime : m.Coprime R
+  crossR : R.Coprime (s n)
+  crossV : V.Coprime n
+  partner : V ∣ s n
+  squarefree : Squarefree V
+  Vbound : (V : ℝ) ≤ x * Real.log x
+  Vlower : x ^ (2 * e + 3 * e ^ 2) ≤ (V : ℝ)
+  dpos : 0 < d
+  dm : d ∣ sigma m
+  dV : d ∣ sigma V
+  omega : (ArithmeticFunction.cardFactors d : ℝ) ≤ Real.log x / Real.log (Real.log x)
+  budget : ((V : ℝ) / d) * Real.exp ((ArithmeticFunction.cardFactors d : ℝ) * Real.log (Real.log x)) ≤
+    x ^ (e - 4 * e ^ 3)
+
+/-- All sums in the final paragraph of Case II, including reconstruction and divisor choices. -/
+theorem caseTwoCounting {e a : ℝ} (he : 0 < e) (he1 : e < 1 / 10) (ha : 0 < a) :
+    ∀ᶠ x : ℝ in atTop, ∀ F : Finset ℕ,
+      (∀ n ∈ F, ∃ m R d V : ℕ, CaseTwoData x e n m R d V) →
+      (F.card : ℝ) ≤ x ^ (1 - 4 * e ^ 3 + a) := by
+  classical
+  have hu : e + e ^ 2 ≤ (1 : ℝ) := by nlinarith
+  have hgap : 2 * (e + e ^ 2) < 2 * e + 3 * e ^ 2 := by nlinarith [sq_pos_of_pos he]
+  filter_upwards [caseTwoBudgetUniform (show 0 < a / 4 by positivity),
+    AmicableDivisors.sigmaDivisorCountUniform (show 0 < a / 4 by positivity),
+    reconstructionPowerGap hu hgap,
+    AmicableAbsorption.constantLogAbsorb 1 (show 0 < a / 2 by positivity),
+    eventually_gt_atTop (1 : ℝ)] with x hbudget hdiv hrec hlog hx
+  intro F hF
+  choose! m R d V hw using hF
+  let M := ⌊x * Real.log x / x ^ e⌋₊
+  have hx0 : 0 < x := by linarith
+  have hpow : 0 < x ^ e := Real.rpow_pos_of_pos hx0 e
+  have hmX : ∀ n ∈ F, (m n : ℝ) ≤ x * Real.log x := by
+    intro n hn
+    have hh : m n ≤ n := (Nat.le_mul_of_pos_right _ (hw n hn).Rpos).trans_eq (hw n hn).eqn.symm
+    exact (by exact_mod_cast hh : (m n : ℝ) ≤ n).trans (hw n hn).nbound
+  have hmM : ∀ n ∈ F, 0 < m n ∧ m n ≤ M := by
+    intro n hn
+    refine ⟨(hw n hn).mpos, Nat.le_floor ?_⟩
+    apply (le_div_iff₀ hpow).mpr
+    have heq : (n : ℝ) = (m n : ℝ) * R n := by exact_mod_cast (hw n hn).eqn
+    have hh := mul_le_mul_of_nonneg_left (hw n hn).Rlower (Nat.cast_nonneg (m n))
+    nlinarith [(hw n hn).nbound]
+  have hdcount : ∀ j ∈ F.image m,
+      (((F.filter (fun n => m n = j)).image d).card : ℝ) ≤ x ^ (a / 4) := by
+    intro j hj
+    obtain ⟨n0, hn0, heq0⟩ := Finset.mem_image.mp hj
+    subst j
+    have hspos : 0 < sigma (m n0) := by rw [sigma_eq_s_add_self]; have := (hw n0 hn0).mpos; omega
+    have hsub : (F.filter (fun n => m n = m n0)).image d ⊆ (sigma (m n0)).divisors := by
+      intro k hk
+      obtain ⟨n, hn, rfl⟩ := Finset.mem_image.mp hk
+      obtain ⟨hnF, heqm⟩ := Finset.mem_filter.mp hn
+      exact Nat.mem_divisors.mpr ⟨heqm ▸ (hw n hnF).dm, hspos.ne'⟩
+    exact (Nat.cast_le.mpr (Finset.card_le_card hsub)).trans (hdiv (m n0) (hmX n0 hn0))
+  have hVcount : ∀ j ∈ F.image m, ∀ k ∈ (F.filter (fun n => m n = j)).image d,
+      (((F.filter (fun n => m n = j ∧ d n = k)).image V).card : ℝ) ≤
+        x ^ (e - 4 * e ^ 3 + a / 4) := by
+    intro j hj k hk
+    obtain ⟨n0, hn0, heq0⟩ := Finset.mem_image.mp hk
+    have hn0F := (Finset.mem_filter.mp hn0).1
+    have hh := hbudget ((F.filter (fun n => m n = j ∧ d n = k)).image V) k
+      (x ^ (e - 4 * e ^ 3)) (heq0 ▸ (hw n0 hn0F).dpos) (by positivity)
+      (heq0 ▸ (hw n0 hn0F).omega) (by
+        intro W hW
+        obtain ⟨n, hn, rfl⟩ := Finset.mem_image.mp hW
+        obtain ⟨hnF, hmj, hdk⟩ := Finset.mem_filter.mp hn
+        refine ⟨(hw n hnF).squarefree, (hw n hnF).Vbound, ?_, ?_⟩
+        · exact hdk ▸ (hw n hnF).dV
+        · exact hdk ▸ (hw n hnF).budget)
+    simpa only [← Real.rpow_add hx0] using hh
+  have huniq : ∀ n1 ∈ F, ∀ n2 ∈ F, m n1 = m n2 → V n1 = V n2 → n1 = n2 := by
+    intro n1 hn1 n2 hn2 hm hV
+    have hR : R n1 = R n2 := by
+      apply hrec (m n1) (V n1) (R n1) (R n2) (hw n1 hn1).Rpos (hw n2 hn2).Rpos
+        (hw n1 hn1).Rupper (hw n2 hn2).Rupper (hw n1 hn1).Vlower (hw n1 hn1).coprime
+      · simpa only [hm] using (hw n2 hn2).coprime
+      · simpa only [← (hw n1 hn1).eqn] using (hw n1 hn1).crossR
+      · simpa only [hm, ← (hw n2 hn2).eqn] using (hw n2 hn2).crossR
+      · simpa only [← (hw n1 hn1).eqn] using (hw n1 hn1).crossV
+      · simpa only [← (hw n1 hn1).eqn] using (hw n1 hn1).partner
+      · simpa only [hm, hV, ← (hw n2 hn2).eqn] using (hw n2 hn2).partner
+    rw [(hw n1 hn1).eqn, (hw n2 hn2).eqn, hm, hR]
+  have hc := threeWitnessCount F m d V M (x ^ (a / 4)) (x ^ (e - 4 * e ^ 3 + a / 4))
+    (by positivity) (by positivity) hmM hdcount hVcount huniq
+  have hlogpos := Real.log_pos hx
+  have hM : (M : ℝ) ≤ x * Real.log x / x ^ e := Nat.floor_le (by positivity)
+  have hcalc : (x * Real.log x / x ^ e) * x ^ (a / 4) * x ^ (e - 4 * e ^ 3 + a / 4) =
+      Real.log x * x ^ (1 - 4 * e ^ 3 + a / 2) := by
+    have hp : x * x ^ (-e) * x ^ (a / 4) * x ^ (e - 4 * e ^ 3 + a / 4) =
+        x ^ (1 - 4 * e ^ 3 + a / 2) := by
+      calc
+        _ = x ^ (1 : ℝ) * x ^ (-e) * x ^ (a / 4) * x ^ (e - 4 * e ^ 3 + a / 4) := by rw [Real.rpow_one]
+        _ = x ^ (1 - 4 * e ^ 3 + a / 2) := by
+          rw [← Real.rpow_add hx0, ← Real.rpow_add hx0, ← Real.rpow_add hx0]
+          congr 1
+          ring
+    calc
+      _ = Real.log x * (x * x ^ (-e) * x ^ (a / 4) * x ^ (e - 4 * e ^ 3 + a / 4)) := by
+        rw [Real.rpow_neg hx0.le]
+        ring
+      _ = _ := by rw [hp]
+  calc
+    (F.card : ℝ) ≤ (M : ℝ) * x ^ (a / 4) * x ^ (e - 4 * e ^ 3 + a / 4) := hc
+    _ ≤ (x * Real.log x / x ^ e) * x ^ (a / 4) * x ^ (e - 4 * e ^ 3 + a / 4) := by gcongr
+    _ = Real.log x * x ^ (1 - 4 * e ^ 3 + a / 2) := hcalc
+    _ ≤ x ^ (a / 2) * x ^ (1 - 4 * e ^ 3 + a / 2) := by
+      gcongr
+      linarith
+    _ = _ := by rw [← Real.rpow_add hx0]; congr 1; ring
+
+#print axioms caseTwoCounting
+end AmicableCases
+

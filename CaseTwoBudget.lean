@@ -1,0 +1,56 @@
+import SharpFactorCost
+
+namespace AmicableCases
+open AmicableManuscript AmicableSigmaCounting AmicableGcdCounting
+open scoped BigOperators
+
+/-- The last reciprocal-sum calculation of Case II, with its error term explicit. -/
+theorem caseTwoBudgetCount (F : Finset ℕ) (M d : ℕ) (K C t B : ℝ)
+    (hK : 1 ≤ K) (hC : 1 ≤ C) (ht : 0 < t) (hB : 0 ≤ B)
+    (hKt : K ≤ C * t) (hd : 0 < d)
+    (hJ : (ArithmeticFunction.cardFactors d : ℝ) ≤ Real.exp t / t)
+    (hprime : ∀ a : ℕ, 0 < a →
+      ∑ p ∈ (Finset.range (M + 1)).filter (fun p => p.Prime ∧ a ∣ p + 1), (1 : ℝ) / p ≤ K / a.totient)
+    (hF : ∀ V ∈ F, Squarefree V ∧ V ≤ M ∧ d ∣ sigma V ∧
+      ((V : ℝ) / d) * Real.exp ((ArithmeticFunction.cardFactors d : ℝ) * t) ≤ B) :
+    (F.card : ℝ) ≤ 2 * B * Real.exp (Real.log (2 * C) * Real.exp t / t) *
+      (⌊Real.log M / Real.log 2⌋₊ + 1 : ℕ) := by
+  let J := ArithmeticFunction.cardFactors d
+  let E := Real.exp ((J : ℝ) * t)
+  let T := B * d / E
+  have hE : 0 < E := Real.exp_pos _
+  have hT : 0 ≤ T := by dsimp [T]; positivity
+  have hsize : ∀ V ∈ F, (V : ℝ) ≤ T := by
+    intro V hV
+    apply (le_div_iff₀ hE).mpr
+    have hh := (hF V hV).2.2.2
+    change ((V : ℝ) / d) * E ≤ B at hh
+    rw [div_mul_eq_mul_div] at hh
+    exact (div_le_iff₀ (by exact_mod_cast hd : (0 : ℝ) < d)).mp hh
+  have hsum := sigmaReciprocalBound F M d K hK hd hprime (fun V hV =>
+    ⟨(hF V hV).1, (hF V hV).2.1, (hF V hV).2.2.1⟩)
+  have hcard : (F.card : ℝ) ≤ T * ∑ V ∈ F, (1 : ℝ) / V := by
+    rw [Finset.mul_sum]
+    calc
+      (F.card : ℝ) = ∑ _ ∈ F, (1 : ℝ) := by simp
+      _ ≤ ∑ V ∈ F, T * (1 / V) := by
+        apply Finset.sum_le_sum
+        intro V hV
+        have hpos : (0 : ℝ) < V := by exact_mod_cast Nat.pos_of_ne_zero (hF V hV).1.ne_zero
+        simpa [div_eq_mul_inv] using (le_div_iff₀ hpos).mpr (by simpa using hsize V hV)
+  have hcost := sharpFactorCost (show 0 ≤ K by linarith) hC ht hKt d hJ
+  have hs' : ∑ V ∈ F, (1 : ℝ) / V ≤
+      2 * (Real.exp ((J : ℝ) * t + Real.log (2 * C) * Real.exp t / t) / d) *
+        (⌊Real.log M / Real.log 2⌋₊ + 1 : ℕ) := by
+    apply hsum.trans
+    change 2 * (factorCost K d / d) * _ ≤ _
+    gcongr
+  have hfin := hcard.trans (mul_le_mul_of_nonneg_left hs' hT)
+  convert hfin using 1
+  dsimp [T, E]
+  rw [Real.exp_add]
+  field_simp [(Real.exp_pos ((J : ℝ) * t)).ne', (by exact_mod_cast hd.ne' : (d : ℝ) ≠ 0)]
+  <;> ring
+
+#print axioms caseTwoBudgetCount
+end AmicableCases

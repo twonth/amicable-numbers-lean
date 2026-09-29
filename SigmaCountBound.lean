@@ -1,0 +1,86 @@
+import SigmaCounting
+import TotientBounds
+
+namespace AmicableSigmaCounting
+open scoped BigOperators
+open AmicableManuscript
+
+theorem fixedWitnessBound (F : Finset ℕ) (N M d : ℕ) (l : List ℕ) (K : ℝ)
+    (hK : 1 ≤ K) (hd : 0 < d) (hNM : N ≤ M)
+    (hl : (∀ a ∈ l, 1 < a) ∧ l.prod = d)
+    (hprime : ∀ a : ℕ, 0 < a →
+      ∑ p ∈ (Finset.range (M + 1)).filter (fun p => p.Prime ∧ a ∣ p + 1), (1 : ℝ) / p ≤ K / a.totient)
+    (hF : ∀ V ∈ F, 0 < V ∧ V ≤ N ∧ Witness d V l) :
+    (F.card : ℝ) ≤ (N : ℝ) * (2 * K) ^ ArithmeticFunction.cardFactors d / d := by
+  have hcount := fixedFactorizationCount F N M l (by
+    intro V hV
+    obtain ⟨q, hq, hqd⟩ := (hF V hV).2.2.2.2
+    exact ⟨(hF V hV).1, (hF V hV).2.1, q,
+      fun i => ⟨(hq i).1, (hq i).2.1, ((hq i).2.2.trans (hF V hV).2.1).trans hNM⟩, hqd⟩)
+  have hlen := AmicablePartitions.factorListLengthNat hd l hl.1 hl.2
+  let T := (l.map Nat.totient).prod
+  have hTpos : 0 < T := List.prod_pos (by
+    intro a ha
+    obtain ⟨b, hb, rfl⟩ := List.mem_map.mp ha
+    exact Nat.totient_pos.mpr (by have := hl.1 b hb; omega))
+  have hprodT : (∏ i : Fin l.length, ((l.get i).totient : ℝ)) = T := by
+    rw [← Nat.cast_prod, ← List.prod_ofFn]
+    congr 1
+    change (List.ofFn (Nat.totient ∘ l.get)).prod = T
+    rw [← List.map_ofFn, List.ofFn_get]
+  have hcost : (∏ i : Fin l.length,
+      ∑ p ∈ (Finset.range (M + 1)).filter (fun p => p.Prime ∧ l.get i ∣ p + 1), (1 : ℝ) / p)
+      ≤ (2 * K) ^ ArithmeticFunction.cardFactors d / d := by
+    calc
+      _ ≤ ∏ i : Fin l.length, K / (l.get i).totient := Finset.prod_le_prod₀
+        (by intros; positivity) (fun i _ => hprime _ (by have := hl.1 _ (List.get_mem l i); omega))
+      _ = K ^ l.length / T := by rw [Finset.prod_div_distrib, hprodT]; simp
+      _ ≤ K ^ ArithmeticFunction.cardFactors d / T := div_le_div_of_nonneg_right
+        (pow_le_pow_right₀ hK hlen) (Nat.cast_nonneg T)
+      _ ≤ (2 * K) ^ ArithmeticFunction.cardFactors d / d := by
+        apply (div_le_div_iff₀ (by exact_mod_cast hTpos : (0 : ℝ) < T)
+          (by exact_mod_cast hd : (0 : ℝ) < d)).mpr
+        have ht := AmicableTotient.factorTotientBound l (fun a ha => by have := hl.1 a ha; omega)
+        rw [hl.2] at ht
+        have htR : (d : ℝ) ≤ (2 : ℝ) ^ ArithmeticFunction.cardFactors d * T := by exact_mod_cast ht
+        have hh := mul_le_mul_of_nonneg_left htR (pow_nonneg (by linarith : 0 ≤ K) (ArithmeticFunction.cardFactors d))
+        rw [mul_pow]
+        nlinarith
+  exact hcount.trans (by simpa only [mul_div_assoc] using mul_le_mul_of_nonneg_left hcost (Nat.cast_nonneg N))
+
+theorem sigmaDivisibilityBound (F : Finset ℕ) (N M d : ℕ) (K : ℝ)
+    (hK : 1 ≤ K) (hd : 0 < d) (hNM : N ≤ M)
+    (hprime : ∀ a : ℕ, 0 < a →
+      ∑ p ∈ (Finset.range (M + 1)).filter (fun p => p.Prime ∧ a ∣ p + 1), (1 : ℝ) / p ≤ K / a.totient)
+    (hF : ∀ V ∈ F, Squarefree V ∧ V ≤ N ∧ d ∣ sigma V) :
+    (F.card : ℝ) ≤ (N : ℝ) * (2 * K) ^ ArithmeticFunction.cardFactors d *
+      (ArithmeticFunction.cardFactors d : ℝ) ^ ArithmeticFunction.cardFactors d / d := by
+  classical
+  choose! l hl using fun V hV => existsWitness hd (hF V hV).1 (hF V hV).2.2
+  let B := F.image l
+  have hB : ∀ a ∈ B, (∀ b ∈ a, 1 < b) ∧ a.prod = d := by
+    intro a ha
+    obtain ⟨V, hV, rfl⟩ := Finset.mem_image.mp ha
+    exact ⟨(hl V hV).1, (hl V hV).2.1⟩
+  have hcardB := AmicablePartitions.allFactorListsBoundNat hd B hB
+  have hsplit := Finset.sum_fiberwise_of_maps_to (s := F) (t := B) (fun V hV => Finset.mem_image_of_mem l hV)
+    (fun _ : ℕ => (1 : ℝ))
+  have hbound : (F.card : ℝ) ≤ (B.card : ℝ) * ((N : ℝ) * (2 * K) ^ ArithmeticFunction.cardFactors d / d) := by
+    calc
+      _ = ∑ a ∈ B, ((F.filter (fun V => l V = a)).card : ℝ) := by simpa [B] using hsplit.symm
+      _ ≤ ∑ _ ∈ B, (N : ℝ) * (2 * K) ^ ArithmeticFunction.cardFactors d / d := by
+        apply Finset.sum_le_sum
+        intro a ha
+        apply fixedWitnessBound _ N M d a K hK hd hNM (hB a ha) hprime
+        intro V hV
+        obtain ⟨hVF, hla⟩ := Finset.mem_filter.mp hV
+        exact ⟨Nat.pos_of_ne_zero (hF V hVF).1.ne_zero, (hF V hVF).2.1, hla ▸ hl V hVF⟩
+      _ = _ := by simp
+  have hcardR : (B.card : ℝ) ≤ (ArithmeticFunction.cardFactors d : ℝ) ^ ArithmeticFunction.cardFactors d := by
+    exact_mod_cast hcardB
+  have hh := mul_le_mul_of_nonneg_right hcardR (show 0 ≤ (N : ℝ) * (2 * K) ^ ArithmeticFunction.cardFactors d / d by positivity)
+  exact hbound.trans (hh.trans_eq (by ring))
+
+#print axioms fixedWitnessBound
+#print axioms sigmaDivisibilityBound
+end AmicableSigmaCounting

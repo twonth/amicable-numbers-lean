@@ -1,0 +1,114 @@
+import SigmaCountBound
+import ReciprocalTails
+import GcdReduction
+
+namespace AmicableGcdCounting
+open scoped BigOperators
+open AmicableManuscript
+
+noncomputable def factorCost (K : ℝ) (d : ℕ) : ℝ :=
+  (2 * K) ^ ArithmeticFunction.cardFactors d *
+    (ArithmeticFunction.cardFactors d : ℝ) ^ ArithmeticFunction.cardFactors d
+
+theorem fixedDivisorCount (F : Finset ℕ) (N d : ℕ) (K : ℝ) (hK : 1 ≤ K) (hd : 0 < d)
+    (hprime : ∀ a : ℕ, 0 < a →
+      ∑ p ∈ (Finset.range (N + 1)).filter (fun p => p.Prime ∧ a ∣ p + 1), (1 : ℝ) / p ≤ K / a.totient)
+    (hF : ∀ n ∈ F, Squarefree n ∧ n ≤ N ∧ d ∣ n ∧ d ∣ sigma (n / d)) :
+    (F.card : ℝ) ≤ (N : ℝ) * factorCost K d / (d : ℝ) ^ 2 := by
+  classical
+  let B := F.image (fun n => n / d)
+  have hinj : Set.InjOn (fun n => n / d) F := by
+    intro n hn m hm heq
+    have hn' := Nat.mul_div_cancel' (hF n hn).2.2.1
+    have hm' := Nat.mul_div_cancel' (hF m hm).2.2.1
+    change n / d = m / d at heq
+    rw [heq] at hn'
+    omega
+  have hB : ∀ b ∈ B, Squarefree b ∧ b ≤ N / d ∧ d ∣ sigma b := by
+    intro b hb
+    obtain ⟨n, hn, rfl⟩ := Finset.mem_image.mp hb
+    exact ⟨(hF n hn).1.squarefree_of_dvd (Nat.div_dvd_of_dvd (hF n hn).2.2.1),
+      Nat.div_le_div_right (hF n hn).2.1, (hF n hn).2.2.2⟩
+  have hh := AmicableSigmaCounting.sigmaDivisibilityBound B (N / d) N d K hK hd (Nat.div_le_self N d) hprime hB
+  have hdiv : ((N / d : ℕ) : ℝ) ≤ (N : ℝ) / d := by
+    apply (le_div_iff₀ (show (0 : ℝ) < d by exact_mod_cast hd)).mpr
+    exact_mod_cast Nat.div_mul_le_self N d
+  have hcost : 0 ≤ factorCost K d := by unfold factorCost; positivity
+  calc
+    (F.card : ℝ) = B.card := by rw [Finset.card_image_of_injOn hinj]
+    _ ≤ ((N / d : ℕ) : ℝ) * factorCost K d / d := by simpa only [factorCost, mul_assoc] using hh
+    _ ≤ ((N : ℝ) / d) * factorCost K d / d :=
+      div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_right hdiv hcost) (Nat.cast_nonneg d)
+    _ = _ := by ring
+
+theorem divisorFamilyCount (F D : Finset ℕ) (N : ℕ) (K : ℝ) (hK : 1 ≤ K)
+    (hD : ∀ d ∈ D, 0 < d)
+    (hprime : ∀ a : ℕ, 0 < a →
+      ∑ p ∈ (Finset.range (N + 1)).filter (fun p => p.Prime ∧ a ∣ p + 1), (1 : ℝ) / p ≤ K / a.totient)
+    (hF : ∀ n ∈ F, Squarefree n ∧ n ≤ N ∧ ∃ d ∈ D, d ∣ n ∧ d ∣ sigma (n / d)) :
+    (F.card : ℝ) ≤ (N : ℝ) * ∑ d ∈ D, factorCost K d / (d : ℝ) ^ 2 := by
+  classical
+  choose! d hd hddiv hdsig using fun n hn => (hF n hn).2.2
+  have hsplit := Finset.sum_fiberwise_of_maps_to hd (fun _ : ℕ => (1 : ℝ))
+  calc
+    (F.card : ℝ) = ∑ a ∈ D, ((F.filter (fun n => d n = a)).card : ℝ) := by simpa using hsplit.symm
+    _ ≤ ∑ a ∈ D, (N : ℝ) * factorCost K a / (a : ℝ) ^ 2 := by
+      apply Finset.sum_le_sum
+      intro a ha
+      apply fixedDivisorCount _ N a K hK (hD a ha) hprime
+      intro n hn
+      obtain ⟨hnF, hda⟩ := Finset.mem_filter.mp hn
+      exact ⟨(hF n hnF).1, (hF n hnF).2.1, hda ▸ hddiv n hnF, hda ▸ hdsig n hnF⟩
+    _ = _ := by rw [Finset.mul_sum]; apply Finset.sum_congr rfl; intros; ring
+
+theorem primeDivisorFamilyCount (F D : Finset ℕ) (N : ℕ) (K T : ℝ) (hK : 1 ≤ K) (hT : 2 ≤ T)
+    (hD : ∀ p ∈ D, p.Prime ∧ T < (p : ℝ))
+    (hprime : ∀ a : ℕ, 0 < a →
+      ∑ p ∈ (Finset.range (N + 1)).filter (fun p => p.Prime ∧ a ∣ p + 1), (1 : ℝ) / p ≤ K / a.totient)
+    (hF : ∀ n ∈ F, Squarefree n ∧ n ≤ N ∧ ∃ p ∈ D, p ∣ n ∧ p ∣ sigma (n / p)) :
+    (F.card : ℝ) ≤ 4 * K * N / T := by
+  have hh := divisorFamilyCount F D N K hK (fun p hp => (hD p hp).1.pos) hprime hF
+  have heq : ∑ p ∈ D, factorCost K p / (p : ℝ) ^ 2 =
+      2 * K * ∑ p ∈ D, (1 : ℝ) / (p : ℝ) ^ 2 := by
+    rw [Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro p hp
+    simp [factorCost, ArithmeticFunction.cardFactors_apply_prime (hD p hp).1]
+    ring
+  rw [heq] at hh
+  have ht := AmicableTails.reciprocalSquareTail D T hT (fun p hp => (hD p hp).2)
+  have hh' := mul_le_mul_of_nonneg_left ht (show 0 ≤ (N : ℝ) * (2 * K) by positivity)
+  exact hh.trans (by rw [← mul_assoc]; exact hh'.trans_eq (by ring))
+
+#print axioms fixedDivisorCount
+#print axioms divisorFamilyCount
+#print axioms primeDivisorFamilyCount
+end AmicableGcdCounting
+
+namespace AmicableGcdCounting
+open scoped BigOperators
+open AmicableManuscript
+
+theorem boundedCostFamilyCount (F D : Finset ℕ) (N : ℕ) (K T B : ℝ)
+    (hK : 1 ≤ K) (hT : 2 ≤ T) (hB : 0 ≤ B)
+    (hD : ∀ d ∈ D, T < (d : ℝ) ∧ factorCost K d ≤ B)
+    (hprime : ∀ a : ℕ, 0 < a →
+      ∑ p ∈ (Finset.range (N + 1)).filter (fun p => p.Prime ∧ a ∣ p + 1), (1 : ℝ) / p ≤ K / a.totient)
+    (hF : ∀ n ∈ F, Squarefree n ∧ n ≤ N ∧ ∃ d ∈ D, d ∣ n ∧ d ∣ sigma (n / d)) :
+    (F.card : ℝ) ≤ 2 * (N : ℝ) * B / T := by
+  have hh := divisorFamilyCount F D N K hK (by
+    intro d hd
+    have := (hD d hd).1
+    have hdR : (0 : ℝ) < d := by linarith
+    exact_mod_cast hdR) hprime hF
+  have hs : ∑ d ∈ D, factorCost K d / (d : ℝ) ^ 2 ≤ B * ∑ d ∈ D, (1 : ℝ) / (d : ℝ) ^ 2 := by
+    rw [Finset.mul_sum]
+    apply Finset.sum_le_sum
+    intro d hd
+    simpa only [mul_one_div] using div_le_div_of_nonneg_right (hD d hd).2 (sq_nonneg (d : ℝ))
+  have ht := AmicableTails.reciprocalSquareTail D T hT (fun d hd => (hD d hd).1)
+  have hb := hs.trans (mul_le_mul_of_nonneg_left ht hB)
+  exact hh.trans ((mul_le_mul_of_nonneg_left hb (Nat.cast_nonneg N)).trans_eq (by ring))
+
+#print axioms boundedCostFamilyCount
+end AmicableGcdCounting

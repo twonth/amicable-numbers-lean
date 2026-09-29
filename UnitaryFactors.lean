@@ -1,0 +1,37 @@
+import ManuscriptArithmetic
+import Mathlib.Data.Nat.MaxPrimeFac
+
+namespace AmicableStructure
+open AmicableManuscript
+
+theorem unitarySquarefreeDivisor {n B a R : ℕ} (hn : n = B * a)
+    (hsf : Squarefree a) (hBA : B.Coprime a) (hRa : R ∣ a) :
+    ∃ m : ℕ, n = m * R ∧ m.Coprime R ∧ sigma R ∣ sigma n := by
+  let m := B * (a / R)
+  have heq : n = m * R := by dsimp [m]; rw [mul_assoc, Nat.div_mul_cancel hRa, hn]
+  have hcop : m.Coprime R := (hBA.of_dvd_right hRa).mul_left
+    (Nat.coprime_of_squarefree_mul (show Squarefree (a / R * R) by rw [Nat.div_mul_cancel hRa]; exact hsf))
+  refine ⟨m, heq, hcop, ?_⟩
+  rw [heq, sigma_mul hcop]
+  exact dvd_mul_left _ _
+
+theorem primeUnitaryFactor {n B a p : ℕ} (hn : n = B * a)
+    (hsf : Squarefree a) (hBA : B.Coprime a) (hp : p.Prime) (hpa : p ∣ a) :
+    ∃ m : ℕ, n = p * m ∧ p.Coprime m ∧ p + 1 ∣ sigma n := by
+  obtain ⟨m, heq, hcop, hsig⟩ := unitarySquarefreeDivisor hn hsf hBA hpa
+  rw [sigma_prime hp] at hsig
+  exact ⟨m, by simpa only [mul_comm] using heq, hcop.symm, hsig⟩
+
+theorem maxPrimesDistinct {a a' : ℕ} (ha : 1 < a) (ha' : 1 < a')
+    (hcop : a.Coprime a') : a.maxPrimeFac ≠ a'.maxPrimeFac := by
+  intro heq
+  have hp := Nat.prime_maxPrimeFac_of_one_lt ha
+  have hdiv : a.maxPrimeFac ∣ Nat.gcd a a' :=
+    Nat.dvd_gcd Nat.maxPrimeFac_dvd (heq ▸ Nat.maxPrimeFac_dvd)
+  rw [hcop.gcd_eq_one] at hdiv
+  exact hp.not_dvd_one hdiv
+
+#print axioms unitarySquarefreeDivisor
+#print axioms primeUnitaryFactor
+#print axioms maxPrimesDistinct
+end AmicableStructure

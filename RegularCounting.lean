@@ -1,0 +1,77 @@
+import RegularAlternatives
+import CaseOneCounting
+import LogarithmicFactors
+import SavingComparison
+
+namespace AmicableCases
+open AmicableManuscript AmicableStructure AmicableWeight Filter
+open scoped Topology
+
+/-- The complete main counting argument, conditional only on the conclusion of Proposition 3. -/
+theorem regularCounting (C : ℝ) {e c : ℝ} (he : 0 < e) (he1 : e < 1 / 10)
+    (hc : c < 1 / 2 - 4 * e) :
+    ∀ᶠ x : ℝ in atTop, ∀ F : Finset ℕ,
+      (∀ n ∈ F, ∃ n', RegularPair x C n n') →
+      (F.card : ℝ) ≤ x * L x ^ (-c) := by
+  classical
+  let c' := (c + (1 / 2 - 4 * e)) / 2
+  have hcc : c < c' := by dsimp [c']; linarith
+  have hck : c' < 1 / 2 - 4 * e := by dsimp [c']; linarith
+  filter_upwards [regularAlternatives C he he1, caseOneCounting he he1,
+    caseTwoCounting he he1 (show 0 < 2 * e ^ 3 by positivity),
+    AmicableTechnical.exceptionalMultiplesSaving (1 / 2 - 4 * e) c' hck,
+    AmicableScale.powerSavingL c' (show 0 < e ^ 2 / 400 by positivity),
+    AmicableScale.powerSavingL c' (show 0 < 2 * e ^ 3 by positivity),
+    AmicableScale.combineSavings hcc 3 (by norm_num)] with x halt hI hII hbad hpowerI hpowerII hcombine
+  intro F hF
+  let PI := fun n => ∃ m R d p : ℕ, CaseOneData x e (s n) m R d p
+  let PB := fun n => ∃ b : ℕ, b ∣ n ∧ b ∈ AmicableTechnical.exceptionalSet (1 / 2 - 4 * e) x (x * Real.log x)
+  let FI := F.filter PI
+  let FB := (F.filter (fun n => ¬ PI n)).filter PB
+  let FII := (F.filter (fun n => ¬ PI n)).filter (fun n => ¬ PB n)
+  have hFI : (FI.card : ℝ) ≤ x * L x ^ (-c') := by
+    have hinj := amicablePartnerInjective FI (by
+      intro n hn
+      obtain ⟨n',hr⟩ := hF n (Finset.mem_filter.mp hn).1
+      exact ⟨n',hr.pair⟩)
+    have hh := hI (FI.image s) (by
+      intro v hv
+      obtain ⟨n,hn,rfl⟩ := Finset.mem_image.mp hv
+      exact (Finset.mem_filter.mp hn).2)
+    rw [Finset.card_image_of_injOn hinj] at hh
+    exact hh.trans hpowerI
+  have hFB : (FB.card : ℝ) ≤ x * L x ^ (-c') := by
+    apply hbad FB
+    intro n hn
+    obtain ⟨hnrest,hbn⟩ := Finset.mem_filter.mp hn
+    have hnF := (Finset.mem_filter.mp hnrest).1
+    obtain ⟨n',hr⟩ := hF n hnF
+    obtain ⟨b,hbn,hb⟩ := hbn
+    have hcond := (Finset.mem_filter.mp hb).2
+    exact ⟨hr.pair.1,hr.bound,b,hbn,hcond.1,hcond.2⟩
+  have hFII : (FII.card : ℝ) ≤ x * L x ^ (-c') := by
+    have hh := hII FII (by
+      intro n hn
+      obtain ⟨hnrest,hnotB⟩ := Finset.mem_filter.mp hn
+      obtain ⟨hnF,hnotI⟩ := Finset.mem_filter.mp hnrest
+      obtain ⟨n',hr⟩ := hF n hnF
+      rcases halt n n' hr with hi | hb | hii
+      · exact False.elim (hnotI (by simpa only [PI, hr.pair.2.2.2.1] using hi))
+      · exact False.elim (hnotB hb)
+      · exact hii)
+    have hid : 1 - 4 * e ^ 3 + 2 * e ^ 3 = 1 - 2 * e ^ 3 := by ring
+    rw [hid] at hh
+    exact hh.trans hpowerII
+  have hcard : F.card = FI.card + FB.card + FII.card := by
+    have hh1 := Finset.card_filter_add_card_filter_not (s := F) PI
+    have hh2 := Finset.card_filter_add_card_filter_not (s := F.filter (fun n => ¬ PI n)) PB
+    dsimp [FI, FB, FII]
+    omega
+  have hsum : (F.card : ℝ) ≤ 3 * (x * L x ^ (-c')) := by
+    rw [hcard]
+    push_cast
+    linarith
+  exact hsum.trans hcombine
+
+#print axioms regularCounting
+end AmicableCases

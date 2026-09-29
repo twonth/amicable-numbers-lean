@@ -1,0 +1,83 @@
+import GcdCounting
+import AsymptoticAbsorption
+
+namespace AmicableGcdCost
+open AmicableGcdCounting
+open scoped BigOperators
+
+noncomputable def smallConstant (beta : ℝ) : ℝ := 1 / (24 * (2 + 1 / beta))
+
+theorem smallConstant_pos {beta : ℝ} (hb : 0 < beta) : 0 < smallConstant beta := by
+  unfold smallConstant
+  positivity
+
+theorem costBound {beta C t u : ℝ} (hb : 0 < beta) (hC : 1 ≤ C)
+    (ht : Real.exp 1 ≤ t) (hCt : 4 * C ≤ t) (hu : 0 ≤ u) (hut : u ≤ t ^ (1 / beta))
+    (d : ℕ) (hJ : (ArithmeticFunction.cardFactors d : ℝ) ≤ smallConstant beta * t / Real.log t) :
+    factorCost (C * (1 + u)) d ≤ Real.exp (t / 24) := by
+  let J := ArithmeticFunction.cardFactors d
+  have ht1 : 1 < t := (Real.one_lt_exp_iff.mpr (by norm_num : (0 : ℝ) < 1)).trans_le ht
+  have ht0 : 0 < t := by linarith
+  have hlog : 1 ≤ Real.log t := by
+    have hh := Real.log_le_log (Real.exp_pos 1) ht
+    simpa only [Real.log_exp] using hh
+  have hc : 0 < smallConstant beta := smallConstant_pos hb
+  have hc1 : smallConstant beta ≤ 1 := by
+    unfold smallConstant
+    have hbInv : 0 < 1 / beta := one_div_pos.mpr hb
+    apply (div_le_iff₀ (by positivity : 0 < 24 * (2 + 1 / beta))).mpr
+    nlinarith
+  have hJt : (J : ℝ) ≤ t := by
+    have hh := (le_div_iff₀ (by linarith : 0 < Real.log t)).mp hJ
+    have hj0 : (0 : ℝ) ≤ J := Nat.cast_nonneg J
+    have hcT := mul_le_mul_of_nonneg_right hc1 ht0.le
+    dsimp [J]
+    nlinarith
+  have htpow : 1 ≤ t ^ (1 / beta) := Real.one_le_rpow ht1.le (by positivity)
+  have hbase : 2 * (C * (1 + u)) * J ≤ t ^ (2 + 1 / beta) := by
+    calc
+      _ ≤ 2 * (C * (1 + u)) * t := mul_le_mul_of_nonneg_left hJt (by positivity)
+      _ ≤ 2 * (C * (2 * t ^ (1 / beta))) * t := by gcongr; linarith
+      _ = 4 * C * t ^ (1 / beta) * t := by ring
+      _ ≤ t * t ^ (1 / beta) * t := by gcongr
+      _ = _ := by
+        calc
+          t * t ^ (1 / beta) * t = t ^ (1 : ℝ) * t ^ (1 / beta) * t ^ (1 : ℝ) := by simp
+          _ = t ^ (2 + 1 / beta) := by
+            rw [← Real.rpow_add ht0, ← Real.rpow_add ht0]
+            congr 1
+            ring
+  by_cases hJ0 : J = 0
+  · simp only [factorCost, show ArithmeticFunction.cardFactors d = 0 from hJ0, pow_zero, mul_one]
+    exact Real.one_le_exp (by linarith)
+  have hJpos : 0 < J := Nat.pos_of_ne_zero hJ0
+  have hbasepos : 0 < 2 * (C * (1 + u)) * (J : ℝ) := by positivity
+  have hcost : factorCost (C * (1 + u)) d = (2 * (C * (1 + u)) * (J : ℝ)) ^ J := by
+    simp only [factorCost, mul_pow, J]
+  rw [hcost, ← Real.exp_log (pow_pos hbasepos J), Real.log_pow]
+  apply Real.exp_le_exp.mpr
+  have hlogbase := Real.log_le_log hbasepos hbase
+  rw [Real.log_rpow ht0] at hlogbase
+  have hmul := mul_le_mul_of_nonneg_left hlogbase (Nat.cast_nonneg J)
+  have hcut := (le_div_iff₀ (by linarith : 0 < Real.log t)).mp hJ
+  have hmulcut := mul_le_mul_of_nonneg_left hcut (show 0 ≤ 2 + 1 / beta by positivity)
+  have hid : (2 + 1 / beta) * smallConstant beta = 1 / 24 := by
+    unfold smallConstant
+    field_simp
+  dsimp [J] at hmul
+  nlinarith [hid]
+
+#print axioms smallConstant_pos
+#print axioms costBound
+end AmicableGcdCost
+
+namespace AmicableGcdCost
+
+theorem omegaSquarefree {d : ℕ} (hd : Squarefree d) :
+    ArithmeticFunction.cardFactors d = d.primeFactors.card := by
+  have hh := (ArithmeticFunction.cardDistinctFactors_eq_cardFactors_iff_squarefree hd.ne_zero).mpr hd
+  simpa only [ArithmeticFunction.cardDistinctFactors_apply, ← Nat.toFinset_factors,
+    List.card_toFinset] using hh.symm
+
+#print axioms omegaSquarefree
+end AmicableGcdCost

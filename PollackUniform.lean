@@ -1,0 +1,72 @@
+import GcdLift
+
+namespace AmicablePollack
+open AmicableManuscript AmicableSquarefull Filter
+open scoped Topology BigOperators
+
+theorem gcdUniform {beta : ℝ} (hb : 0 < beta) :
+    ∃ rho : ℝ, 0 < rho ∧ ∀ᶠ G : ℝ in atTop, ∀ (N : ℕ) (F : Finset ℕ),
+      3 ≤ N → Real.log (Real.log N) ≤ (Real.log G / 4) ^ (1 / beta) →
+      (∀ n ∈ F, 0 < n ∧ n ≤ N ∧ G < (Nat.gcd n (sigma n) : ℝ)) →
+      (F.card : ℝ) ≤ (N : ℝ) * G ^ (-rho) := by
+  classical
+  obtain ⟨r, hr, hsf⟩ := squarefreeGcdBound hb
+  let rho := min (1 / 16 : ℝ) (r / 8)
+  have hrho : 0 < rho := lt_min (by norm_num) (by positivity)
+  refine ⟨rho, hrho, ?_⟩
+  have ht0 : 0 ≤ tailConstant := by
+    have hh := squarefullReciprocalTail ∅ (by norm_num : (0 : ℝ) < 1) (by simp)
+    simpa using hh
+  have htend := tendsto_rpow_atTop (by norm_num : (0 : ℝ) < 1 / 4)
+  filter_upwards [htend.eventually hsf,
+    htend.eventually (eventually_ge_atTop (3 : ℝ)),
+    (tendsto_rpow_atTop hrho).eventually (eventually_ge_atTop (1 + 2 * tailConstant)),
+    eventually_gt_atTop (1 : ℝ)] with G hsfG hroot hconst hG
+  intro N F hN hu hF
+  have hG0 : 0 < G := by linarith
+  have hlogG : Real.log (G ^ (1 / 4 : ℝ)) = Real.log G / 4 := by
+    rw [Real.log_rpow hG0]; ring
+  have hcount : ∀ (M : ℕ) (B : Finset ℕ), M ≤ N →
+      (∀ a ∈ B, Squarefree a ∧ a ≤ M ∧ G ^ (1 / 4 : ℝ) < (Nat.gcd a (sigma a) : ℝ)) →
+      (B.card : ℝ) ≤ M * (G ^ (1 / 4 : ℝ)) ^ (-r) := by
+    intro M B hMN hB
+    by_cases hM : 3 ≤ M
+    · apply hsfG M B hM _ hB
+      rw [hlogG]
+      apply le_trans _ hu
+      apply Real.log_le_log
+      · exact Real.log_pos (by exact_mod_cast (show 1 < M by omega))
+      · exact Real.log_le_log (by exact_mod_cast (show 0 < M by omega)) (by exact_mod_cast hMN)
+    · have hempty : B = ∅ := by
+        apply Finset.eq_empty_iff_forall_notMem.mpr
+        intro a ha
+        obtain ⟨hasf, haM, hag⟩ := hB a ha
+        have hh := Nat.gcd_le_left (sigma a) (Nat.pos_of_ne_zero hasf.ne_zero)
+        have hh' : (Nat.gcd a (sigma a) : ℝ) ≤ M := by exact_mod_cast hh.trans haM
+        have hM' : (M : ℝ) < 3 := by exact_mod_cast (show M < 3 by omega)
+        linarith
+      simp only [hempty, Finset.card_empty, Nat.cast_zero]
+      positivity
+  have hh := gcdLift F N hG0 (Real.rpow_nonneg (by positivity) (-r)) hcount hF
+  have hid : (G ^ (1 / 4 : ℝ)) ^ (-r) = G ^ (-r / 4) := by
+    rw [← Real.rpow_mul hG0.le]; congr 1; ring
+  rw [hid] at hh
+  have hr1 : rho ≤ 1 / 16 := min_le_left _ _
+  have hr2 : rho ≤ r / 8 := min_le_right _ _
+  have hp1 := Real.rpow_le_rpow_of_exponent_le hG.le (show -(1 / 8 : ℝ) ≤ -2 * rho by linarith)
+  have hp2 := Real.rpow_le_rpow_of_exponent_le hG.le (show -r / 4 ≤ -2 * rho by linarith)
+  have hsum : (F.card : ℝ) ≤ (N : ℝ) * (1 + 2 * tailConstant) * G ^ (-2 * rho) := by
+    have h1 := mul_le_mul_of_nonneg_left hp1 (show 0 ≤ (N : ℝ) * tailConstant by positivity)
+    have h2 := mul_le_mul_of_nonneg_left hp2 (show 0 ≤ (N : ℝ) * (1 + tailConstant) by positivity)
+    nlinarith [Real.rpow_nonneg hG0.le (-2 * rho)]
+  calc
+    (F.card : ℝ) ≤ (N : ℝ) * (1 + 2 * tailConstant) * G ^ (-2 * rho) := hsum
+    _ ≤ (N : ℝ) * G ^ rho * G ^ (-2 * rho) := by gcongr
+    _ = (N : ℝ) * G ^ (-rho) := by
+      rw [mul_assoc, ← Real.rpow_add hG0]
+      congr 2
+      ring
+
+#print axioms gcdUniform
+end AmicablePollack
+

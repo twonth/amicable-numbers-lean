@@ -1,0 +1,52 @@
+import StructuralCounting
+import AsymptoticAbsorption
+
+namespace AmicableStructure
+open AmicableManuscript Filter
+open scoped Topology
+
+theorem structuralPowerCount : ∀ᶠ x : ℝ in atTop, ∀ (F : Finset ℕ) (m D M : ℕ → ℕ),
+    (∀ n ∈ F, 0 < m n ∧ (m n : ℝ) ≤ x ^ (21 / 100 : ℝ)) →
+    (∀ n ∈ F, x ^ (1 / 2 : ℝ) < (D n : ℝ) ∧ (D n : ℝ) ≤ x ^ (71 / 100 : ℝ)) →
+    (∀ n ∈ F, (M n : ℝ) ≤ x * Real.log x / D n) →
+    (∀ n ∈ F, (D n).Coprime (sigma (D n))) →
+    (∀ n ∈ F, Nat.ModEq (sigma (D n)) (sigma (m n) * D n * M n) (m n * sigma (m n))) →
+    (∀ n ∈ F, n = s (D n * M n)) → (F.card : ℝ) ≤ x ^ (19 / 20 : ℝ) := by
+  filter_upwards [AmicableAbsorption.constantLogAbsorb 5 (by norm_num : (0 : ℝ) < 3 / 100),
+    AmicableAbsorption.constantLogAbsorb 2 (by norm_num : (0 : ℝ) < 1 / 2),
+    eventually_gt_atTop (1 : ℝ)] with x hlog htwo hx
+  intro F m D M hm hD hM hcop hcong hn
+  have hx0 : 0 < x := by linarith
+  have hlog0 : 0 < Real.log x := Real.log_pos hx
+  have hH : 2 ≤ x ^ (1 / 2 : ℝ) := by nlinarith
+  have hh := structuralCongruenceTotal F m D M ⌊x ^ (21 / 100 : ℝ)⌋₊ ⌊x ^ (71 / 100 : ℝ)⌋₊
+    (by positivity : 0 ≤ x * Real.log x) hH
+    (fun n hn => ⟨(hm n hn).1,Nat.le_floor (hm n hn).2⟩)
+    (fun n hn => ⟨(hD n hn).1,Nat.le_floor (hD n hn).2⟩) hM hcop hcong hn
+  have hZ : (⌊x ^ (21 / 100 : ℝ)⌋₊ : ℝ) ≤ x ^ (21 / 100 : ℝ) := Nat.floor_le (Real.rpow_nonneg hx0.le _)
+  have hW : (⌊x ^ (71 / 100 : ℝ)⌋₊ : ℝ) ≤ x ^ (71 / 100 : ℝ) := Nat.floor_le (Real.rpow_nonneg hx0.le _)
+  have hZone : 1 ≤ x ^ (21 / 100 : ℝ) := Real.one_le_rpow hx.le (by norm_num)
+  have hZ1 : (⌊x ^ (21 / 100 : ℝ)⌋₊ : ℝ) + 1 ≤ 2 * x ^ (21 / 100 : ℝ) := by linarith
+  have hnum : (⌊x ^ (21 / 100 : ℝ)⌋₊ : ℝ) * ⌊x ^ (71 / 100 : ℝ)⌋₊ +
+      2 * (x * Real.log x) * ⌊x ^ (21 / 100 : ℝ)⌋₊ * (⌊x ^ (21 / 100 : ℝ)⌋₊ + 1) / x ^ (1 / 2 : ℝ) ≤
+      (1 + 4 * Real.log x) * x ^ (23 / 25 : ℝ) := by
+    calc
+      _ ≤ x ^ (21 / 100 : ℝ) * x ^ (71 / 100 : ℝ) +
+          2 * (x * Real.log x) * x ^ (21 / 100 : ℝ) * (2 * x ^ (21 / 100 : ℝ)) / x ^ (1 / 2 : ℝ) := by gcongr
+      _ = _ := by
+        have h1 : x ^ (21 / 100 : ℝ) * x ^ (71 / 100 : ℝ) = x ^ (23 / 25 : ℝ) := by rw [← Real.rpow_add hx0]; norm_num
+        have h2 : x * x ^ (21 / 100 : ℝ) * x ^ (21 / 100 : ℝ) / x ^ (1 / 2 : ℝ) = x ^ (23 / 25 : ℝ) := by
+          calc
+            _ = x ^ (1 : ℝ) * x ^ (21 / 100 : ℝ) * x ^ (21 / 100 : ℝ) / x ^ (1 / 2 : ℝ) := by rw [Real.rpow_one]
+            _ = _ := by rw [← Real.rpow_add hx0, ← Real.rpow_add hx0, ← Real.rpow_sub hx0]; norm_num
+        calc
+          _ = x ^ (21 / 100 : ℝ) * x ^ (71 / 100 : ℝ) + 4 * Real.log x *
+              (x * x ^ (21 / 100 : ℝ) * x ^ (21 / 100 : ℝ) / x ^ (1 / 2 : ℝ)) := by ring
+          _ = _ := by rw [h1,h2]; ring
+  calc
+    (F.card : ℝ) ≤ (1 + 4 * Real.log x) * x ^ (23 / 25 : ℝ) := hh.trans hnum
+    _ ≤ x ^ (3 / 100 : ℝ) * x ^ (23 / 25 : ℝ) := by gcongr; linarith
+    _ = x ^ (19 / 20 : ℝ) := by rw [← Real.rpow_add hx0]; norm_num
+
+#print axioms structuralPowerCount
+end AmicableStructure

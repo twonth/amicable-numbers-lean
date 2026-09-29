@@ -1,0 +1,12 @@
+$ErrorActionPreference = 'Stop'
+Set-Location -LiteralPath $PSScriptRoot
+lake build
+if ($LASTEXITCODE -ne 0) { throw 'Lean build failed.' }
+$report = lake env lean Certificate.lean 2>&1
+$code = $LASTEXITCODE
+$report
+if ($code -ne 0) { throw 'Certificate check failed.' }
+if (($report | Out-String) -match 'sorryAx|Lean\.ofReduceBool|Lean\.trustCompiler') {
+    throw 'An unapproved axiom was reported.'
+}
+'PASS: certificate checked.'

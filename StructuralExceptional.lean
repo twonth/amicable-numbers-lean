@@ -1,0 +1,85 @@
+import StructuralParameters
+import Squarefull
+
+namespace AmicableStructure
+open AmicableManuscript AmicableSquarefull Filter
+open scoped Topology
+
+def BasicGood (x rho : ℝ) (n : ℕ) : Prop :=
+  x * Real.log x / L x ^ (1 / 2 : ℝ) < (n : ℝ) ∧
+  (Nat.gcd n (sigma n) : ℝ) ≤ L x ^ (1 / (2 * rho)) ∧
+  ∀ q : ℕ, Squarefull q → q ∣ n → (q : ℝ) ≤ L x
+
+theorem basicExceptional : ∃ rho : ℝ, 0 < rho ∧ ∀ c : ℝ, c < 1 / 2 →
+    ∀ᶠ x : ℝ in atTop, ∀ F : Finset ℕ,
+      (∀ n ∈ F, 0 < n ∧ (n : ℝ) ≤ x * Real.log x ∧ ¬ BasicGood x rho n) →
+      (F.card : ℝ) ≤ x * L x ^ (-c) := by
+  classical
+  obtain ⟨rho,hrho,hpol⟩ := AmicablePollack.pollack (by norm_num : (0 : ℝ) < 1 / 2)
+  refine ⟨rho,hrho,?_⟩
+  intro c hc
+  let K := 2 + |tailConstant|
+  have hK : 0 ≤ K := by dsimp [K]; positivity
+  filter_upwards [X_tendsto.eventually hpol, pollackThreshold hrho,
+    AmicableScale.constantLogPowerL K 1 hK (show 0 < 1 / 2 - c by linarith),
+    eventually_gt_atTop (1 : ℝ)] with x hpoll hthreshold hlog hx
+  have hx0 : 0 < x := by linarith
+  have hlog0 : 0 < Real.log x := Real.log_pos hx
+  have hX0 : 0 ≤ x * Real.log x := by positivity
+  have hL0 : 0 < L x := Real.exp_pos _
+  let T := x * Real.log x / L x ^ (1 / 2 : ℝ)
+  have hT : 0 ≤ T := by dsimp [T]; positivity
+  intro F hF
+  let P := fun n : ℕ => (n : ℝ) ≤ T
+  let Q := fun n : ℕ => L x ^ (1 / (2 * rho)) < (Nat.gcd n (sigma n) : ℝ)
+  let F1 := F.filter P
+  let F2 := (F.filter (fun n => ¬ P n)).filter Q
+  let F3 := (F.filter (fun n => ¬ P n)).filter (fun n => ¬ Q n)
+  have h1 : (F1.card : ℝ) ≤ T := positiveCardBound F1 hT (by
+    intro n hn
+    exact ⟨(hF n (Finset.mem_filter.mp hn).1).1,(Finset.mem_filter.mp hn).2⟩)
+  have h2 : (F2.card : ℝ) ≤ T := by
+    have hh := hpoll (L x ^ (1 / (2 * rho))) hthreshold F2 (by
+      intro n hn
+      obtain ⟨hnrest,hnQ⟩ := Finset.mem_filter.mp hn
+      have hnF := (Finset.mem_filter.mp hnrest).1
+      exact ⟨(hF n hnF).1,(hF n hnF).2.1,hnQ⟩)
+    have heq : (L x ^ (1 / (2 * rho))) ^ rho = L x ^ (1 / 2 : ℝ) := by
+      rw [← Real.rpow_mul hL0.le]
+      congr 1
+      field_simp
+    simpa only [heq] using hh
+  have h3 : (F3.card : ℝ) ≤ |tailConstant| * T := by
+    have hh := largeSquarefullDivisorCount F3 ⌊x * Real.log x⌋₊ hL0 (by
+      intro n hn
+      obtain ⟨hnrest,hnQ⟩ := Finset.mem_filter.mp hn
+      obtain ⟨hnF,hnP⟩ := Finset.mem_filter.mp hnrest
+      have hf := hF n hnF
+      refine ⟨hf.1,Nat.le_floor hf.2.1,?_⟩
+      have hfail : ¬ ∀ q : ℕ, Squarefull q → q ∣ n → (q : ℝ) ≤ L x := by
+        intro hfull
+        exact hf.2.2 ⟨lt_of_not_ge hnP,le_of_not_gt hnQ,hfull⟩
+      push_neg at hfail
+      exact hfail)
+    calc
+      (F3.card : ℝ) ≤ (⌊x * Real.log x⌋₊ : ℝ) * tailConstant * L x ^ (-(1 / 2 : ℝ)) := hh
+      _ ≤ (x * Real.log x) * |tailConstant| * L x ^ (-(1 / 2 : ℝ)) := by
+        apply mul_le_mul_of_nonneg_right _ (Real.rpow_nonneg hL0.le _)
+        exact (mul_le_mul_of_nonneg_left (le_abs_self _) (Nat.cast_nonneg _)).trans
+          (mul_le_mul_of_nonneg_right (Nat.floor_le hX0) (abs_nonneg _))
+      _ = |tailConstant| * T := by dsimp [T]; rw [Real.rpow_neg hL0.le]; ring
+  have hcard : F.card = F1.card + F2.card + F3.card := by
+    have hh1 := Finset.card_filter_add_card_filter_not (s := F) P
+    have hh2 := Finset.card_filter_add_card_filter_not (s := F.filter (fun n => ¬ P n)) Q
+    dsimp [F1,F2,F3]
+    omega
+  have hsum : (F.card : ℝ) ≤ K * T := by rw [hcard]; push_cast; dsimp [K]; nlinarith
+  have hlog' : K * Real.log x ≤ L x ^ (1 / 2 - c) := by simpa only [Real.rpow_one] using hlog
+  calc
+    (F.card : ℝ) ≤ K * T := hsum
+    _ = x * (K * Real.log x) / L x ^ (1 / 2 : ℝ) := by dsimp [T]; ring
+    _ ≤ x * L x ^ (1 / 2 - c) / L x ^ (1 / 2 : ℝ) := by gcongr
+    _ = x * L x ^ (-c) := by rw [mul_div_assoc, ← Real.rpow_sub hL0]; congr 2; ring
+
+#print axioms basicExceptional
+end AmicableStructure

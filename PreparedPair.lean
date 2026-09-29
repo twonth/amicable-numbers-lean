@@ -1,0 +1,85 @@
+import StructuralExceptional
+import RegularPair
+
+namespace AmicableStructure
+open AmicableManuscript Filter
+open scoped Topology
+
+structure PreparedPair (x C : ℝ) (n n' : ℕ) : Prop where
+  pair : Amicable n n'
+  bound : (n : ℝ) ≤ x * Real.log x
+  bound' : (n' : ℝ) ≤ x * Real.log x
+  factors : ∃ a a' B B' : ℕ,
+    n = B * a ∧ n' = B' * a' ∧ Squarefree a ∧ Squarefree a' ∧
+    B.Coprime a ∧ B'.Coprime a' ∧ a.Coprime n' ∧ a'.Coprime n ∧
+    x / L x ^ C ≤ (a : ℝ) ∧ x / L x ^ C ≤ (a' : ℝ) ∧
+    (B : ℝ) ≤ L x ^ C ∧ (B' : ℝ) ≤ L x ^ C ∧ a'.maxPrimeFac < a.maxPrimeFac
+
+theorem basicFactorization {rho : ℝ} (hrho : 0 < rho) :
+    ∀ᶠ x : ℝ in atTop, ∀ n n' : ℕ, Amicable n n' → BasicGood x rho n →
+      ∃ a B : ℕ, n = B * a ∧ Squarefree a ∧ B.Coprime a ∧ a.Coprime n' ∧
+        x / L x ^ (2 + 1 / (2 * rho)) ≤ (a : ℝ) ∧
+        (B : ℝ) ≤ L x ^ (2 + 1 / (2 * rho)) := by
+  filter_upwards [AmicableScale.S_tendsto.eventually (eventually_ge_atTop (0 : ℝ)),
+    eventually_gt_atTop (Real.exp 1)] with x hS hx
+  have hL0 : 0 < L x := Real.exp_pos _
+  have hL1 : 1 ≤ L x := Real.one_le_exp_iff.mpr hS
+  have hx0 : 0 < x := (Real.exp_pos 1).trans hx
+  have hlog : 1 < Real.log x := by
+    have hh := Real.log_lt_log (Real.exp_pos 1) hx
+    simpa using hh
+  intro n n' hp hg
+  have hgcd : (Nat.gcd n n' : ℝ) ≤ L x ^ (1 / (2 * rho)) := by
+    have hh := hg.2.1
+    rw [(amicable_sigma hp).1, Nat.gcd_self_add_right] at hh
+    exact hh
+  obtain ⟨a,B,hn,ha,haB,han',hB⟩ := boundedStructuralFactorization hp.1 hp.2.1 hg.2.2 hgcd
+  have hBpow : (B : ℝ) ≤ L x ^ (1 + 1 / (2 * rho)) := by
+    simpa only [Real.rpow_add hL0, Real.rpow_one] using hB
+  have hBfinal : (B : ℝ) ≤ L x ^ (2 + 1 / (2 * rho)) :=
+    hBpow.trans (Real.rpow_le_rpow_of_exponent_le hL1 (by linarith))
+  refine ⟨a,B,hn,ha,haB.symm,han',?_,hBfinal⟩
+  have hBY : (B : ℝ) * L x ^ (1 / 2 : ℝ) ≤ L x ^ (2 + 1 / (2 * rho)) := by
+    calc
+      _ ≤ L x ^ (1 + 1 / (2 * rho)) * L x ^ (1 / 2 : ℝ) := by gcongr
+      _ = L x ^ (1 + 1 / (2 * rho) + 1 / 2) := (Real.rpow_add hL0 _ _).symm
+      _ ≤ _ := Real.rpow_le_rpow_of_exponent_le hL1 (by linarith)
+  have hnlo := (div_lt_iff₀ (Real.rpow_pos_of_pos hL0 (1 / 2))).mp hg.1
+  have hnreal : (n : ℝ) = (B : ℝ) * a := by exact_mod_cast hn
+  apply (div_le_iff₀ (Real.rpow_pos_of_pos hL0 _)).mpr
+  have hmult := mul_le_mul_of_nonneg_left hBY (Nat.cast_nonneg a)
+  rw [hnreal] at hnlo
+  nlinarith
+
+theorem preparePair {rho : ℝ} (hrho : 0 < rho) :
+    ∀ᶠ x : ℝ in atTop, ∀ n n' : ℕ, Amicable n n' →
+      (n : ℝ) ≤ x * Real.log x → (n' : ℝ) ≤ x * Real.log x →
+      BasicGood x rho n → BasicGood x rho n' →
+      PreparedPair x (2 + 1 / (2 * rho)) n n' ∨ PreparedPair x (2 + 1 / (2 * rho)) n' n := by
+  let C := 2 + 1 / (2 * rho)
+  filter_upwards [basicFactorization hrho,
+    AmicableScale.L_power_subpower C (by norm_num : (0 : ℝ) < 1 / 2),
+    eventually_gt_atTop (1 : ℝ)] with x hfactor hL hx
+  intro n n' hp hnX hn'X hnG hn'G
+  obtain ⟨a,B,hn,ha,hBA,han',halo,hB⟩ := hfactor n n' hp hnG
+  obtain ⟨a',B',hn',ha',hBA',ha'n,ha'lo,hB'⟩ := hfactor n' n (amicable_symmetric hp) hn'G
+  have hlower : 1 < x / L x ^ C := by
+    have hx0 : 0 < x := by linarith
+    calc
+      1 < x ^ (1 / 2 : ℝ) := Real.one_lt_rpow hx (by norm_num)
+      _ = x / x ^ (1 / 2 : ℝ) := by
+        simpa only [show (1 : ℝ) - 1 / 2 = 1 / 2 by norm_num, Real.rpow_one] using Real.rpow_sub hx0 (1 : ℝ) (1 / 2 : ℝ)
+      _ ≤ _ := div_le_div_of_nonneg_left hx0.le (Real.rpow_pos_of_pos (Real.exp_pos _) _) hL
+  have haone : 1 < a := by exact_mod_cast hlower.trans_le halo
+  have ha'one : 1 < a' := by exact_mod_cast hlower.trans_le ha'lo
+  have hacop : a.Coprime a' := han'.of_dvd_right (hn' ▸ dvd_mul_left _ _)
+  have hne := maxPrimesDistinct haone ha'one hacop
+  rcases lt_or_gt_of_ne hne with hh | hh
+  · right
+    exact ⟨amicable_symmetric hp,hn'X,hnX,a',a,B',B,hn',hn,ha',ha,hBA',hBA,ha'n,han',ha'lo,halo,hB',hB,hh⟩
+  · left
+    exact ⟨hp,hnX,hn'X,a,a',B,B',hn,hn',ha,ha',hBA,hBA',han',ha'n,halo,ha'lo,hB,hB',hh⟩
+
+#print axioms basicFactorization
+#print axioms preparePair
+end AmicableStructure

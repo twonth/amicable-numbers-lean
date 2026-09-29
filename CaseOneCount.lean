@@ -1,0 +1,82 @@
+import CaseReconstruction
+import CountFibres
+import ResidueCounting
+
+namespace AmicableCases
+open AmicableManuscript Filter
+open scoped Topology
+
+theorem twoKindsCard (F : Finset ℕ) (P Q : ℕ → Prop)
+    (hcover : ∀ R ∈ F, P R ∨ Q R)
+    (hP : ∀ R1 ∈ F, ∀ R2 ∈ F, P R1 → P R2 → R1 = R2)
+    (hQ : ∀ R1 ∈ F, ∀ R2 ∈ F, Q R1 → Q R2 → R1 = R2) : F.card ≤ 2 := by
+  classical
+  have h1 : (F.filter P).card ≤ 1 := Finset.card_le_one.mpr (by
+    intro R1 h1 R2 h2
+    obtain ⟨h1F, h1P⟩ := Finset.mem_filter.mp h1
+    obtain ⟨h2F, h2P⟩ := Finset.mem_filter.mp h2
+    exact hP R1 h1F R2 h2F h1P h2P)
+  have h2 : (F.filter (fun R => ¬ P R)).card ≤ 1 := Finset.card_le_one.mpr (by
+    intro R1 h1 R2 h2
+    obtain ⟨h1F, h1P⟩ := Finset.mem_filter.mp h1
+    obtain ⟨h2F, h2P⟩ := Finset.mem_filter.mp h2
+    exact hQ R1 h1F R2 h2F ((hcover R1 h1F).resolve_left h1P)
+      ((hcover R2 h2F).resolve_left h2P))
+  have hh := Finset.card_filter_add_card_filter_not (s := F) P
+  omega
+
+theorem caseOneRCount {e : ℝ} (he : 0 < e) (he1 : e < 1 / 10) :
+    ∀ᶠ x : ℝ in atTop, ∀ (m p : ℕ) (F : Finset ℕ),
+      p.Prime → x ^ (e ^ 2) ≤ (p : ℝ) →
+      (∀ R ∈ F, 0 < R ∧ m.Coprime R ∧ p.Coprime (m * R) ∧
+        R.Coprime (s (m * R)) ∧ p ∣ s (m * R) ∧
+        ((R.Prime ∧ R < p) ∨ (R : ℝ) ≤ x ^ (e ^ 2 / 5))) → F.card ≤ 2 := by
+  have hu : e ^ 2 / 5 ≤ (1 : ℝ) := by nlinarith
+  have hgap : 2 * (e ^ 2 / 5) < e ^ 2 := by nlinarith [sq_pos_of_pos he]
+  filter_upwards [reconstructionPowerGap hu hgap] with x hx
+  intro m p F hp hpX hF
+  apply twoKindsCard F (fun R => R.Prime ∧ R < p) (fun R => (R : ℝ) ≤ x ^ (e ^ 2 / 5))
+  · intro R hR; exact (hF R hR).2.2.2.2.2
+  · intro R1 h1 R2 h2 hR1 hR2
+    exact primeReconstruction hp hR1.1 hR2.1 (hF R1 h1).2.1.symm (hF R2 h2).2.1.symm
+      ((hF R1 h1).2.2.1.of_dvd_right (dvd_mul_right _ _))
+      (hF R1 h1).2.2.2.2.1 (hF R2 h2).2.2.2.2.1 hR1.2 hR2.2
+  · intro R1 h1 R2 h2 hR1 hR2
+    exact hx m p R1 R2 (hF R1 h1).1 (hF R2 h2).1 hR1 hR2 hpX
+      (hF R1 h1).2.1 (hF R2 h2).2.1 (hF R1 h1).2.2.2.1 (hF R2 h2).2.2.2.1
+      (hF R1 h1).2.2.1 (hF R1 h1).2.2.2.2.1 (hF R2 h2).2.2.2.2.1
+
+theorem shiftedDivisorResidue {p d : ℕ} (hd : 0 < d) (hdiv : d ∣ p + 1) :
+    p % d = d - 1 := by
+  have hh : (p + 1) % d = 0 := Nat.mod_eq_zero_of_dvd hdiv
+  have hmod := Nat.mod_lt p hd
+  have heq := Nat.add_mod p 1 d
+  by_cases hd1 : d = 1
+  · simpa only [hd1, Nat.sub_self] using Nat.mod_one p
+  have h1 : 1 % d = 1 := Nat.mod_eq_of_lt (by omega)
+  rw [h1, hh] at heq
+  have hsmall : p % d + 1 ≤ d := by omega
+  have hdiv' : d ∣ p % d + 1 := Nat.dvd_of_mod_eq_zero heq.symm
+  have hh' := Nat.le_of_dvd (by omega : 0 < p % d + 1) hdiv'
+  omega
+
+theorem caseOnePrimeCount (F : Finset ℕ) {P U : ℝ} {d : ℕ}
+    (hP : 0 ≤ P) (hU : 1 ≤ U) (hd : 0 < d)
+    (hdsize : P / (2 * U) ^ (9 / 10 : ℝ) ≤ d)
+    (hF : ∀ p ∈ F, (p : ℝ) ≤ 2 * P ∧ d ∣ p + 1) :
+    (F.card : ℝ) ≤ 1 + 2 * (2 * U) ^ (9 / 10 : ℝ) := by
+  have hh := AmicableResidues.oneResidueRealBound F hd (show 0 ≤ 2 * P by positivity)
+    (fun p hp => ⟨(hF p hp).1, shiftedDivisorResidue hd (hF p hp).2⟩)
+  have hpow : 0 < (2 * U) ^ (9 / 10 : ℝ) := Real.rpow_pos_of_pos (by linarith) _
+  have hpd : P ≤ (d : ℝ) * (2 * U) ^ (9 / 10 : ℝ) := (div_le_iff₀ hpow).mp hdsize
+  have hfrac : 2 * P / (d : ℝ) ≤ 2 * (2 * U) ^ (9 / 10 : ℝ) := by
+    apply (div_le_iff₀ (by exact_mod_cast hd : (0 : ℝ) < d)).mpr
+    nlinarith
+  linarith
+
+#print axioms twoKindsCard
+#print axioms caseOneRCount
+#print axioms shiftedDivisorResidue
+#print axioms caseOnePrimeCount
+end AmicableCases
+

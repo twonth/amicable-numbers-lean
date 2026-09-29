@@ -1,0 +1,79 @@
+import CaseTwoSelectedDivisor
+import CaseTwoCounting
+import CommonDivisor
+
+namespace AmicableCases
+open AmicableManuscript AmicableWeight AmicableSelection Filter
+open scoped BigOperators Topology
+
+/-- The construction of the witnesses counted in Case II. The explicit logarithmic
+    hypotheses are the bounds obtained from the structural proposition and Lemma 2. -/
+theorem caseTwoWitness {e delta : ℝ} (he : 0 < e) (he1 : e < 1 / 10)
+    (hd0 : 0 < delta) (hd : delta ≤ selectionGap e / 4) :
+    ∀ᶠ x : ℝ in atTop, ∀ (n m R b a B : ℕ),
+      0 < m → 0 < R → 0 < b → 0 < B →
+      n = m * R → (n : ℝ) ≤ x * Real.log x →
+      x ^ e ≤ (R : ℝ) → (R : ℝ) ≤ x ^ (e + e ^ 2) →
+      m.Coprime R → R.Coprime (s n) → a.Coprime n →
+      Squarefree a → (a : ℝ) ≤ x * Real.log x → a ∣ s n →
+      (∀ p ∈ a.primeFactors, (p : ℝ) ≤ x ^ (e ^ 2)) →
+      sigma b ∣ sigma m → sigma b ∣ sigma B * sigma a →
+      (1 - delta) * Real.log x ≤ Real.log (a : ℝ) →
+      Real.log ((a : ℝ) / b) + Real.log (sigma B : ℝ) ≤
+        (e + e ^ 2 + delta) * Real.log x →
+      Real.log (smallPart (Real.log x) (sigma b) : ℝ) +
+        Real.log (Real.log x) * (roughOmega (Real.log x) (sigma b) : ℝ) ≤
+          (1 / 2 - 4 * e) * Real.log x →
+      ∃ d V : ℕ, CaseTwoData x e n m R d V := by
+  classical
+  filter_upwards [caseTwoSelectedDivisor he he1 hd0 hd,
+    eventually_gt_atTop (Real.exp 2)] with x hselect hx
+  have hx1 : 1 < x := (Real.one_lt_exp_iff.mpr (by norm_num : (0 : ℝ) < 2)).trans hx
+  have hx0 : 0 < x := by linarith
+  have hlog1 : 1 < Real.log x := by
+    have hh := Real.log_lt_log (Real.exp_pos 2) hx
+    rw [Real.log_exp] at hh
+    linarith
+  have ht : 0 ≤ Real.log (Real.log x) := (Real.log_pos hlog1).le
+  intro n m R b a B hm hR hb hB hn hnX hRlo hRhi hcop hcrossR hcrossa
+    hsf haX hadiv hprimes hbm hba halog hratio hmass
+  have hapos : 0 < a := Nat.pos_of_ne_zero hsf.ne_zero
+  obtain ⟨r, g, hcommon⟩ := commonDivisorExists (Real.log x) hb hB hba
+  have hcost := commonDivisorCost hapos hb hB ht hcommon
+  have htotal : Real.log ((a : ℝ) / r) +
+      Real.log (Real.log x) * (ArithmeticFunction.cardFactors r : ℝ) ≤
+        (1 / 2 - 3 * e + e ^ 2 + delta) * Real.log x := by nlinarith
+  have hU : 1 ≤ x ^ (2 * e + 3 * e ^ 2) := Real.one_le_rpow hx1.le (by positivity)
+  obtain ⟨k, V, hprod, hzero, hVs⟩ := indexedSquarefreePartition a hsf hU hprimes
+  have hVdiv : ∀ i, V i ∣ a := by
+    intro i
+    rw [← hprod]
+    exact Finset.dvd_prod_of_mem V (Finset.mem_univ i)
+  have hVpos : ∀ i, 0 < V i := fun i => Nat.pos_of_dvd_of_pos (hVdiv i) hapos
+  have hVX : ∀ i, (V i : ℝ) ≤ x * Real.log x := by
+    intro i
+    exact (by exact_mod_cast Nat.le_of_dvd hapos (hVdiv i) : (V i : ℝ) ≤ a).trans haX
+  obtain ⟨d, hdprod, hdV⟩ := partitionAllocation Finset.univ V hsf hprod hcommon.dividesA
+  have hdir : ∀ i, d i ∣ r := by
+    intro i
+    rw [← hdprod]
+    exact Finset.dvd_prod_of_mem d (Finset.mem_univ i)
+  have hdpos : ∀ i, 0 < d i := fun i => Nat.pos_of_dvd_of_pos (hdir i) hcommon.rpos
+  have hVs' : ∀ i, i ≠ 0 → x ^ (2 * e + 3 * e ^ 2) < (V i : ℝ) ∧
+      (V i : ℝ) ≤ x ^ (2 * e + 4 * e ^ 2) := by
+    intro i hi
+    refine ⟨(hVs i hi).1, ?_⟩
+    have hh := (hVs i hi).2
+    rw [← Real.rpow_add hx0] at hh
+    convert hh using 1 <;> ring
+  obtain ⟨i, hi, hdi, homega, hbudget⟩ := hselect k V d a r hVpos hdpos hprod hdprod
+    (fun i => hdV i (Finset.mem_univ _)) hVX hzero hVs' halog htotal
+    (fun q hq => (hcommon.primes q hq).le)
+  refine ⟨d i, V i, hm, hR, hn, hnX, hRlo, hRhi, hcop, hcrossR,
+    hcrossa.of_dvd_left (hVdiv i), (hVdiv i).trans hadiv,
+    hsf.squarefree_of_dvd (hVdiv i), hVX i, (hVs' i hi).1.le,
+    hdpos i, (hdir i).trans (hcommon.dividesB.trans hbm),
+    hdV i (Finset.mem_univ _), homega, hbudget⟩
+
+#print axioms caseTwoWitness
+end AmicableCases

@@ -1,0 +1,158 @@
+import Mathlib.NumberTheory.ArithmeticFunction.Misc
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Tactic
+import Reconstruction
+
+/-!
+Definitions and arithmetic identities for the actual manuscript.
+The final bound is DEFINED as a proposition, not asserted or proved here.
+-/
+namespace AmicableManuscript
+
+def sigma (n : ℕ) : ℕ := ArithmeticFunction.sigma 1 n
+def s (n : ℕ) : ℕ := ∑ d ∈ n.properDivisors, d
+
+def Amicable (n n' : ℕ) : Prop :=
+  0 < n ∧ 0 < n' ∧ n ≠ n' ∧ s n = n' ∧ s n' = n
+
+noncomputable def A (x : ℝ) : ℕ := by
+  classical
+  exact ((Finset.range (⌊x⌋₊ + 1)).filter (fun n => ∃ n', Amicable n n')).card
+
+noncomputable def S (x : ℝ) : ℝ :=
+  Real.log x * Real.log (Real.log (Real.log x)) / Real.log (Real.log x)
+
+noncomputable def L (x : ℝ) : ℝ := Real.exp (S x)
+
+/-- The requested final result. This definition is NOT a proof of the proposition. -/
+def MainBound : Prop :=
+  ∀ c : ℝ, c < 1 / 2 → ∃ x₀ : ℝ, ∀ x : ℝ, x₀ ≤ x →
+    (A x : ℝ) ≤ x * Real.exp (-c * S x)
+
+theorem sigma_eq_s_add_self (n : ℕ) : sigma n = s n + n := by
+  exact (ArithmeticFunction.sigma_one_apply n).trans
+    Nat.sum_divisors_eq_sum_properDivisors_add_self
+
+theorem sigma_eq_sum_divisors (n : ℕ) : sigma n = ∑ d ∈ n.divisors, d :=
+  ArithmeticFunction.sigma_one_apply n
+
+theorem sigma_mul {m n : ℕ} (h : m.Coprime n) :
+    sigma (m * n) = sigma m * sigma n :=
+  ArithmeticFunction.isMultiplicative_sigma.map_mul_of_coprime h
+
+theorem sigma_prime {p : ℕ} (hp : p.Prime) : sigma p = p + 1 := by
+  simpa [sigma] using (ArithmeticFunction.sigma_one_apply_prime_pow (i := 1) hp)
+
+theorem s_mul_prime {p m : ℕ} (hp : p.Prime) (hpm : p.Coprime m) :
+    s (p * m) = p * s m + sigma m := by
+  have hmul := sigma_mul hpm
+  rw [sigma_prime hp] at hmul
+  have hparts := sigma_eq_s_add_self (p * m)
+  have hm := sigma_eq_s_add_self m
+  nlinarith
+
+theorem amicable_sigma {n n' : ℕ} (h : Amicable n n') :
+    sigma n = n + n' ∧ sigma n' = n + n' := by
+  obtain ⟨_, _, _, hs, hs'⟩ := h
+  constructor <;> simp [sigma_eq_s_add_self, hs, hs', Nat.add_comm]
+
+theorem amicable_partner_unique {n n₁ n₂ : ℕ}
+    (h₁ : Amicable n n₁) (h₂ : Amicable n n₂) : n₁ = n₂ := by
+  exact h₁.2.2.2.1.symm.trans h₂.2.2.2.1
+
+theorem amicable_symmetric {n n' : ℕ} (h : Amicable n n') : Amicable n' n := by
+  obtain ⟨hn, hn', hne, hs, hs'⟩ := h
+  exact ⟨hn', hn, Ne.symm hne, hs', hs⟩
+
+theorem caseOnePartnerEquation {n n' p m : ℕ}
+    (h : Amicable n n') (hn : n = p * m)
+    (hp : p.Prime) (hpm : p.Coprime m) :
+    n' = p * s m + sigma m := by
+  rw [← h.2.2.2.1, hn, s_mul_prime hp hpm]
+
+theorem unitaryPartnerEquationInt {m R : ℕ} (h : m.Coprime R) :
+    (s (m * R) : ℤ) = (sigma m : ℤ) * (sigma R : ℤ) - (m : ℤ) * (R : ℤ) := by
+  have hmul : (sigma (m * R) : ℤ) = (sigma m : ℤ) * (sigma R : ℤ) := by
+    exact_mod_cast sigma_mul h
+  have hparts : (sigma (m * R) : ℤ) = (s (m * R) : ℤ) + (m : ℤ) * (R : ℤ) := by
+    exact_mod_cast sigma_eq_s_add_self (m * R)
+  omega
+
+/-- The reconstruction step with the actual divisor-sum function. The determinant
+size inequality is an explicit hypothesis; its asymptotic proof is not hidden here. -/
+theorem divisorSumReconstruction {m V R₁ R₂ : ℕ}
+    (hV : 0 < V) (hR₁ : 0 < R₁) (hR₂ : 0 < R₂)
+    (hm₁ : m.Coprime R₁) (hm₂ : m.Coprime R₂)
+    (hcross₁ : R₁.Coprime (s (m * R₁)))
+    (hcross₂ : R₂.Coprime (s (m * R₂)))
+    (hVmR : V.Coprime (m * R₁))
+    (hdiv₁ : V ∣ s (m * R₁)) (hdiv₂ : V ∣ s (m * R₂))
+    (hsize : |(sigma R₁ : ℤ) * (R₂ : ℤ) - (sigma R₂ : ℤ) * (R₁ : ℤ)| < (V : ℤ)) :
+    R₁ = R₂ := by
+  have heq₁ := unitaryPartnerEquationInt hm₁
+  have heq₂ := unitaryPartnerEquationInt hm₂
+  have hc₁ : Int.gcd (R₁ : ℤ) (s (m * R₁) : ℤ) = 1 := by
+    simpa [Int.gcd] using hcross₁
+  have hc₂ : Int.gcd (R₂ : ℤ) (s (m * R₂) : ℤ) = 1 := by
+    simpa [Int.gcd] using hcross₂
+  have hVmR' : Int.gcd (V : ℤ) ((m : ℤ) * (R₁ : ℤ)) = 1 := by
+    simpa [Int.gcd, Int.natAbs_mul] using hVmR
+  have hd₁ : (V : ℤ) ∣ (sigma m : ℤ) * (sigma R₁ : ℤ) - (m : ℤ) * (R₁ : ℤ) := by
+    rw [← heq₁]
+    exact_mod_cast hdiv₁
+  have hd₂ : (V : ℤ) ∣ (sigma m : ℤ) * (sigma R₂ : ℤ) - (m : ℤ) * (R₂ : ℤ) := by
+    rw [← heq₂]
+    exact_mod_cast hdiv₂
+  have hred₁ := AmicableAudit.reducedRatioFromPartner R₁ (sigma R₁) (sigma m) m
+    (s (m * R₁)) heq₁ hc₁
+  have hred₂ := AmicableAudit.reducedRatioFromPartner R₂ (sigma R₂) (sigma m) m
+    (s (m * R₂)) heq₂ hc₂
+  have hinv := AmicableAudit.invertibleCoefficientFromPartner V (sigma m) (sigma R₁)
+    m R₁ hd₁ hVmR'
+  obtain ⟨hlo, hhi⟩ := abs_lt.mp hsize
+  have hz := AmicableAudit.reconstructionUniqueGcd (sigma m) m V (sigma R₁) (sigma R₂)
+    R₁ R₂ (by exact_mod_cast hV) (by exact_mod_cast hR₁) (by exact_mod_cast hR₂)
+    hinv hred₁ hred₂ hd₁ hd₂ hlo hhi
+  exact_mod_cast hz
+
+theorem averagingGapPositive (e : ℝ) (he : 0 < e) (hu : e < 1 / 10) :
+    (1 / 2 - e) * (1 - 2 * e - 3 * e ^ 2) >
+      1 / 2 - 3 * e + e ^ 2 := by
+  have he2 : 0 ≤ e ^ 2 := sq_nonneg e
+  have he3 : 0 ≤ e ^ 3 := by positivity
+  nlinarith
+
+theorem caseTwoSavingIdentity (e : ℝ) :
+    (1 / 2 - e) * (2 * e + 4 * e ^ 2) = e - 4 * e ^ 3 := by ring
+
+/-- The real, finite weighted averaging step, before specializing to logarithms. -/
+theorem weightedSelection {ι : Type*} (I : Finset ι) (hI : I.Nonempty)
+    (cost weight : ι → ℝ) (c : ℝ)
+    (h : ∑ i ∈ I, cost i ≤ c * ∑ i ∈ I, weight i) :
+    ∃ i ∈ I, cost i ≤ c * weight i := by
+  by_contra! hnone
+  have hstrict : ∑ i ∈ I, c * weight i < ∑ i ∈ I, cost i := by
+    apply Finset.sum_lt_sum
+    · intro i hi
+      exact le_of_lt (hnone i hi)
+    · obtain ⟨i, hi⟩ := hI
+      exact ⟨i, hi, hnone i hi⟩
+  rw [← Finset.mul_sum] at hstrict
+  linarith
+
+#print axioms sigma_eq_s_add_self
+#print axioms sigma_eq_sum_divisors
+#print axioms sigma_mul
+#print axioms sigma_prime
+#print axioms s_mul_prime
+#print axioms amicable_sigma
+#print axioms amicable_partner_unique
+#print axioms amicable_symmetric
+#print axioms caseOnePartnerEquation
+#print axioms unitaryPartnerEquationInt
+#print axioms divisorSumReconstruction
+#print axioms averagingGapPositive
+#print axioms caseTwoSavingIdentity
+#print axioms weightedSelection
+
+end AmicableManuscript

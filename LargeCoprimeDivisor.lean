@@ -1,0 +1,57 @@
+import CoprimeDivisor
+import DivisorBound
+
+namespace AmicableCoprimeDivisor
+open AmicableManuscript Filter
+open scoped Topology BigOperators
+
+theorem sigmaCardBound (n : ℕ) : sigma n ≤ n * n.divisors.card := by
+  rw [sigma_eq_sum_divisors]
+  calc
+    _ ≤ ∑ _ ∈ n.divisors, n := Finset.sum_le_sum (fun d hd => Nat.divisor_le hd)
+    _ = _ := by simp [Nat.mul_comm]
+
+/-- Pollack's large coprime divisor lemma, with its quantifiers explicit. -/
+theorem largeCoprimeDivisor {e : ℝ} (he : 0 < e) :
+    ∃ N : ℕ, ∀ n : ℕ, N ≤ n → Squarefree n →
+      ∃ d : ℕ, d ∣ n ∧ d.Coprime (sigma d) ∧ (n : ℝ) ^ (1 / 2 - e) ≤ d := by
+  obtain ⟨K, hK, hdivisor⟩ := AmicableDivisors.divisorPowerBound he
+  have hlim : Tendsto (fun n : ℕ => (n : ℝ) ^ e) atTop atTop :=
+    (tendsto_rpow_atTop he).comp tendsto_natCast_atTop_atTop
+  obtain ⟨N, hN⟩ := eventually_atTop.mp (hlim.eventually (eventually_ge_atTop (2 * K)))
+  refine ⟨max N 1, ?_⟩
+  intro n hn hsf
+  obtain ⟨d, hd, hc, hsize⟩ := squarefreeDivisorFinite hsf
+  have hnpos : 0 < n := by omega
+  have hdpos : 0 < d := Nat.pos_of_ne_zero (hsf.squarefree_of_dvd hd).ne_zero
+  have hdle : d ≤ n := Nat.le_of_dvd hnpos hd
+  have hnR : (0 : ℝ) < n := by exact_mod_cast hnpos
+  have hdR : (0 : ℝ) < d := by exact_mod_cast hdpos
+  have htau := hdivisor d hdpos
+  have hsigma : (sigma d : ℝ) ≤ (d : ℝ) * (d.divisors.card : ℝ) := by exact_mod_cast sigmaCardBound d
+  have hsizeR : (n : ℝ) ≤ 2 * (d : ℝ) * sigma d := by exact_mod_cast hsize
+  have hnK := hN n (by omega)
+  have hpow := Real.rpow_le_rpow hdR.le (show (d : ℝ) ≤ (n : ℝ) by exact_mod_cast hdle) he.le
+  have hs : (n : ℝ) ≤ (d : ℝ) ^ 2 * ((n : ℝ) ^ e) ^ 2 := calc
+    _ ≤ 2 * (d : ℝ) * sigma d := hsizeR
+    _ ≤ 2 * (d : ℝ) * ((d : ℝ) * (K * (d : ℝ) ^ e)) :=
+      mul_le_mul_of_nonneg_left (hsigma.trans (mul_le_mul_of_nonneg_left htau hdR.le)) (by positivity)
+    _ ≤ 2 * (d : ℝ) * ((d : ℝ) * (K * (n : ℝ) ^ e)) := by gcongr
+    _ ≤ (d : ℝ) ^ 2 * ((n : ℝ) ^ e) ^ 2 := by
+      have hh := mul_le_mul_of_nonneg_right hnK (show 0 ≤ (d : ℝ) ^ 2 * (n : ℝ) ^ e by positivity)
+      nlinarith
+  refine ⟨d, hd, hc, ?_⟩
+  by_contra h
+  have hdsmall : (d : ℝ) < (n : ℝ) ^ (1 / 2 - e) := lt_of_not_ge h
+  have hsquare : (d : ℝ) ^ 2 < ((n : ℝ) ^ (1 / 2 - e)) ^ 2 :=
+    (sq_lt_sq₀ hdR.le (Real.rpow_nonneg hnR.le _)).mpr hdsmall
+  have hstrict := mul_lt_mul_of_pos_right hsquare (sq_pos_of_pos (Real.rpow_pos_of_pos hnR e))
+  have hid : ((n : ℝ) ^ (1 / 2 - e)) ^ 2 * ((n : ℝ) ^ e) ^ 2 = n := by
+    rw [← Real.rpow_mul_natCast hnR.le, ← Real.rpow_mul_natCast hnR.le, ← Real.rpow_add hnR]
+    norm_num [show (1 / 2 - e) * 2 + e * 2 = (1 : ℝ) by ring]
+  rw [hid] at hstrict
+  linarith
+
+#print axioms sigmaCardBound
+#print axioms largeCoprimeDivisor
+end AmicableCoprimeDivisor

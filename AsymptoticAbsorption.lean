@@ -1,0 +1,63 @@
+import RankinParameters
+
+namespace AmicableAbsorption
+open Filter
+open scoped Topology
+
+theorem constantLogAbsorb (C : ℝ) {r : ℝ} (hr : 0 < r) :
+    ∀ᶠ x : ℝ in atTop, C * (1 + Real.log x) ≤ x ^ r := by
+  have hlog : Tendsto (fun x : ℝ => Real.log x / x ^ r) atTop (𝓝 0) :=
+    (isLittleO_log_rpow_atTop hr).tendsto_div_nhds_zero
+  have hinv : Tendsto (fun x : ℝ => (x ^ r)⁻¹) atTop (𝓝 0) :=
+    (tendsto_rpow_atTop hr).inv_tendsto_atTop
+  have hlim : Tendsto (fun x : ℝ => C * (1 + Real.log x) / x ^ r) atTop (𝓝 0) := by
+    have hh := (hinv.add hlog).const_mul C
+    simpa [div_eq_mul_inv, add_mul, mul_add, mul_assoc] using hh
+  filter_upwards [hlim.eventually (gt_mem_nhds (by norm_num : (0 : ℝ) < 1)),
+    eventually_gt_atTop (0 : ℝ)] with x hx hx0
+  have hh := (div_lt_iff₀ (Real.rpow_pos_of_pos hx0 r)).mp hx
+  simpa using hh.le
+
+theorem dyadicCountAbsorb {r : ℝ} (hr : 0 < r) :
+    ∀ᶠ x : ℝ in atTop, 2 * (⌊Real.log ⌊x⌋₊ / Real.log 2⌋₊ + 1 : ℕ) ≤ x ^ r := by
+  have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
+  filter_upwards [constantLogAbsorb (2 * (1 + 1 / Real.log 2)) hr,
+    eventually_ge_atTop (2 : ℝ)] with x hx hx2
+  have hfloor1 : 1 ≤ ⌊x⌋₊ := (Nat.le_floor_iff (by linarith : 0 ≤ x)).mpr (by norm_num; linarith)
+  have hfloorR : (1 : ℝ) ≤ ⌊x⌋₊ := by exact_mod_cast hfloor1
+  have hlf0 : 0 ≤ Real.log (⌊x⌋₊ : ℝ) := Real.log_nonneg hfloorR
+  have hlf : Real.log (⌊x⌋₊ : ℝ) ≤ Real.log x :=
+    Real.log_le_log (by linarith) (Nat.floor_le (by linarith : 0 ≤ x))
+  have hK := Nat.floor_le (div_nonneg hlf0 hlog2.le)
+  have hlogx : 0 ≤ Real.log x := Real.log_nonneg (by linarith)
+  have hratio := (div_le_div_of_nonneg_right hlf hlog2.le)
+  have hrec : 0 < 1 / Real.log 2 := one_div_pos.mpr hlog2
+  have hbound : (⌊Real.log ⌊x⌋₊ / Real.log 2⌋₊ : ℝ) ≤ Real.log x / Real.log 2 := hK.trans hratio
+  have heq : Real.log x / Real.log 2 = Real.log x * (1 / Real.log 2) := by ring
+  rw [heq] at hbound
+  push_cast
+  nlinarith
+
+#print axioms constantLogAbsorb
+#print axioms dyadicCountAbsorb
+end AmicableAbsorption
+
+namespace AmicableAbsorption
+open Filter
+open scoped Topology
+
+theorem constantLogPowerAbsorb (C r : ℝ) {s : ℝ} (hs : 0 < s) :
+    ∀ᶠ x : ℝ in atTop, C * (1 + (Real.log x) ^ r) ≤ x ^ s := by
+  have hlog : Tendsto (fun x : ℝ => (Real.log x) ^ r / x ^ s) atTop (𝓝 0) :=
+    (isLittleO_log_rpow_rpow_atTop r hs).tendsto_div_nhds_zero
+  have hinv : Tendsto (fun x : ℝ => (x ^ s)⁻¹) atTop (𝓝 0) :=
+    (tendsto_rpow_atTop hs).inv_tendsto_atTop
+  have hlim : Tendsto (fun x : ℝ => C * (1 + (Real.log x) ^ r) / x ^ s) atTop (𝓝 0) := by
+    simpa [div_eq_mul_inv, add_mul, mul_add, mul_assoc] using (hinv.add hlog).const_mul C
+  filter_upwards [hlim.eventually (gt_mem_nhds (by norm_num : (0 : ℝ) < 1)),
+    eventually_gt_atTop (0 : ℝ)] with x hx hx0
+  have hh := (div_lt_iff₀ (Real.rpow_pos_of_pos hx0 s)).mp hx
+  simpa using hh.le
+
+#print axioms constantLogPowerAbsorb
+end AmicableAbsorption

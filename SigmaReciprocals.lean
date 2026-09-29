@@ -1,0 +1,56 @@
+import SigmaCountBound
+import PartialSummation
+
+namespace AmicableSigmaCounting
+open scoped BigOperators
+open AmicableManuscript
+
+theorem sigmaReciprocalBound (F : Finset ℕ) (M d : ℕ) (K : ℝ)
+    (hK : 1 ≤ K) (hd : 0 < d)
+    (hprime : ∀ a : ℕ, 0 < a →
+      ∑ p ∈ (Finset.range (M + 1)).filter (fun p => p.Prime ∧ a ∣ p + 1), (1 : ℝ) / p ≤ K / a.totient)
+    (hF : ∀ V ∈ F, Squarefree V ∧ V ≤ M ∧ d ∣ sigma V) :
+    ∑ V ∈ F, (1 : ℝ) / V ≤
+      2 * ((2 * K) ^ ArithmeticFunction.cardFactors d *
+      (ArithmeticFunction.cardFactors d : ℝ) ^ ArithmeticFunction.cardFactors d / d) *
+      (⌊Real.log M / Real.log 2⌋₊ + 1 : ℕ) := by
+  let E := (2 * K) ^ ArithmeticFunction.cardFactors d *
+      (ArithmeticFunction.cardFactors d : ℝ) ^ ArithmeticFunction.cardFactors d / d
+  have hE : 0 ≤ E := by dsimp [E]; positivity
+  apply AmicablePartialSummation.reciprocalFromCount F M E hE
+    (fun V hV => ⟨Nat.pos_of_ne_zero (hF V hV).1.ne_zero, (hF V hV).2.1⟩)
+  intro T hT
+  by_cases hTM : T ≤ M
+  · have hh := sigmaDivisibilityBound (F.filter (· ≤ T)) T M d K hK hd hTM hprime (by
+      intro V hV
+      obtain ⟨hVF, hVT⟩ := Finset.mem_filter.mp hV
+      exact ⟨(hF V hVF).1, hVT, (hF V hVF).2.2⟩)
+    simpa only [E, mul_div_assoc, mul_assoc, mul_comm] using hh
+  · have hh := sigmaDivisibilityBound F M M d K hK hd le_rfl hprime hF
+    have hcard : (((F.filter (· ≤ T)).card) : ℝ) ≤ (F.card : ℝ) :=
+      Nat.cast_le.mpr (Finset.card_filter_le _ _)
+    have hh' : (F.card : ℝ) ≤ E * M := by simpa only [E, mul_div_assoc, mul_assoc, mul_comm] using hh
+    exact hcard.trans (hh'.trans (mul_le_mul_of_nonneg_left (by exact_mod_cast (le_of_not_ge hTM)) hE))
+
+theorem primeReciprocalInput : ∃ C : ℝ, 1 ≤ C ∧ ∀ M : ℕ, 3 ≤ M → ∀ a : ℕ, 0 < a →
+    ∑ p ∈ (Finset.range (M + 1)).filter (fun p => p.Prime ∧ a ∣ p + 1), (1 : ℝ) / p ≤
+      (C * (1 + Real.log (Real.log M))) / a.totient := by
+  classical
+  obtain ⟨C, hC, hbound⟩ := AmicablePrimeReciprocals.primeReciprocalUniform
+  refine ⟨max C 1, le_max_right _ _, ?_⟩
+  intro M hM a ha
+  have hh := hbound M a ((Finset.range (M + 1)).filter (fun p => p.Prime ∧ a ∣ p + 1)) hM ha (by
+    intro p hp
+    obtain ⟨hpM, hpp, hpa⟩ := Finset.mem_filter.mp hp
+    exact ⟨hpp, Nat.le_of_lt_succ (Finset.mem_range.mp hpM), hpa⟩)
+  have hlogM : 1 < Real.log (M : ℝ) := by
+    have ht := Real.log_lt_log (Real.exp_pos 1)
+      (Real.exp_one_lt_three.trans_le (show (3 : ℝ) ≤ (M : ℝ) by exact_mod_cast hM))
+    simpa only [Real.log_exp] using ht
+  have hll : 0 ≤ 1 + Real.log (Real.log (M : ℝ)) := by have := Real.log_pos hlogM; linarith
+  exact hh.trans (div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_right (le_max_left _ _) hll)
+    (Nat.cast_nonneg a.totient))
+
+#print axioms sigmaReciprocalBound
+#print axioms primeReciprocalInput
+end AmicableSigmaCounting

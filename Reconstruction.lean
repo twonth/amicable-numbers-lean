@@ -1,0 +1,168 @@
+import Std
+
+/-!
+Checked components of the amicable-number manuscript audit.
+This file does NOT prove the asymptotic counting theorem.
+It imports only the Lean standard library, not any analytic assumptions.
+-/
+
+namespace AmicableAudit
+
+theorem eliminatePrime (m m' p p' s s' a a' : Int)
+    (h1 : m' * p' = p * s + a)
+    (h2 : m * p = p' * s' + a') :
+    p' * (m * m' - s * s') = m * a + s * a' := by
+  grind
+
+theorem eliminatePrimeWithDivisor (m p D M s a b c : Int)
+    (hs : s = a - m)
+    (h1 : D * M = p * s + a)
+    (h2 : b * c = p * m + D * M) :
+    s * b * c = a * D * M - m * a := by
+  grind
+
+theorem reducedDenominatorsEqual (a₁ a₂ r₁ r₂ u₁ v₁ u₂ v₂ : Int)
+    (hr₁ : 0 < r₁) (hr₂ : 0 < r₂)
+    (hbez₁ : u₁ * a₁ + v₁ * r₁ = 1)
+    (hbez₂ : u₂ * a₂ + v₂ * r₂ = 1)
+    (hcross : a₁ * r₂ = a₂ * r₁) : r₁ = r₂ := by
+  have hd₁ : r₁ ∣ r₂ := by
+    refine ⟨u₁ * a₂ + v₁ * r₂, ?_⟩
+    grind
+  have hd₂ : r₂ ∣ r₁ := by
+    refine ⟨u₂ * a₁ + v₂ * r₁, ?_⟩
+    grind
+  exact Int.dvd_antisymm (by omega) (by omega) hd₁ hd₂
+
+theorem determinantDivisible (s m V a₁ a₂ r₁ r₂ u v : Int)
+    (hinv : u * s + v * V = 1)
+    (h₁ : V ∣ s * a₁ - m * r₁)
+    (h₂ : V ∣ s * a₂ - m * r₂) :
+    V ∣ a₁ * r₂ - a₂ * r₁ := by
+  obtain ⟨k₁, hk₁⟩ := h₁
+  obtain ⟨k₂, hk₂⟩ := h₂
+  refine ⟨u * (k₁ * r₂ - k₂ * r₁) + v * (a₁ * r₂ - a₂ * r₁), ?_⟩
+  grind
+
+theorem smallMultipleIsZero (V z : Int) (hV : 0 < V)
+    (hd : V ∣ z) (hlo : -V < z) (hhi : z < V) : z = 0 := by
+  obtain ⟨k, hk⟩ := hd
+  have : k = 0 := by
+    by_cases hneg : k < 0
+    · have hmul := Int.mul_le_mul_of_nonneg_left (show k ≤ -1 by omega) (show 0 ≤ V by omega)
+      have : V * k ≤ -V := by simpa using hmul
+      omega
+    · by_cases hpos : 0 < k
+      · have hmul := Int.mul_le_mul_of_nonneg_left (show 1 ≤ k by omega) (show 0 ≤ V by omega)
+        have : V ≤ V * k := by simpa using hmul
+        omega
+      · omega
+  grind
+
+theorem reconstructionUnique (s m V a₁ a₂ r₁ r₂ u v u₁ v₁ u₂ v₂ : Int)
+    (hV : 0 < V) (hr₁ : 0 < r₁) (hr₂ : 0 < r₂)
+    (hinv : u * s + v * V = 1)
+    (hbez₁ : u₁ * a₁ + v₁ * r₁ = 1)
+    (hbez₂ : u₂ * a₂ + v₂ * r₂ = 1)
+    (h₁ : V ∣ s * a₁ - m * r₁)
+    (h₂ : V ∣ s * a₂ - m * r₂)
+    (hlo : -V < a₁ * r₂ - a₂ * r₁)
+    (hhi : a₁ * r₂ - a₂ * r₁ < V) : r₁ = r₂ := by
+  have hd := determinantDivisible s m V a₁ a₂ r₁ r₂ u v hinv h₁ h₂
+  have hz := smallMultipleIsZero V (a₁ * r₂ - a₂ * r₁) hV hd hlo hhi
+  exact reducedDenominatorsEqual a₁ a₂ r₁ r₂ u₁ v₁ u₂ v₂ hr₁ hr₂
+    hbez₁ hbez₂ (by omega)
+
+theorem cancelCoprimeFactor (D a b : Int) (hg : Int.gcd D a = 1)
+    (hd : D ∣ a * b) : D ∣ b := by
+  have h := Int.dvd_gcd_mul_iff_dvd_mul.mpr hd
+  simpa [hg] using h
+
+theorem reducedDenominatorsEqualGcd (a₁ a₂ r₁ r₂ : Int)
+    (hr₁ : 0 < r₁) (hr₂ : 0 < r₂)
+    (hg₁ : Int.gcd r₁ a₁ = 1) (hg₂ : Int.gcd r₂ a₂ = 1)
+    (hcross : a₁ * r₂ = a₂ * r₁) : r₁ = r₂ := by
+  have hd₁ : r₁ ∣ a₁ * r₂ := by
+    refine ⟨a₂, ?_⟩
+    grind
+  have hd₂ : r₂ ∣ a₂ * r₁ := by
+    refine ⟨a₁, ?_⟩
+    grind
+  exact Int.dvd_antisymm (by omega) (by omega)
+    (cancelCoprimeFactor r₁ a₁ r₂ hg₁ hd₁)
+    (cancelCoprimeFactor r₂ a₂ r₁ hg₂ hd₂)
+
+/-- The reduced-ratio reconstruction argument in both cases of the manuscript.
+Take s = sigma(m), a_i = sigma(r_i). All hypotheses are displayed explicitly. -/
+theorem reconstructionUniqueGcd (s m V a₁ a₂ r₁ r₂ : Int)
+    (hV : 0 < V) (hr₁ : 0 < r₁) (hr₂ : 0 < r₂)
+    (hs : Int.gcd V s = 1)
+    (hg₁ : Int.gcd r₁ a₁ = 1) (hg₂ : Int.gcd r₂ a₂ = 1)
+    (h₁ : V ∣ s * a₁ - m * r₁)
+    (h₂ : V ∣ s * a₂ - m * r₂)
+    (hlo : -V < a₁ * r₂ - a₂ * r₁)
+    (hhi : a₁ * r₂ - a₂ * r₁ < V) : r₁ = r₂ := by
+  have hd : V ∣ s * (a₁ * r₂ - a₂ * r₁) := by
+    obtain ⟨k₁, hk₁⟩ := h₁
+    obtain ⟨k₂, hk₂⟩ := h₂
+    refine ⟨k₁ * r₂ - k₂ * r₁, ?_⟩
+    grind
+  have hz := smallMultipleIsZero V (a₁ * r₂ - a₂ * r₁) hV
+    (cancelCoprimeFactor V s _ hs hd) hlo hhi
+  exact reducedDenominatorsEqualGcd a₁ a₂ r₁ r₂ hr₁ hr₂ hg₁ hg₂ (by omega)
+
+/-- The prime-variable reconstruction in Case I, expressed without primality:
+coprimality of the coefficient and a single residue interval suffice. -/
+theorem linearResidueUnique (p s a R₁ R₂ : Int)
+    (hp : 0 < p) (hcop : Int.gcd p s = 1)
+    (h₁ : p ∣ s * R₁ + a) (h₂ : p ∣ s * R₂ + a)
+    (hl₁ : 0 ≤ R₁) (hl₂ : 0 ≤ R₂)
+    (hu₁ : R₁ < p) (hu₂ : R₂ < p) : R₁ = R₂ := by
+  have hd : p ∣ s * (R₁ - R₂) := by
+    obtain ⟨k₁, hk₁⟩ := h₁
+    obtain ⟨k₂, hk₂⟩ := h₂
+    refine ⟨k₁ - k₂, ?_⟩
+    grind
+  have hz := smallMultipleIsZero p (R₁ - R₂) hp
+    (cancelCoprimeFactor p s _ hcop hd) (by omega) (by omega)
+  omega
+
+theorem reducedRatioFromPartner (r a s m n : Int)
+    (hn : n = s * a - m * r) (hcop : Int.gcd r n = 1) :
+    Int.gcd r a = 1 := by
+  apply Int.gcd_eq_one_iff.mpr
+  intro c hcr hca
+  have hcn : c ∣ n := by
+    obtain ⟨j, hj⟩ := hcr
+    obtain ⟨k, hk⟩ := hca
+    refine ⟨s * k - m * j, ?_⟩
+    grind
+  exact Int.gcd_eq_one_iff.mp hcop c hcr hcn
+
+theorem invertibleCoefficientFromPartner (V s a m r : Int)
+    (hcong : V ∣ s * a - m * r) (hcop : Int.gcd V (m * r) = 1) :
+    Int.gcd V s = 1 := by
+  apply Int.gcd_eq_one_iff.mpr
+  intro c hcV hcs
+  have hcmr : c ∣ m * r := by
+    obtain ⟨j, hj⟩ := hcV
+    obtain ⟨k, hk⟩ := hcs
+    obtain ⟨l, hl⟩ := hcong
+    refine ⟨k * a - j * l, ?_⟩
+    grind
+  exact Int.gcd_eq_one_iff.mp hcop c hcV hcmr
+
+#print axioms eliminatePrime
+#print axioms eliminatePrimeWithDivisor
+#print axioms reducedDenominatorsEqual
+#print axioms determinantDivisible
+#print axioms smallMultipleIsZero
+#print axioms reconstructionUnique
+#print axioms cancelCoprimeFactor
+#print axioms reducedDenominatorsEqualGcd
+#print axioms reconstructionUniqueGcd
+#print axioms linearResidueUnique
+#print axioms reducedRatioFromPartner
+#print axioms invertibleCoefficientFromPartner
+
+end AmicableAudit

@@ -1,0 +1,108 @@
+import IndexedPartition
+import CaseTwoSelection
+import SigmaUniform
+
+namespace AmicableCases
+open AmicableManuscript AmicableWeight AmicableSelection Filter
+open scoped BigOperators Topology
+
+/-- Selection from the actual divisor partition, including the term indexed by zero. -/
+theorem caseTwoSelectedDivisor {e delta : ℝ} (he : 0 < e) (he1 : e < 1 / 10)
+    (hd0 : 0 < delta) (hd : delta ≤ selectionGap e / 4) :
+    ∀ᶠ x : ℝ in atTop, ∀ (k : ℕ) (V d : Fin (k + 1) → ℕ) (a r : ℕ),
+      (∀ i, 0 < V i) → (∀ i, 0 < d i) →
+      (∏ i, V i) = a → (∏ i, d i) = r →
+      (∀ i, d i ∣ sigma (V i)) →
+      (∀ i, (V i : ℝ) ≤ x * Real.log x) →
+      (V 0 : ℝ) ≤ x ^ (2 * e + 3 * e ^ 2) →
+      (∀ i, i ≠ 0 → x ^ (2 * e + 3 * e ^ 2) < (V i : ℝ) ∧
+        (V i : ℝ) ≤ x ^ (2 * e + 4 * e ^ 2)) →
+      (1 - delta) * Real.log x ≤ Real.log (a : ℝ) →
+      Real.log ((a : ℝ) / r) + Real.log (Real.log x) * (ArithmeticFunction.cardFactors r : ℝ) ≤
+        (1 / 2 - 3 * e + e ^ 2 + delta) * Real.log x →
+      (∀ q ∈ r.primeFactors, Real.log x ≤ (q : ℝ)) →
+      ∃ i, i ≠ 0 ∧ 1 < d i ∧
+        (ArithmeticFunction.cardFactors (d i) : ℝ) ≤ Real.log x / Real.log (Real.log x) ∧
+        ((V i : ℝ) / d i) * Real.exp ((ArithmeticFunction.cardFactors (d i) : ℝ) * Real.log (Real.log x)) ≤
+          x ^ (e - 4 * e ^ 3) := by
+  classical
+  filter_upwards [AmicableSigmaBounds.sigmaUniformRatio hd0,
+    AmicableSigmaBounds.sigmaUniformRatio (by norm_num : (0 : ℝ) < 1 / 10),
+    eventually_gt_atTop (Real.exp 2)] with x hsigma hsigma1 hx
+  have hx1 : 1 < x := (Real.one_lt_exp_iff.mpr (by norm_num : (0 : ℝ) < 2)).trans hx
+  have hx0 : 0 < x := by linarith
+  have hlog : 0 < Real.log x := Real.log_pos hx1
+  have hlog1 : 1 < Real.log x := by
+    have hh := Real.log_lt_log (Real.exp_pos 2) hx
+    rw [Real.log_exp] at hh
+    linarith
+  have ht : 0 ≤ Real.log (Real.log x) := (Real.log_pos hlog1).le
+  intro k V d a r hVpos hdpos hVa hdr hdV hVX hV0 hVr halog htotal hprimes
+  let I := Finset.univ.erase (0 : Fin (k + 1))
+  let cost := fun i => Real.log ((V i : ℝ) / d i) +
+    Real.log (Real.log x) * (ArithmeticFunction.cardFactors (d i) : ℝ)
+  let weight := fun i => Real.log (V i : ℝ)
+  have hapos : 0 < a := hVa ▸ Finset.prod_pos (fun i _ => hVpos i)
+  have hrpos : 0 < r := hdr ▸ Finset.prod_pos (fun i _ => hdpos i)
+  have hsum : cost 0 + ∑ i ∈ I, cost i =
+      Real.log ((a : ℝ) / r) + Real.log (Real.log x) * (ArithmeticFunction.cardFactors r : ℝ) := by
+    rw [add_comm, Finset.sum_erase_add _ _ (Finset.mem_univ _)]
+    exact partitionCostSum Finset.univ V d _ (fun i _ => hVpos i) (fun i _ => hdpos i) hVa hdr
+  have hweight : (1 - 2 * e - 3 * e ^ 2 - delta) * Real.log x ≤ ∑ i ∈ I, weight i := by
+    have hlogs : ∑ i, weight i = Real.log (a : ℝ) := by
+      dsimp [weight]
+      rw [← Real.log_prod (fun i _ => by exact_mod_cast (hVpos i).ne'), ← Nat.cast_prod, hVa]
+    have hzero := Real.log_le_log (by exact_mod_cast hVpos 0 : (0 : ℝ) < V 0) hV0
+    rw [Real.log_rpow hx0] at hzero
+    have hsplit : (∑ i ∈ I, weight i) + weight 0 = Real.log (a : ℝ) := by
+      rw [Finset.sum_erase_add _ _ (Finset.mem_univ _)]
+      exact hlogs
+    dsimp [weight] at hsplit
+    nlinarith
+  have hzero : -delta * Real.log x ≤ cost 0 := by
+    have hdle : (d 0 : ℝ) ≤ (V 0 : ℝ) * x ^ delta :=
+      (show (d 0 : ℝ) ≤ sigma (V 0) by exact_mod_cast Nat.le_of_dvd (show 0 < sigma (V 0) by rw [sigma_eq_s_add_self]; have := hVpos 0; omega) (hdV 0)).trans
+        (hsigma _ (hVX 0))
+    have hh := Real.log_le_log (by exact_mod_cast hdpos 0 : (0 : ℝ) < d 0) hdle
+    rw [Real.log_mul (by exact_mod_cast (hVpos 0).ne') (Real.rpow_pos_of_pos hx0 _).ne', Real.log_rpow hx0] at hh
+    dsimp [cost]
+    rw [Real.log_div (by exact_mod_cast (hVpos 0).ne') (by exact_mod_cast (hdpos 0).ne')]
+    have hnon := mul_nonneg ht (Nat.cast_nonneg (ArithmeticFunction.cardFactors (d 0)))
+    linarith
+  have hI : I.Nonempty := by
+    by_contra hh
+    have hnil : I = ∅ := Finset.not_nonempty_iff_eq_empty.mp hh
+    rw [hnil, Finset.sum_empty] at hweight
+    have hgapupper : selectionGap e < 1 := by dsimp [selectionGap]; nlinarith [sq_nonneg e, mul_nonneg he.le (sq_nonneg e)]
+    have hcoef : 0 < 1 - 2 * e - 3 * e ^ 2 - delta := by nlinarith [sq_nonneg (e - 1 / 10)]
+    exact (not_le_of_gt (mul_pos hcoef hlog)) hweight
+  obtain ⟨i, hi, hcost⟩ := caseTwoSelectIndex I hI cost weight (cost 0) e (Real.log x) delta
+    he he1 hlog hd0.le hd hzero (hsum ▸ htotal) hweight
+  have hi0 : i ≠ 0 := (Finset.mem_erase.mp hi).1
+  have hVone : 1 < V i := by
+    have hp : 1 ≤ x ^ (2 * e + 3 * e ^ 2) := Real.one_le_rpow hx1.le (by positivity)
+    exact_mod_cast hp.trans_lt (hVr i hi0).1
+  obtain ⟨hdone, hbudget⟩ := caseTwoBudgetFromLog hx1 he he1 hVone (hdpos i) (hVr i hi0).2 hcost
+  refine ⟨i, hi0, hdone, ?_, hbudget⟩
+  have hdir : d i ∣ r := by
+    rw [← hdr]
+    exact Finset.dvd_prod_of_mem d (Finset.mem_univ i)
+  have hpdi : ∀ q ∈ (d i).primeFactors, Real.log x ≤ (q : ℝ) := by
+    intro q hq
+    exact hprimes q (Nat.mem_primeFactors.mpr ⟨Nat.prime_of_mem_primeFactors hq,
+      (Nat.dvd_of_mem_primeFactors hq).trans hdir, hrpos.ne'⟩)
+  have hO := omegaLogBound (hdpos i) hlog1 hpdi
+  have hdX : (d i : ℝ) ≤ x := by
+    have hdle : (d i : ℝ) ≤ sigma (V i) := by
+      exact_mod_cast Nat.le_of_dvd (show 0 < sigma (V i) by rw [sigma_eq_s_add_self]; have := hVpos i; omega) (hdV i)
+    calc
+      _ ≤ (V i : ℝ) * x ^ (1 / 10 : ℝ) := hdle.trans (hsigma1 _ (hVX i))
+      _ ≤ x ^ (2 * e + 4 * e ^ 2) * x ^ (1 / 10 : ℝ) := by gcongr; exact (hVr i hi0).2
+      _ = x ^ (2 * e + 4 * e ^ 2 + 1 / 10) := (Real.rpow_add hx0 _ _).symm
+      _ ≤ x ^ (1 : ℝ) := Real.rpow_le_rpow_of_exponent_le hx1.le (by nlinarith [sq_nonneg (e - 1 / 10)])
+      _ = x := Real.rpow_one x
+  exact hO.trans (div_le_div_of_nonneg_right
+    (Real.log_le_log (by exact_mod_cast hdpos i) hdX) ht)
+
+#print axioms caseTwoSelectedDivisor
+end AmicableCases

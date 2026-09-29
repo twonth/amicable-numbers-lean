@@ -1,0 +1,37 @@
+import DivisorSelection
+
+namespace AmicableSelection
+open scoped BigOperators
+
+/-- Successively multiply primes until the prescribed threshold is first exceeded. -/
+theorem squarefreePartition (a : ℕ) (ha : Squarefree a) {U B : ℝ} (hU : 1 ≤ U)
+    (hprime : ∀ p ∈ a.primeFactors, (p : ℝ) ≤ B) :
+    ∃ V0 : ℕ, ∃ Vs : List ℕ, a = V0 * Vs.prod ∧ (V0 : ℝ) ≤ U ∧
+      ∀ V ∈ Vs, U < (V : ℝ) ∧ (V : ℝ) ≤ U * B := by
+  induction a using Nat.strong_induction_on with
+  | h a ih =>
+    by_cases hsmall : (a : ℝ) ≤ U
+    · exact ⟨a, [], by simp, hsmall, by simp⟩
+    obtain ⟨D, hDa, hDU, hDB⟩ := squarefreeDivisorCrossing ha hU (lt_of_not_ge hsmall) hprime
+    have hD1 : 1 < D := by
+      have hh : (1 : ℝ) < D := hU.trans_lt hDU
+      exact_mod_cast hh
+    have hapos : 0 < a := Nat.pos_of_ne_zero ha.ne_zero
+    have hrest : a / D < a := Nat.div_lt_self hapos hD1
+    have hrestD : a / D ∣ a := Nat.div_dvd_of_dvd hDa
+    obtain ⟨V0, Vs, heq, hV0, hVs⟩ := ih (a / D) hrest
+      (ha.squarefree_of_dvd hrestD) (by
+        intro p hp
+        exact hprime p (Nat.mem_primeFactors.mpr ⟨Nat.prime_of_mem_primeFactors hp,
+          (Nat.dvd_of_mem_primeFactors hp).trans hrestD, ha.ne_zero⟩))
+    refine ⟨V0, D :: Vs, ?_, hV0, ?_⟩
+    · have hh := Nat.mul_div_cancel' hDa
+      rw [heq] at hh
+      simpa only [List.prod_cons, mul_assoc, mul_left_comm] using hh.symm
+    · intro V hV
+      rcases List.mem_cons.mp hV with rfl | hV
+      · exact ⟨hDU, hDB⟩
+      · exact hVs V hV
+
+#print axioms squarefreePartition
+end AmicableSelection

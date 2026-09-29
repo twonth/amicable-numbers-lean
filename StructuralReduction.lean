@@ -1,0 +1,92 @@
+import PreparedExceptional
+import FinalReduction
+
+namespace AmicableManuscript
+open AmicableStructure Filter
+open scoped Topology
+
+/-- Proposition 3, with a single uniform constant in the size bounds. -/
+theorem structuralReduction : StructuralReduction := by
+  classical
+  obtain ⟨rho,hrho,hbasic⟩ := basicExceptional
+  let C := 2 + 1 / (2 * rho)
+  refine ⟨C,?_⟩
+  intro c hc
+  let c' := (c + 1 / 2) / 2
+  have hcc : c < c' := by dsimp [c']; linarith
+  have hc' : c' < 1 / 2 := by dsimp [c']; linarith
+  filter_upwards [hbasic c' hc', preparedExceptional C c' hc', preparePair hrho, partnerBelowX,
+    AmicableScale.combineSavings hcc 4 (by norm_num)] with x hbasicx hprepared hprepare hpartner hcombine
+  intro F hF hnot
+  have hpairs : ∀ n ∈ F, Amicable n (s n) := by
+    intro n hn
+    obtain ⟨n',hp⟩ := (hF n hn).2
+    simpa only [hp.2.2.2.1] using hp
+  have hbnds : ∀ n ∈ F, (n : ℝ) ≤ x * Real.log x ∧ (s n : ℝ) ≤ x * Real.log x := by
+    intro n hn
+    exact hpartner n (s n) (hpairs n hn) (hF n hn).1
+  let P := fun n => BasicGood x rho n
+  let Q := fun n => BasicGood x rho (s n)
+  let R := fun n => PreparedPair x C n (s n)
+  let G := F.filter P
+  let H := G.filter Q
+  let F1 := F.filter (fun n => ¬ P n)
+  let F2 := G.filter (fun n => ¬ Q n)
+  let F3 := H.filter R
+  let F4 := H.filter (fun n => ¬ R n)
+  have h1 : (F1.card : ℝ) ≤ x * L x ^ (-c') := hbasicx F1 (by
+    intro n hn
+    obtain ⟨hnF,hnP⟩ := Finset.mem_filter.mp hn
+    exact ⟨(hpairs n hnF).1,(hbnds n hnF).1,hnP⟩)
+  have h2 : (F2.card : ℝ) ≤ x * L x ^ (-c') := by
+    have hinj := amicablePartnerInjective F2 (by
+      intro n hn
+      exact ⟨s n,hpairs n (Finset.mem_filter.mp (Finset.mem_filter.mp hn).1).1⟩)
+    have hh := hbasicx (F2.image s) (by
+      intro v hv
+      obtain ⟨n,hn,rfl⟩ := Finset.mem_image.mp hv
+      obtain ⟨hnG,hnQ⟩ := Finset.mem_filter.mp hn
+      have hnF := (Finset.mem_filter.mp hnG).1
+      exact ⟨(hpairs n hnF).2.1,(hbnds n hnF).2,hnQ⟩)
+    rwa [Finset.card_image_of_injOn hinj] at hh
+  have h3 : (F3.card : ℝ) ≤ x * L x ^ (-c') := hprepared F3 (by
+    intro n hn
+    obtain ⟨hnH,hnR⟩ := Finset.mem_filter.mp hn
+    have hnF := (Finset.mem_filter.mp (Finset.mem_filter.mp hnH).1).1
+    exact ⟨hnR,(hnot n hnF).1⟩)
+  have h4 : (F4.card : ℝ) ≤ x * L x ^ (-c') := by
+    have hinj := amicablePartnerInjective F4 (by
+      intro n hn
+      exact ⟨s n,hpairs n (Finset.mem_filter.mp (Finset.mem_filter.mp (Finset.mem_filter.mp hn).1).1).1⟩)
+    have hh := hprepared (F4.image s) (by
+      intro v hv
+      obtain ⟨n,hn,rfl⟩ := Finset.mem_image.mp hv
+      obtain ⟨hnH,hnR⟩ := Finset.mem_filter.mp hn
+      obtain ⟨hnG,hnQ⟩ := Finset.mem_filter.mp hnH
+      obtain ⟨hnF,hnP⟩ := Finset.mem_filter.mp hnG
+      have hp := hpairs n hnF
+      have hprep : PreparedPair x C (s n) n := by
+        rcases hprepare n (s n) hp (hbnds n hnF).1 (hbnds n hnF).2 hnP hnQ with hh | hh
+        · exact False.elim (hnR hh)
+        · exact hh
+      rw [hp.2.2.2.2]
+      exact ⟨hprep,(hnot n hnF).2⟩)
+    rwa [Finset.card_image_of_injOn hinj] at hh
+  have hcard : F.card = F1.card + F2.card + F3.card + F4.card := by
+    have hh1 := Finset.card_filter_add_card_filter_not (s := F) P
+    have hh2 := Finset.card_filter_add_card_filter_not (s := G) Q
+    have hh3 := Finset.card_filter_add_card_filter_not (s := H) R
+    dsimp [G,H,F1,F2,F3,F4] at *
+    omega
+  have hsum : (F.card : ℝ) ≤ 4 * (x * L x ^ (-c')) := by
+    rw [hcard]
+    push_cast
+    linarith
+  exact hsum.trans hcombine
+
+/-- The upper bound with exponent 1/2, for the actual counting function A. -/
+theorem amicableUpperBound : MainBound := mainBoundOfStructuralReduction structuralReduction
+
+#print axioms structuralReduction
+#print axioms amicableUpperBound
+end AmicableManuscript

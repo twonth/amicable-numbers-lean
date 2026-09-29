@@ -1,0 +1,88 @@
+import RegularCounting
+
+namespace AmicableManuscript
+open AmicableStructure AmicableCases Filter
+open scoped Topology
+
+/-- The remaining structural proposition. This definition is not an assumption or axiom. -/
+def StructuralReduction : Prop :=
+  ∃ C : ℝ, ∀ c : ℝ, c < 1 / 2 → ∀ᶠ x : ℝ in atTop, ∀ F : Finset ℕ,
+    (∀ n ∈ F, (n : ℝ) ≤ x ∧ ∃ n', Amicable n n') →
+    (∀ n ∈ F, ¬ RegularPair x C n (s n) ∧ ¬ RegularPair x C (s n) n) →
+    (F.card : ℝ) ≤ x * L x ^ (-c)
+
+/-- All of the main theorem after Proposition 3, including orientation and the limit in epsilon.
+    The premise remains to be proved; this is not a certificate of MainBound by itself. -/
+theorem mainBoundOfStructuralReduction (hstruct : StructuralReduction) : MainBound := by
+  classical
+  obtain ⟨C,hstruct⟩ := hstruct
+  intro c hc
+  let c' := (c + 1 / 2) / 2
+  have hcc : c < c' := by dsimp [c']; linarith
+  have hc' : c' < 1 / 2 := by dsimp [c']; linarith
+  let e := min (1 / 20 : ℝ) ((1 / 2 - c') / 8)
+  have he : 0 < e := lt_min (by norm_num) (by positivity)
+  have he1 : e < 1 / 10 := (min_le_left _ _).trans_lt (by norm_num)
+  have hegap : c' < 1 / 2 - 4 * e := by
+    have hh : e ≤ (1 / 2 - c') / 8 := min_le_right _ _
+    linarith
+  have hevent : ∀ᶠ x : ℝ in atTop, (A x : ℝ) ≤ x * L x ^ (-c) := by
+    filter_upwards [hstruct c' hc', regularCounting C he he1 hegap,
+      AmicableScale.combineSavings hcc 3 (by norm_num)] with x hbad hgood hcombine
+    let F := (Finset.range (⌊x⌋₊ + 1)).filter (fun n => ∃ n', Amicable n n')
+    let G := F.filter (fun n => RegularPair x C n (s n))
+    let H := (F.filter (fun n => ¬ RegularPair x C n (s n))).filter (fun n => RegularPair x C (s n) n)
+    let E := (F.filter (fun n => ¬ RegularPair x C n (s n))).filter (fun n => ¬ RegularPair x C (s n) n)
+    have hF : ∀ n ∈ F, (n : ℝ) ≤ x ∧ ∃ n', Amicable n n' := by
+      intro n hn
+      obtain ⟨hnrange,hnpair⟩ := Finset.mem_filter.mp hn
+      refine ⟨?_, hnpair⟩
+      obtain ⟨n',hp⟩ := hnpair
+      have hnat : n ≤ ⌊x⌋₊ := by have := Finset.mem_range.mp hnrange; omega
+      have hx0 : 0 ≤ x := by
+        by_contra hh
+        have hfloor : ⌊x⌋₊ = 0 := Nat.floor_eq_zero.mpr (by linarith)
+        rw [hfloor] at hnat
+        have := hp.1
+        omega
+      exact (Nat.cast_le.mpr hnat).trans (Nat.floor_le hx0)
+    have hG : (G.card : ℝ) ≤ x * L x ^ (-c') := hgood G (by
+      intro n hn
+      exact ⟨s n,(Finset.mem_filter.mp hn).2⟩)
+    have hH : (H.card : ℝ) ≤ x * L x ^ (-c') := by
+      have hinj := amicablePartnerInjective H (by
+        intro n hn
+        exact (hF n (Finset.mem_filter.mp (Finset.mem_filter.mp hn).1).1).2)
+      have hh := hgood (H.image s) (by
+        intro v hv
+        obtain ⟨n,hn,rfl⟩ := Finset.mem_image.mp hv
+        exact ⟨n,(Finset.mem_filter.mp hn).2⟩)
+      rwa [Finset.card_image_of_injOn hinj] at hh
+    have hE : (E.card : ℝ) ≤ x * L x ^ (-c') := hbad E (by
+      intro n hn
+      exact hF n (Finset.mem_filter.mp (Finset.mem_filter.mp hn).1).1) (by
+      intro n hn
+      exact ⟨(Finset.mem_filter.mp (Finset.mem_filter.mp hn).1).2,(Finset.mem_filter.mp hn).2⟩)
+    have hcard : F.card = G.card + H.card + E.card := by
+      have hh1 := Finset.card_filter_add_card_filter_not (s := F) (fun n => RegularPair x C n (s n))
+      have hh2 := Finset.card_filter_add_card_filter_not (s := F.filter (fun n => ¬ RegularPair x C n (s n)))
+        (fun n => RegularPair x C (s n) n)
+      dsimp [G,H,E]
+      omega
+    have hsum : (A x : ℝ) ≤ 3 * (x * L x ^ (-c')) := by
+      change (F.card : ℝ) ≤ _
+      rw [hcard]
+      push_cast
+      linarith
+    exact hsum.trans hcombine
+  obtain ⟨x0,hx0⟩ := eventually_atTop.1 hevent
+  refine ⟨x0,fun x hx => ?_⟩
+  have hh := hx0 x hx
+  have hpow : L x ^ (-c) = Real.exp (-c * S x) := by
+    rw [L, Real.rpow_def_of_pos (Real.exp_pos _), Real.log_exp]
+    congr 1
+    ring
+  simpa only [hpow] using hh
+
+#print axioms mainBoundOfStructuralReduction
+end AmicableManuscript

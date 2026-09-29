@@ -1,0 +1,104 @@
+import LinearCongruenceCount
+import SigmaAverage
+import ReciprocalTails
+import CountFibres
+
+namespace AmicableStructure
+open AmicableManuscript AmicableResidues
+open scoped BigOperators
+
+/-- The double sum at the end of Proposition 3, with explicit parameters. -/
+theorem structuralDoubleSum (Z W : ℕ) {X H : ℝ} (hX : 0 ≤ X) (hH : 2 ≤ H) :
+    ∑ m ∈ Finset.Icc 1 Z, ∑ D ∈ (Finset.Icc 1 W).filter (fun D : ℕ => H < (D : ℝ)),
+      (1 + X * sigma m / (D : ℝ) ^ 2) ≤
+      (Z : ℝ) * W + 2 * X * Z * (Z + 1) / H := by
+  classical
+  let Ds := (Finset.Icc 1 W).filter (fun D : ℕ => H < (D : ℝ))
+  have hcard : (Ds.card : ℝ) ≤ W := by
+    have hh := Finset.card_le_card (Finset.filter_subset (fun D : ℕ => H < (D : ℝ)) (Finset.Icc 1 W))
+    simpa using (Nat.cast_le.mpr hh : (Ds.card : ℝ) ≤ (Finset.Icc 1 W).card)
+  have htail : ∑ D ∈ Ds, (1 : ℝ) / (D : ℝ) ^ 2 ≤ 2 / H :=
+    AmicableTails.reciprocalSquareTail Ds H hH (fun D hD => (Finset.mem_filter.mp hD).2)
+  have hsigma : ∑ m ∈ Finset.Icc 1 Z, (sigma m : ℝ) ≤ (Z : ℝ) * (Z + 1) := by
+    apply le_trans _ (AmicableSigmaAverage.sumSigmaRealBound Z)
+    apply Finset.sum_le_sum_of_subset_of_nonneg
+    · intro m hm
+      exact Finset.mem_range.mpr (by have := (Finset.mem_Icc.mp hm).2; omega)
+    · intros; positivity
+  calc
+    _ = (Z : ℝ) * Ds.card + X * (∑ m ∈ Finset.Icc 1 Z, (sigma m : ℝ)) *
+        (∑ D ∈ Ds, (1 : ℝ) / (D : ℝ) ^ 2) := by
+      simp only [Ds, Finset.sum_add_distrib, Finset.sum_const, nsmul_eq_mul]
+      simp_rw [div_eq_mul_inv]
+      simp only [← Finset.mul_sum, ← Finset.sum_mul]
+      simp [mul_assoc]
+    _ ≤ (Z : ℝ) * W + X * ((Z : ℝ) * (Z + 1)) * (2 / H) := by gcongr
+    _ = _ := by ring
+
+/-- Counting actual values s(DM) from the structural congruence. -/
+theorem structuralCongruenceTotal (F : Finset ℕ) (m D M : ℕ → ℕ)
+    (Z W : ℕ) {X H : ℝ} (hX : 0 ≤ X) (hH : 2 ≤ H)
+    (hm : ∀ n ∈ F, 0 < m n ∧ m n ≤ Z)
+    (hD : ∀ n ∈ F, H < (D n : ℝ) ∧ D n ≤ W)
+    (hM : ∀ n ∈ F, (M n : ℝ) ≤ X / D n)
+    (hcop : ∀ n ∈ F, (D n).Coprime (sigma (D n)))
+    (hcong : ∀ n ∈ F, Nat.ModEq (sigma (D n)) (sigma (m n) * D n * M n) (m n * sigma (m n)))
+    (hn : ∀ n ∈ F, n = s (D n * M n)) :
+    (F.card : ℝ) ≤ (Z : ℝ) * W + 2 * X * Z * (Z + 1) / H := by
+  classical
+  let Ds := (Finset.Icc 1 W).filter (fun D : ℕ => H < (D : ℝ))
+  let I := (Finset.Icc 1 Z).product Ds
+  have hmap : ∀ n ∈ F, (m n, D n) ∈ I := by
+    intro n hnF
+    have hDpos : 1 ≤ D n := by
+      have hh := (hD n hnF).1
+      have : (1 : ℝ) ≤ D n := by linarith
+      exact_mod_cast this
+    exact Finset.mem_product.mpr ⟨Finset.mem_Icc.mpr ⟨(hm n hnF).1, (hm n hnF).2⟩,
+      Finset.mem_filter.mpr ⟨Finset.mem_Icc.mpr ⟨hDpos, (hD n hnF).2⟩, (hD n hnF).1⟩⟩
+  have hfibre : ∀ j ∈ I, ((F.filter (fun n => (m n, D n) = j)).card : ℝ) ≤
+      1 + X * sigma j.1 / (j.2 : ℝ) ^ 2 := by
+    rintro ⟨m0,D0⟩ hj
+    let B := F.filter (fun n => (m n, D n) = (m0,D0))
+    by_cases hne : B.Nonempty
+    · obtain ⟨n0, hn0⟩ := hne
+      obtain ⟨hn0F, heq0⟩ := Finset.mem_filter.mp hn0
+      have hm0 := congrArg Prod.fst heq0
+      have hD0 := congrArg Prod.snd heq0
+      simp only [Prod.fst, Prod.snd] at hm0 hD0
+      have hDpos : 0 < D0 := by
+        have hh := (hD n0 hn0F).1
+        rw [hD0] at hh
+        exact_mod_cast (show (0 : ℝ) < D0 by linarith)
+      have hinj : Set.InjOn M B := by
+        intro n1 hn1 n2 hn2 heq
+        obtain ⟨hn1F, heq1⟩ := Finset.mem_filter.mp hn1
+        obtain ⟨hn2F, heq2⟩ := Finset.mem_filter.mp hn2
+        have hd1 := congrArg Prod.snd heq1
+        have hd2 := congrArg Prod.snd heq2
+        simp only [Prod.snd] at hd1 hd2
+        rw [hn n1 hn1F, hn n2 hn2F, hd1, hd2, heq]
+      have hc := structuralCongruenceCount (B.image M) D0 m0 hDpos
+        (hm0 ▸ (hm n0 hn0F).1) hX (hD0 ▸ hcop n0 hn0F) (by
+          intro v hv
+          obtain ⟨n, hnB, rfl⟩ := Finset.mem_image.mp hv
+          obtain ⟨hnF, heq⟩ := Finset.mem_filter.mp hnB
+          obtain ⟨hmj, hDj⟩ := Prod.mk.inj heq
+          exact ⟨hDj ▸ hM n hnF, hmj ▸ hDj ▸ hcong n hnF⟩)
+      rw [Finset.card_image_of_injOn hinj] at hc
+      exact hc
+    · have hB : B = ∅ := Finset.not_nonempty_iff_eq_empty.mp hne
+      change (B.card : ℝ) ≤ _
+      rw [hB, Finset.card_empty, Nat.cast_zero]
+      positivity
+  have hsum := Finset.sum_fiberwise_of_maps_to hmap (fun _ : ℕ => (1 : ℝ))
+  calc
+    (F.card : ℝ) = ∑ j ∈ I, ((F.filter (fun n => (m n, D n) = j)).card : ℝ) := by simpa using hsum.symm
+    _ ≤ ∑ j ∈ I, (1 + X * sigma j.1 / (j.2 : ℝ) ^ 2) := Finset.sum_le_sum hfibre
+    _ = ∑ m ∈ Finset.Icc 1 Z, ∑ D ∈ Ds, (1 + X * sigma m / (D : ℝ) ^ 2) := Finset.sum_product _ _ _
+    _ ≤ _ := structuralDoubleSum Z W hX hH
+
+#print axioms structuralDoubleSum
+#print axioms structuralCongruenceTotal
+end AmicableStructure
+

@@ -1,0 +1,71 @@
+import PreparedPair
+import SmallProductCount
+
+namespace AmicableStructure
+open AmicableManuscript Filter
+open scoped Topology
+
+structure PreparedPrimeData (x C : ℝ) (n n' m m' p p' a B : ℕ) : Prop where
+  pair : Amicable n n'
+  bound : (n : ℝ) ≤ x * Real.log x
+  bound' : (n' : ℝ) ≤ x * Real.log x
+  mpos : 0 < m
+  m'pos : 0 < m'
+  prime : p.Prime
+  prime' : p'.Prime
+  eqn : n = p * m
+  eqn' : n' = p' * m'
+  cop : p.Coprime m
+  cop' : p'.Coprime m'
+  eqna : n' = B * a
+  sf : Squarefree a
+  copBa : B.Coprime a
+  cross : a.Coprime n
+  lower : x ^ (1 / 2 : ℝ) < (a : ℝ)
+  primes : ∀ q ∈ a.primeFactors, q ≤ p'
+  large : x ^ (4 / 5 : ℝ) < (p : ℝ)
+
+theorem preparedPrimeData (C : ℝ) : ∀ᶠ x : ℝ in atTop, ∀ n n' : ℕ,
+    PreparedPair x C n n' → ¬ RegularPair x C n n' →
+    ∃ m m' p p' a B : ℕ, PreparedPrimeData x C n n' m m' p p' a B := by
+  filter_upwards [AmicableScale.L_power_subpower C (by norm_num : (0 : ℝ) < 1 / 4),
+    eventually_gt_atTop (1 : ℝ)] with x hL hx
+  intro n n' hprep hnot
+  obtain ⟨a,a',B,B',hn,hn',hsf,hsf',hBA,hBA',han',ha'n,halo,ha'lo,hB,hB',horder⟩ := hprep.factors
+  have hlower : x ^ (1 / 2 : ℝ) < x / L x ^ C := by
+    have hx0 : 0 < x := by linarith
+    calc
+      _ < x ^ (3 / 4 : ℝ) := Real.rpow_lt_rpow_of_exponent_lt hx (by norm_num)
+      _ = x / x ^ (1 / 4 : ℝ) := by
+        simpa only [show (1 : ℝ) - 1 / 4 = 3 / 4 by norm_num, Real.rpow_one] using Real.rpow_sub hx0 (1 : ℝ) (1 / 4 : ℝ)
+      _ ≤ _ := div_le_div_of_nonneg_left hx0.le (Real.rpow_pos_of_pos (Real.exp_pos _) _) hL
+  have hhalf : 1 ≤ x ^ (1 / 2 : ℝ) := Real.one_le_rpow hx.le (by norm_num)
+  have ha1 : 1 < a := by exact_mod_cast hhalf.trans_lt (hlower.trans_le halo)
+  have ha'1 : 1 < a' := by exact_mod_cast hhalf.trans_lt (hlower.trans_le ha'lo)
+  let p := a.maxPrimeFac
+  let p' := a'.maxPrimeFac
+  have hp : p.Prime := Nat.prime_maxPrimeFac_of_one_lt ha1
+  have hp' : p'.Prime := Nat.prime_maxPrimeFac_of_one_lt ha'1
+  obtain ⟨m,hnp,hcop,hsig⟩ := primeUnitaryFactor hn hsf hBA hp Nat.maxPrimeFac_dvd
+  obtain ⟨m',hnp',hcop',hsig'⟩ := primeUnitaryFactor hn' hsf' hBA' hp' Nat.maxPrimeFac_dvd
+  have hm : 0 < m := by
+    by_contra hh
+    have : m = 0 := by omega
+    have hh := hprep.pair.1
+    simp [hnp,this] at hh
+  have hm' : 0 < m' := by
+    by_contra hh
+    have : m' = 0 := by omega
+    have hh := hprep.pair.2.1
+    simp [hnp',this] at hh
+  have hlarge : x ^ (4 / 5 : ℝ) < (p : ℝ) := by
+    by_contra hh
+    exact hnot ⟨hprep.pair,hprep.bound,hprep.bound',a,a',B,B',hn,hn',hsf,hsf',hBA,hBA',han',ha'n,
+      halo,ha'lo,hB,hB',horder,le_of_not_gt hh⟩
+  refine ⟨m,m',p,p',a',B',hprep.pair,hprep.bound,hprep.bound',hm,hm',hp,hp',hnp,hnp',hcop,hcop',
+    hn',hsf',hBA',ha'n,hlower.trans_le ha'lo,?_,hlarge⟩
+  intro q hq
+  exact Nat.le_maxPrimeFac hsf'.ne_zero (Nat.prime_of_mem_primeFactors hq) (Nat.dvd_of_mem_primeFactors hq)
+
+#print axioms preparedPrimeData
+end AmicableStructure
