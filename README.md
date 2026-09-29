@@ -22,7 +22,11 @@ No mathematical result is assumed through a custom axiom, `sorry`, or `native_de
 
 ## Relation to the manuscript
 
-The source is the unchanged `manuscript-input.txt`, copied from attachment
+The current paper is [USER_PROOF_HALF.tex](USER_PROOF_HALF.tex), updated on
+September 29, 2026. The certificate concerns the proof of the main theorem;
+the introductory heuristics are outside its scope.
+
+The original formalization source is the unchanged `manuscript-input.txt`, copied from attachment
 8d1dc442-c142-4799-a616-78ee8072be7e. Its SHA256 matches the attachment:
 `6324e9e9cac2f6324a6b2213c8f20fcd8c206f7388b951af5d3f039212516fa7`.
 The separately supplied definition L(x)=exp(log(x) log_3(x)/log_2(x)) is included.
@@ -33,7 +37,7 @@ in Case I, and the common-divisor/weighted-selection/reconstruction count in Cas
 `PROOF_MAP.md` identifies the corresponding checked declarations and explains the
 finite and asymptotic bookkeeping used to express the prose precisely.
 `AUDIT.md` records the mathematical review and points worth making explicit in print.
-The TeX manuscript has not been edited.
+The original formalization input is preserved separately from the current paper.
 
 ## Main checked results
 
