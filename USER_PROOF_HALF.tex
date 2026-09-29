@@ -25,7 +25,6 @@ We prove that
 $A(x)\le x\exp\{-(1/2+o(1))\log x\,\log_3 x/\log_2 x\}$
 as $x\to\infty$, where $\log_k$ denotes the $k$th iterated logarithm.
 \end{abstract}
-\dedicatory{In memory of the highly amicable Florian Luca}
     \maketitle
     
     \section{Introduction}\label{sec:introduction}
@@ -161,7 +160,7 @@ ChatGPT Astra has also formally certified the proof in Lean using only establish
     The first of these, Lemma \ref{lem:pollack}, appears as \cite[Theorem 1.1]{Pollack2011}. 
     
     \begin{lemma}\label{lem:pollack}
-    Fix $\beta>0$. There is a constant $\rho=\rho(\beta)>0$ for which the following holds. For all $X>X_0(\beta)$, and all $G>\exp((\log\log X)^\beta)$,
+    Fix $\beta>0$. There is a constant $\rho=\rho(\beta)>0$ for which the following holds. For all $X>X_0(\beta)$ and all $G>\exp((\log\log X)^\beta)$,
     \[
      \#\{n\le X:\gcd(n,\sigma(n))>G\}\le X/G^\rho.
     \]
@@ -288,7 +287,7 @@ Suppose that $p>x^{4/5}$. Then
     \[
      m\le X/p\le x^{1/5+o(1)}.
     \]
-    Furthermore, as $mm'\ge XY^{-1}$, we have that $m'\ge XY^{-1}m^{-1}\ge x^{4/5+o(1)}$, so that
+    Furthermore, as $mm'>XY^{-1}$, we have that $m'\ge XY^{-1}m^{-1}\ge x^{4/5+o(1)}$, so that
     \[
      p'\le x^{1/5+o(1)}.
     \]
@@ -345,7 +344,7 @@ as $x\to\infty$. Since $\varepsilon$ can be taken arbitrarily small, this proves
 
 Throughout this proof, constants and $o(1)$ terms may depend on $\varepsilon$.
 
-Here is a brief roadmap of the proof. In both cases, we write one member of the pair as $mR$ and
+Here is a brief roadmap of the proof. In each of the two cases below, we write one member of the pair as $mR$ and
 choose a factor $v$ of the other member.\footnote{For readers
 returning to this outline after reading the proof, $v=p$ in
 Case I and $v=V$ in Case II.}
