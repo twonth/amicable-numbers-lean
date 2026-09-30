@@ -18,7 +18,7 @@
     \subjclass[2020]{Primary 11A25; Secondary 11N37}
     \keywords{Amicable numbers, sum-of-divisors function, aliquot sums}
     \begin{document}
-    \begin{abstract} Let $s(n)=\sum_{d\mid n,\,d < n} d$ denote the sum of the proper divisors of $n$. Distinct positive integers $n,m$ form an amicable pair if  $s(n)=m$ and $s(m)=n$. 
+    \begin{abstract} Let $s(n):=\sum_{d\mid n,\,d < n} d$ denote the sum of the proper divisors of $n$. Distinct positive integers $n,m$ form an \textsf{amicable pair} if  $s(n)=m$ and $s(m)=n$. 
 Let $A(x)$ count the positive integers not exceeding $x$
 that belong to an amicable pair.
 We prove that
@@ -29,7 +29,7 @@ as $x\to\infty$, where $\log_k$ denotes the $k$th iterated logarithm.
     
     \section{Introduction}\label{sec:introduction}
 
-Let $\sigma(n)=\sum_{d\mid n}d$ denote the sum of the positive divisors of $n$ and write $s(n)=\sum_{d\mid n,\,d<n}d$ for the sum of the proper divisors of $n$, so that $s(n)=\sigma(n)-n$. There are many problems about $s(n)$ which go back to ancient times and about which we still know embarrassingly little. Perhaps the most famous of these concern \textsf{perfect numbers}, positive integers $n$ for which $s(n)=n$. In this article we are concerned with a close conceptual cousin of the perfect numbers: amicable pairs. These are pairs of distinct positive integers \(n,n'\) satisfying \(s(n)=n'\) and \(s(n')=n\). We say $n$ is an \textsf{amicable number} if $n$ is a member of an amicable pair. 
+Let $\sigma(n):=\sum_{d\mid n}d$ denote the sum of the positive divisors of $n$ and write $s(n):=\sum_{d\mid n,\,d<n}d$ for the sum of the proper divisors of $n$, so that $s(n)=\sigma(n)-n$. There are many problems about $s(n)$ which go back to ancient times and about which we still know embarrassingly little. Perhaps the most famous of these concern \textsf{perfect numbers}, positive integers $n$ for which $s(n)=n$. In this article we are concerned with a close conceptual cousin of the perfect numbers: amicable pairs. These are pairs of distinct positive integers \(n,n'\) satisfying \(s(n)=n'\) and \(s(n')=n\). We say $n$ is an \textsf{amicable number} if $n$ is a member of an amicable pair. 
 
 The smallest amicable pair $220, 284$ appears in the writings of Iamblichus (ca.~300 CE), who discusses its significance to the Pythagorean school \cite[pp.~34--35]{Iamblichus1894}:\footnote{Translation by ChatGPT from the Greek text.}
 \begin{quote}
@@ -151,9 +151,13 @@ palatable to carbon-based lifeforms. P.P. takes full
 responsibility for the mathematical content without claiming
 credit for discovering the proof.
 
-ChatGPT Astra has also formally certified the proof in Lean using only established Lean libraries; see
+ChatGPT Astra also produced a Lean formalization of
+Theorem~\ref{thm:main}. The formal proof has been checked by
+Lean's kernel; the only axioms on which it depends are
+\texttt{propext}, \texttt{Classical.choice}, and
+\texttt{Quot.sound}, the standard foundational axioms used by
+Lean and Mathlib. See
 \url{https://github.com/twonth/amicable-numbers-lean}.
-
     \section{Proof of Theorem \ref{thm:main}}\label{sec:main-proof}
     
     We first isolate two lemmas needed for the proof of Theorem \ref{thm:main}. 
@@ -200,7 +204,7 @@ Then $Y^{\delta}\le X^{\delta}\le L(x)^{o(1)}$ and $x^{-\kappa\eta}=L(x)^{-\kapp
  \le 2^{1+\delta}\sum_q\frac{H(q+1)^\eta}{(q+1)^{1+\delta}}
  <3\sum_{v\ge1}\frac{H(v)^\eta}{v^{1+\delta}},
 \]
-where the sum is on all positive integers $v$. Continuing, since $y^\eta=A$,
+where the final sum is over all positive integers $v$. Continuing, since $y^\eta=A$,
 \begin{align*}
  \sum_{v\ge1}\frac{H(v)^\eta}{v^{1+\delta}}
  &=\prod_{p\le y}(1-p^{-1-\delta+\eta})^{-1}
@@ -434,7 +438,7 @@ We write $a=Rb$, so that
 By Lemma \ref{lem:technical-A}, we can assume that
 \begin{equation}\label{eq:case-II-mass}
  \log(\sigma(b)_{\le y})+(\log_2 x)\Omega(\sigma(b)_{>y})
- < (1/2-4\varepsilon)\log x,
+ \le (1/2-4\varepsilon)\log x,
  \quad \text{where~} y:=\log x.
 \end{equation}
 Indeed, given $b$ there are at most $X/b$ possibilities for $n$. Lemma \ref{lem:technical-A} with $\kappa:=1/2-4\varepsilon$ and partial summation show that the number of exceptions is at most
@@ -580,7 +584,7 @@ Thus, there are at most $x^{o(1)}$ choices of $d$. Moreover,
 \eqref{eq:case-II-mass} gives
 \[
  J=\Omega(d)\le\Omega(\sigma(b)_{>y})
- \le\frac{\log x}{\log_2 x}.
+ < \frac{\log x}{\log_2 x}.
 \]
 
 For fixed $d$, we estimate $\sum 1/V$ over squarefree $V\le X$
@@ -625,11 +629,9 @@ Thus, by \eqref{eq:prime-reciprocals},
 where $C$ is a positive absolute constant. To go from the second to the third line, we used that every prime factor of $d$ exceeds $y$, so that each $\phi(f_i) = f_i \prod_{p \mid f_i}(1-1/p) \ge f_i \exp(-2\sum_{p \mid f_i} 1/p) \ge f_i \exp(-2\Omega(f_i)/y)$.
 
 We have $h\le\Omega(d)=J$, and the number of multiplicative
-partitions of $d$ is at most $\Omega(d)^{\Omega(d)}=J^J$:
-each partition is obtained in at least one way by partitioning the
+partitions of $d$ is at most $\Omega(d)^{\Omega(d)}=J^J$: Each partition is obtained in at least one way by partitioning the
 $\Omega(d)$ prime factors of $d$, with occurrences
-distinguished, into nonempty groups.
-Since $J\le\log x/\log_2 x$, we have
+distinguished, into nonempty groups. The number of these set partitions is bounded by the number $J^J$ of functions from $\{1,2,\dots,J\}$ to $\{1,2,\dots,J\}$, as one sees by encoding each partition by the function sending an element to the least member of its group. Since $J\le\log x/\log_2 x$, we have
 \[
  \log\{(\log X)(C\log_2 X)^J J^J\exp\{2J/y\}\}
  \le J\log_2 x+O(J+\log_2 x).

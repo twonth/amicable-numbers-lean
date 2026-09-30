@@ -1,6 +1,6 @@
 {
   "status": "passed",
-  "completedAtUtc": "2026-09-30T01:00:25.412942+00:00",
+  "completedAtUtc": "2026-09-30T17:15:15.667398+00:00",
   "schema": {
     "version": "v0.4",
     "revision": "99c678e569c7c4c0772db297c5ddd5e4c9b6322e",
@@ -13,7 +13,8 @@
     "manuscriptHashes": "passed",
     "sourceLabelsAndModulePaths": "passed",
     "comparatorInputsAndLog": "passed",
-    "leanDeclarationNames": "passed"
+    "leanDeclarationNames": "passed",
+    "humanReviewRecordConsistency": "passed"
   },
   "alignmentEntries": 31,
   "alignmentStatuses": {
@@ -24,8 +25,8 @@
   "uniqueLeanDeclarations": 35,
   "comparatorCompletedAtUtc": "2026-09-30T00:55:46Z",
   "inputs": {
-    "formalization.yaml": "645c0db506dc4c8ae874857658fca84cdf50511a0796ed7eba808631d4fc22c5",
-    "USER_PROOF_HALF.tex": "f106bae2f492a683021c65c8afb3bca37ea5ab8f783d9e60af69b4f93a56c4fb",
+    "formalization.yaml": "98c0121e2b3266ac315f5492dd392d0ba7bf206c55df23f55d8ac8484cec348d",
+    "USER_PROOF_HALF.tex": "eb264cb17af354b30fa2d5695e24d414efead3579e781c85e398c9647384bbf4",
     "manuscript-input.txt": "6324e9e9cac2f6324a6b2213c8f20fcd8c206f7388b951af5d3f039212516fa7",
     "ManuscriptArithmetic.lean": "edddd5f5025c43b591c7184341c5498796f78eabd7e657be1efed4a5deef09c0",
     "Certificate.lean": "3fc0fcbb5e7d3f851bfbfe3d92c860bf83dcaddc8bc79951ca4d5ca16a257ffc",
@@ -137,8 +138,9 @@
     "PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean": "dac92baf87d5cc61b67f79f2062d4bb2cd1e510f057b2141ac52f13abce6dfaf",
     "PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/SelbergBounds.lean": "941f481d0979f47ac776e138c8e1f01b25d2798bfbb606c8a0c584325c5e96d1",
     "verify-comparator.sh": "b826998496d06a16c5a928cac6bb104594252f02766de614eb6832d8c22a5d51",
-    "verification/comparator-status.json": "7731c331b314807c212272322f89ef5294006179aedafe9b3e9e0be0bf84c1e9",
+    "verification/comparator-status.json": "aab41e74880163898cc7e52e2c4a9e49691432de7ab7239f247f13987bc874f1",
     "verification/comparator.log": "a4a6abcbfac84a39e323aa73d78c464cc79626599e0a73bb8b52507c7a0d7c0f",
+    "verification/human-review.json": "462c10f5e1448446010200856c7995420e5afa80314cf144f69fd0c1775c6c12",
     "LICENSE": "0e953604400442fb399dcf1e10d6f9e6eae0183afb1c2a3bbe05f3ca3fcfa11b",
     "LICENSE_SCOPE.md": "58d454a89b803fcf092b66e84dd07900413407b0af7f86d4d33c89e4e1fc50cf",
     "vendor-provenance.json": "d7216abdd5e1c2d60ac6b0c3e77720bbcc1d753275fa45165b3cd62475ab3b6f",
@@ -146,5 +148,5 @@
     "vendor-licenses/PrimeGapsLib-LICENSE": "1eb85fc97224598dad1852b5d6483bbcf0aa8608790dcc657a5a2a761ae9c8c6",
     "vendor-licenses/PrimeNumberTheoremAnd-LICENSE": "1eb85fc97224598dad1852b5d6483bbcf0aa8608790dcc657a5a2a761ae9c8c6"
   },
-  "limitations": "Structural validation and declaration existence only; no independent human review or automatic assessment of mathematical correspondence."
+  "limitations": "Structural validation and declaration existence only; no automatic assessment of mathematical correspondence. Human review, when recorded, is limited to its stated scope."
 }

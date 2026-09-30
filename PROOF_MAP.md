@@ -10,6 +10,10 @@ stable TeX labels, and corresponding Lean declarations.
 This map distinguishes mathematical steps from implementation details;
 it does not assert that every sentence of prose is itself a Lean declaration.
 
+Paul Pollack confirmed completion of the human check matching Theorem 1 to the
+Comparator challenge on September 30, 2026. The reviewed artifacts and scope
+are recorded in [verification/human-review.json](verification/human-review.json).
+
 ## Definitions and final statement
 
 `ManuscriptArithmetic.lean` defines sigma as mathlib's divisor-sum arithmetic

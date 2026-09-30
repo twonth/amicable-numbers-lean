@@ -113,6 +113,17 @@ def main():
     require(digest(read("verification/comparator.log")) == comparator["logSha256"], "Comparator log hash mismatch")
     config = json.loads(read("comparator.json"))
     require(config == comparator["configuration"], "Comparator configuration mismatch")
+    human_review_check = "not-recorded"
+    if "human_review_record" in metadata["review"]:
+        review = json.loads(read(metadata["review"]["human_review_record"]))
+        require(review["reviewer"] in metadata["review"]["reviewers"], "Human reviewer mismatch")
+        require(review["completedOn"] == metadata["review"]["human_review_date"], "Human review date mismatch")
+        require(review["scope"] == metadata["review"]["human_review_scope"], "Human review scope mismatch")
+        for artifact in (review["manuscript"], review["challenge"]):
+            require(digest(read(artifact["file"])) == artifact["sha256"], "Reviewed artifact has changed: " + artifact["file"])
+        require(review["manuscript"]["label"] in labels, "Reviewed manuscript label missing")
+        require(review["challenge"]["declaration"] in config["theorem_names"], "Reviewed challenge differs from Comparator configuration")
+        human_review_check = "passed"
     for result in metadata["status"]["main_results"]:
         read(result["file"])
         require(result["axioms"] == config["permitted_axioms"], "Axiom lists disagree")
@@ -150,13 +161,14 @@ def main():
                    "url": SCHEMA_URL, "sha256": SCHEMA_SHA256},
         "checks": {"schema": "passed", "uniqueYamlKeys": "passed",
                    "manuscriptHashes": "passed", "sourceLabelsAndModulePaths": "passed",
-                   "comparatorInputsAndLog": "passed", "leanDeclarationNames": lean_check},
+                   "comparatorInputsAndLog": "passed", "leanDeclarationNames": lean_check,
+                   "humanReviewRecordConsistency": human_review_check},
         "alignmentEntries": len(entries),
         "alignmentStatuses": dict(Counter(entry["status"] for entry in entries)),
         "uniqueLeanDeclarations": len(declarations),
         "comparatorCompletedAtUtc": comparator["completedAtUtc"],
         "inputs": checked,
-        "limitations": "Structural validation and declaration existence only; no independent human review or automatic assessment of mathematical correspondence."
+        "limitations": "Structural validation and declaration existence only; no automatic assessment of mathematical correspondence. Human review, when recorded, is limited to its stated scope."
     }
     if args.report:
         args.report.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")

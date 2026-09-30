@@ -41,9 +41,12 @@ rerun in that project, retaining dependency caches. Both runs used real Landrun
 sandboxing and systemd's `RestrictAddressFamilies=~AF_UNIX` protection.
 No independently implemented external kernel was used.
 
-The match between the written theorem and the challenge was reviewed by the
-agent; no separate human review is recorded here. The paper's introductory
-heuristics and historical assertions are outside this check's scope.
+Paul Pollack confirmed on September 30, 2026 that he completed the human check
+of the correspondence between the manuscript's Theorem 1 and the challenge;
+see [verification/human-review.json](verification/human-review.json). The agent
+also reviewed this correspondence. This does not claim a line-by-line human
+audit of all Lean proofs or independent peer review. The paper's introductory
+heuristics and historical assertions are outside Comparator's scope.
 
 ## Reproduction
 

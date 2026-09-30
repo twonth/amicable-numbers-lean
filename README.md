@@ -31,7 +31,7 @@ solution does not depend on it.
 ## Relation to the manuscript
 
 The current paper is [USER_PROOF_HALF.tex](USER_PROOF_HALF.tex), updated on
-September 29, 2026. The certificate concerns the proof of the main theorem;
+September 30, 2026. The certificate concerns the proof of the main theorem;
 the introductory heuristics are outside its scope.
 
 The original formalization source is the unchanged `manuscript-input.txt`, copied from attachment
@@ -138,8 +138,13 @@ python3 scripts/validate_metadata.py --lean-project .
 The validator downloads the schema from its recorded immutable revision and
 verifies its SHA256. Use `--schema /path/to/v0.4.schema.json` for an offline copy,
 or omit `--lean-project` to skip compilation of the declaration-name checks.
-These checks establish metadata consistency; the mathematical correspondence
-remains a separate review task. No independent human review is claimed.
+These checks establish metadata consistency; mathematical correspondence is
+reviewed separately. Paul Pollack confirmed on September 30, 2026 that he
+completed the human check of the correspondence between the manuscript's
+Theorem 1 and the Comparator challenge. The exact reviewed manuscript and
+challenge are identified in [verification/human-review.json](verification/human-review.json).
+This records the author's statement review, not a line-by-line human audit of
+all Lean proofs or independent peer review.
 
 The copyright-header additions are recorded in `verification/header-changes.json`;
 all pre-existing original proof bodies were preserved byte-for-byte. Comparator

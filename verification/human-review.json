@@ -1,0 +1,22 @@
+{
+  "status": "completed",
+  "reviewer": "Paul Pollack",
+  "completedOn": "2026-09-30",
+  "scope": "Correspondence between the manuscript's Theorem 1 and the Comparator challenge",
+  "basis": "The author confirmed completion in the project conversation: 'I have completed the human check'.",
+  "manuscript": {
+    "file": "USER_PROOF_HALF.tex",
+    "label": "thm:main",
+    "sha256": "eb264cb17af354b30fa2d5695e24d414efead3579e781c85e398c9647384bbf4"
+  },
+  "challenge": {
+    "file": "Challenge.lean",
+    "declaration": "AmicableComparator.main_theorem",
+    "sha256": "2ce909e112e4bb0af37d639824e99c7514045a5fe5a707bf6bdb3a7a08439c10"
+  },
+  "scopeExclusions": [
+    "Line-by-line human audit of the entire Lean proof development",
+    "Independent peer review",
+    "Formal verification of introductory heuristics and second-moment discussion"
+  ]
+}

@@ -128,19 +128,24 @@ fidelity:
     main theorem. See PROOF_MAP.md for details.
 
 review:
-  status: "agent-reviewed"
-  reviewers: ["ChatGPT Astra"]
+  status: "author-verified"
+  reviewers: ["Paul Pollack", "ChatGPT Astra"]
+  human_review_record: "verification/human-review.json"
+  human_review_date: "2026-09-30"
+  human_review_scope: "Correspondence between the manuscript's Theorem 1 and the Comparator challenge"
   notes: >-
-    The theorem-to-manuscript correspondence has been reviewed by the agent;
-    no separate human review of the full Lean development or peer review is
-    claimed. The author has participated in preparing the manuscript.
+    Paul Pollack confirmed on 2026-09-30 that he completed the human check of
+    the correspondence between the manuscript's Theorem 1 and the Comparator
+    challenge. The agent also reviewed the manuscript-to-Lean mapping.
+    This records a human statement-correspondence review, not a line-by-line
+    human review of the full Lean development or independent peer review.
     Comparator checks statement/definition agreement, permitted axioms, and
     Lean kernel acceptance; it does not establish the fidelity of the initial
     challenge to the prose. No independent external kernel has been run.
 
 alignment:
   source_file: "USER_PROOF_HALF.tex"
-  source_sha256: "f106bae2f492a683021c65c8afb3bca37ea5ab8f783d9e60af69b4f93a56c4fb"
+  source_sha256: "eb264cb17af354b30fa2d5695e24d414efead3579e781c85e398c9647384bbf4"
   original_input:
     file: "manuscript-input.txt"
     sha256: "6324e9e9cac2f6324a6b2213c8f20fcd8c206f7388b951af5d3f039212516fa7"

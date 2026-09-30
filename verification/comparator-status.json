@@ -58,6 +58,7 @@
   "inputHashFile": "comparator-source-hashes.json",
   "log": "comparator.log",
   "logSha256": "a4a6abcbfac84a39e323aa73d78c464cc79626599e0a73bb8b52507c7a0d7c0f",
-  "statementReview": "Agent-reviewed against the manuscript; no separate human review recorded.",
-  "scope": "Main theorem and its transitive proof dependencies; introductory heuristics are not checked."
+  "statementReview": "Agent-reviewed at the time of the Comparator run. Paul Pollack subsequently confirmed the human statement-correspondence check on 2026-09-30; see humanReviewRecord.",
+  "scope": "Main theorem and its transitive proof dependencies; introductory heuristics are not checked.",
+  "humanReviewRecord": "verification/human-review.json"
 }
