@@ -1,0 +1,620 @@
+[
+  {
+    "file": "AnalyticInputs.lean",
+    "oldSha256": "1b3bde95611daa20ff763fc21e0f63d6ca14768dc07dfebe45ee7259ee717be1",
+    "newSha256": "c1dd71ba6a1c946240a0ac8b4501d9dfef2e16a78ac8a91d26910b36e66e63ad",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "ArithmeticChecks.lean",
+    "oldSha256": "30089d81c4755f779f96206073a64a67dcd3a7ae47c5d532e7407b03663d260a",
+    "newSha256": "8636962f0e1163a8d99b70a091761d6b2ed7dd2828a38580901f329dfd6bb11b",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "AsymptoticAbsorption.lean",
+    "oldSha256": "2986c70170f497a68de490c2b992c44cb92761e79e81ac2cad89854c4c0806f9",
+    "newSha256": "b456470e97ba85cc26d996e700aa0990266f7d9eb81219f07d22a31cfa8e179c",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "CaseOneCount.lean",
+    "oldSha256": "9116b2ef3d5c95266897b148dd613f207e70ef2cf7e79a040992f9cad1607c57",
+    "newSha256": "28e2a557e9701cf9824e4381f56af4b4aa604c80de7737c3cb138122613184a6",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "CaseOneCounting.lean",
+    "oldSha256": "ddb11e9d1bea5f747e30371a0fb9f1c4636aa3190c002a6c14c4760ffdd3dd72",
+    "newSha256": "5121e5da2bef3c04e521924e96ad37fec5f98a1b1575f7cb89133dab514c7c52",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "CaseOneCountingSharp.lean",
+    "oldSha256": "e99a39b2507b97ddcd7effff357912f4a59eef524efc86cfd032da3d3b946e4c",
+    "newSha256": "3fe1e58689e51f76c026e0eced0b620f89b1e7d85c1f8481fe9fd45367f7a74b",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "CaseOneRange.lean",
+    "oldSha256": "9314e9082b6a0ccb1e22ca605c0c049b47dd7142aebf8063d45db4424a2e8107",
+    "newSha256": "78359035562f09bd70af7285e437ad07dc42099c488acf7dd38d3502215a0a2e",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "CaseOneSelection.lean",
+    "oldSha256": "342b48a66bac799370cfcc0847c04d0ea1ab464c0561abd8e4be4b52e116da46",
+    "newSha256": "18ae3ab190092194cb1adba6edec8bc2b7222394848d810040e2dfb1b95600e9",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "CaseOneWitness.lean",
+    "oldSha256": "5d763913d82e19a194f17b030be2bd2fddd7dedfe3418bc74258220c73f8a8b1",
+    "newSha256": "5295ca9119591814ccf2156bac8f3ae3308178aa1e0aeac318e51e4a33c97617",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "CaseReconstruction.lean",
+    "oldSha256": "a124db0ec856aaaf0aff9c2e61366066dc42dc80c3e37e08761b8b06a31a0a6f",
+    "newSha256": "0536a8e6ad851b6a66ca40c0b74a3606a94f849f32a907345a490b7735faf02c",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "CaseTwoBudget.lean",
+    "oldSha256": "1e244afbf4e01938baad08c8cd14b013d26ba95b979fa3510df01414857cfc9a",
+    "newSha256": "fa777b0de559ab228f171be8f64094611667d0e575d31cd4458f931f5d689e82",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "CaseTwoCounting.lean",
+    "oldSha256": "341fc889c66cbaaffe755e16e70e8621a6f234f6f61a0f2f555a323f418fb025",
+    "newSha256": "a72e91fbb8baaef8c85ee6990c69a4ed5e56dbaf0dbd9d7e52c889c57bdfe328",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "CaseTwoPairWitness.lean",
+    "oldSha256": "0420f4a40fc1465556e103bc71b70560f5c8a232be223c4073d155086cbbfae4",
+    "newSha256": "137ea8eae20296cedfaa1e722405a4deaa33be38d62acf515fe40c16713cc57c",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "CaseTwoSelectedDivisor.lean",
+    "oldSha256": "e474863ff258a5a47464db660285a1fa73aadbca61bde2c949ee0ac49b568084",
+    "newSha256": "bcb6310f00da01b834a78c1d78b18bef7cc0a79435a35286105ddec5c7b8cd9c",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "CaseTwoSelection.lean",
+    "oldSha256": "1b10054240d20690891513c02cf551db6480fbcd1d7aa9d219b557eb9deaef55",
+    "newSha256": "f79a8354d10180066c2bf1adad9bc740008f91527c04b4460f9d74769a1172b3",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "CaseTwoUniform.lean",
+    "oldSha256": "a1822cc01a5b5592e98148fed418c99fbec8d056a5dd997b751d9ac20b820ad2",
+    "newSha256": "5af2f5a55680640919f9dc896ff2fa997941bc88adc2a041b67abdda3bf85b4a",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "CaseTwoWitness.lean",
+    "oldSha256": "d396c38e193007d0295d9703d73889aee6b6ad0b61de8c3098c85e30c5dd4bc3",
+    "newSha256": "9a17da2335c92cd7deda353dd4ca2ad87d3733f2ece0923d5ef3997d2882bbe8",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "Certificate.lean",
+    "oldSha256": "31748b1ed58b3c9694b7c5fc1aa0783d33943b09622127d3aade00ea7134c1a2",
+    "newSha256": "3fc0fcbb5e7d3f851bfbfe3d92c860bf83dcaddc8bc79951ca4d5ca16a257ffc",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "Challenge.lean",
+    "oldSha256": "4af47bfc8920b1c9901d4e1a30df68cf478ac9b7e28c8e2e94d058d9064b9eb5",
+    "newSha256": "2ce909e112e4bb0af37d639824e99c7514045a5fe5a707bf6bdb3a7a08439c10",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "CommonDivisor.lean",
+    "oldSha256": "084b3ce8218fbad7d9736b775fe4ba0d792ccb35f36cfbe9a4ab58f876adb6ff",
+    "newSha256": "11c27f58cdb7e3bbc1344fff8d5d082664859759f24c6084b074fae54223442f",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "ComplementaryDivisor.lean",
+    "oldSha256": "fb2241c8034d81648add89b8dec6b7d6b9f567d39fdb99f54d099a1a47127978",
+    "newSha256": "0296bd969858fddd4ecee33a6cbe6c227a56de9607ff51a58435008e38036436",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "CoprimeDivisor.lean",
+    "oldSha256": "2638dc8c9b8781cca8411676610957dbb720ff704893351dc2490592d78d7f7f",
+    "newSha256": "696b94fff99910b45a162d1f664acd6726fa6d349a1b2009613213554bb95e27",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "CountFibres.lean",
+    "oldSha256": "6e6d409a28c9671c07dcb0718fdb238a799dc355c40c85649a9b6b426dd01086",
+    "newSha256": "e44db893fa8d5c3238527bb908e1cbacfbb65ffbc65ecc722b9695ce84e93e9e",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "CountMultiplicity.lean",
+    "oldSha256": "ff53ae64f43d75f192db53235e70e2d38cca05ff385daa893c4d526016defa1d",
+    "newSha256": "163aa6b6236fb3129e01a4a102e04e3d8986626c618ea83f6ab983a88a38f3bd",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "DivisorAllocation.lean",
+    "oldSha256": "8877d385fc310e6acd5a3ada593037e20dc64109e5c4d0de613ee72eafa49795",
+    "newSha256": "dd0b9bd2598c26bd54625a5329ff0d6e39e5cf05965c7686d3d2f72ab19e38b5",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "DivisorBound.lean",
+    "oldSha256": "5f3033d22cffd15123ac3e404558f4df64456858e81e6976afe739e26d79d0ad",
+    "newSha256": "db68c136686f4544f1d549c8802744a7f35a2a289384e735aa1253169029da05",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "DivisorPartition.lean",
+    "oldSha256": "8e6e3a32dc8c42e36660ce555484fb132e04cce5354537ac7d8dfe649920986e",
+    "newSha256": "d4d88c25bece24ca0542b112206f46d76d2a32165967540fbd1aecf534edfe4d",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "DivisorSelection.lean",
+    "oldSha256": "47f69c6fdaf95162163b95718e93451f1c5bafa67d2912073592b002b3a53037",
+    "newSha256": "d12fc66405e45510bf3ee33cd177f68505245c306f4c77dfeadec7a0173f4b1d",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "DyadicRanges.lean",
+    "oldSha256": "8924de5923df117b132503258e97dd6375378f98db34024e54b720ebc6962a3e",
+    "newSha256": "2a1b8783387e2c2e06cd575f9f2a1f0de048c492e918fbe67bacfcfa091aa3d7",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "FactorizationCounting.lean",
+    "oldSha256": "5c7c50e24015dbb574901b7e3f90d779ec1078214a8caefc36b35bba5457eafd",
+    "newSha256": "f84454dbd254d2dc6beb7b487590a92cdca1ef21bc3240377625c729ff287d81",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "FinalReduction.lean",
+    "oldSha256": "c4be10005cc301b76ab79da16ab48dd8f1310b403fcdbb7df32e785f41eccba7",
+    "newSha256": "abf29b0a2312e4d6cd55e8b0304eb0e92e43dd306659faf0d6531937b525830b",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "FineTotientBound.lean",
+    "oldSha256": "e1ea1f0e098731eccd53d496d461fa4aa417bc2cc85003ccbb37214e9d7b317f",
+    "newSha256": "4509f1c87ddb92de8499563a303e67eeececc53457ba03c9bab4af2fd6043895",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "FiniteCounting.lean",
+    "oldSha256": "4dac62f446ab24db7a07ed19d91abc7d32d31c9cfeeac5564b30dcdd319a5b9e",
+    "newSha256": "96f1a5bb63921c9d1057c6772d5bfaa201990fbd5f0fa1034d11dea82df0c019",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "GcdCost.lean",
+    "oldSha256": "3cf348ac9eeb193604f07637d9e4b2bfe3e641cb3e588b0a2bccf0dafd0437fe",
+    "newSha256": "778399c58a048e5e39db48d3225a20b61052c4bebea671c9f87dfbc41fdd5ce6",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "GcdCounting.lean",
+    "oldSha256": "f8e82f3bddd86bc0f3754a303daf77b8912bdd15f54056208c6957aea253b479",
+    "newSha256": "a8cdd734374ddc971b7341bab1fcfa4a8d7fb9d9fbe60da5fcc19361d1ef8f8c",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "GcdDecomposition.lean",
+    "oldSha256": "154dd9aaba781f10b0a36ff16b10a572ca87cabf57a9b89fd47062c391fabc57",
+    "newSha256": "9b57d59dbdb88cbeb60e6f8adbdd0e12e9f95bb8534f2fcf5fc7a9a1d12af7d3",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "GcdLift.lean",
+    "oldSha256": "fe63c5d28f891614874c315b3398559a271a9c726ca669d94bee170265e8f424",
+    "newSha256": "fa108b7cb1f916f939c7fb5bcdf9808b68b9c2866c92b03d82ae8a3f5d23ae31",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "GcdReduction.lean",
+    "oldSha256": "806f6d5af89125475db5e7457ed474e3b9a5295c6be1bf984aaefd9651c0d16a",
+    "newSha256": "19fbd50818357148623f1c245a0a2d5cb18051efbba884a9f20b66005e829247",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "GeometricBounds.lean",
+    "oldSha256": "24bbf88369dbd67f6541a076b6ca97be619bec59aa8033934667526a2fc3e997",
+    "newSha256": "25976a8cdcfe9c3b9f4bf3754b8ca0fa74ef0fd91a738efc2b5e75f6cf769434",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "GoodPrimeProduct.lean",
+    "oldSha256": "9ad43d96014675e4e4c37abb7332f24024c48bbdb868125293d2dca1bee60b47",
+    "newSha256": "69002063bf25f307f507cf168206464e83b7a925b9aaa69e8f9db18febc05abb",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "HarmonicCoprime.lean",
+    "oldSha256": "ec41f4ca0494066cda6cdee9bbf9fd721cf6b477728c171db2302aa12683a143",
+    "newSha256": "ebfe8a3cd79fbcd6401c76388ace6b04d9c3bebb21f801b0568b41fbe9d7d87f",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "IndexedPartition.lean",
+    "oldSha256": "b8ee99e2efdf9b9241bdc4f9221883da7d5664aa609fa1e513ca7670376d4643",
+    "newSha256": "7745ec5fae67834754842d6c4d59e6314541f6b76b123626cc4ebc36e753c57d",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "LargeCoprimeDivisor.lean",
+    "oldSha256": "55db4eedac29eb80dcbd3d8e20545a9c92c3322eb0857c3cbbc1e4f88cd0b18f",
+    "newSha256": "0f67c6779b5026905fc49e9b06b4539192daa7d6e81822ffc4922810b43e6696",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "LinearCongruenceCount.lean",
+    "oldSha256": "5c16b5750a1e54c4b21e2390b124f1c747427721b32db94fc56563817ec7c97a",
+    "newSha256": "4e3278537c044af530e93aefc7348c6d36438b82f8a11f4e13a677a5ac59d397",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "LogarithmicFactors.lean",
+    "oldSha256": "df21b2134abe2a915377fea59f4a0160e404ac60bcd23e8962dbfd15cc78dbf9",
+    "newSha256": "81609292beac8f7e2783f5ac227dfaecdec7a1b3ce8f96f75f45bc0a317599c4",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "ManuscriptArithmetic.lean",
+    "oldSha256": "2a08c221caa610266210e99855ba45bdcd6fece4b8897dfe1373339dedac0bff",
+    "newSha256": "edddd5f5025c43b591c7184341c5498796f78eabd7e657be1efed4a5deef09c0",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "ManyPrimeDivisors.lean",
+    "oldSha256": "46616beee348a4a44f73df3d19c1012ba4ad138753588981acdc0b05efbfe669",
+    "newSha256": "ea81cbd10a6c51784f3a8794ea304b5851f2d224c7ea952781b27e8398bade2f",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "MomentEuler.lean",
+    "oldSha256": "22e0aa9ac7735ce0396b5272e48907a95e74f83d13e45132d865c0d23d8d1941",
+    "newSha256": "d79bfa8cdd2d1d01d8d8d801551ba97e0bec0857074fa262622e08296960dce7",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "MomentWeight.lean",
+    "oldSha256": "570f1e562b7f1a751e63e5fedf0d8cf1dcc071de45bbede80eb7721850429efa",
+    "newSha256": "2ea0d71b4acd4864fc7aae540dae8cefc73d121b42b0b97c73e46f2b214e1390",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "OmegaMoment.lean",
+    "oldSha256": "c0e7a572097e554c232601ee73c33881b1055293e50a3d93815e7d29ce36f924",
+    "newSha256": "bd257c4579aa81dc87cbc84efd3e17eb9571aaf9b5f55bde6e362dfc942b925b",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "OmegaTail.lean",
+    "oldSha256": "534bdad6322e8e8b37e8bfc8d58a6b645dd484215159bee9389f2db7f1a9463e",
+    "newSha256": "38dc39104194409ed6592b8a174390c4446126bf252c97146004832e8c941d75",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "PartialSummation.lean",
+    "oldSha256": "0bef7cdca6e994ea18ea1eed68fd4ddc24337d346f13d8d6c93ce69a151c006d",
+    "newSha256": "cfef8be2519ceb96e228852295e07ba6ff66abdd2d7e3632c354fb4c1f9f54ee",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "PollackTheorem.lean",
+    "oldSha256": "889af16c9f4a0f87de1c836d1a14a3a226c4c3e9ed19b56b44ae15a2452bc31c",
+    "newSha256": "8910ddedcfb24844002b6b310e87c796b745b4d7171e9cd2c7d90d5e9759d5a1",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "PollackUniform.lean",
+    "oldSha256": "83c4e90a5797a6535c7a84f04427c2f26f93864cbd202886b7b2ac9b63a940c6",
+    "newSha256": "08d6167c497f93a6d3ce2b9a5aefae9d07c1c0d34a5f772c875aa8628d318009",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "PreparedExceptional.lean",
+    "oldSha256": "8c3c91d920a5b8bd48da0c4f55c9f8d0c212200fc8e35041db05178f9f7fd3e4",
+    "newSha256": "eddc7b760f0d447971171c62021aa1f40776759713ec3347dc27d8883c170a20",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "PreparedPair.lean",
+    "oldSha256": "a34a3da5c33c7298eb91687d4f3e4f838b7bfb254dc1e33e227a12f24d314aeb",
+    "newSha256": "e30039153c07f4c1d0e6cc9c2a49763a9e5507dcfb4d678bd8a48286b586bad4",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "PreparedPrimeData.lean",
+    "oldSha256": "7304737f6315fbf00832a7e6c0984b259af00993cec30b1837dd4e22c4999f62",
+    "newSha256": "771745daa8b0a218f0d294cd723b743faecaafda0d476df689f7133325a8aaf5",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "PrimeInputUniform.lean",
+    "oldSha256": "d47317080bc68790b34d276e9d8b1a8883b7af8edfa74286739fda6ac482802c",
+    "newSha256": "905311e48c313494b8d2a28d97cc86f40e6dcc42eb2c7fb7def90dd28f727253",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "PrimeReciprocals.lean",
+    "oldSha256": "7b309e1be3f7b679a05a13d2bdc539babd10c49bc7046afc4855bdcd0c125bfd",
+    "newSha256": "e7a5c2a9489b9142a06648d3c2171d1288f31e06e68450aa4916fcb4c6375d80",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "ProgressionSieve.lean",
+    "oldSha256": "14e535757a50558d000df5e7079f8712c3b0c7b85454437ec675b9194451c284",
+    "newSha256": "3c253061670c597b3422ca02201df71b054ebe6b058723a030d167497e39432f",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "RankinFinite.lean",
+    "oldSha256": "47a837c0f862754fea519e09632a7601822944886485c06a022dc0ca3ff5eff8",
+    "newSha256": "c423bdea278e98806cb918fd47af2b1cb91204092852a60dcc58360ee343e8f4",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "RankinParameters.lean",
+    "oldSha256": "0efcca7b106b44dde5b88e1abff9aff80f3589b7dbf459b85e3493acb4a72b96",
+    "newSha256": "88025b9d0496c321d539daf721adbbf60980be8f5a1b65d67002d0f1d06c0e2f",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "ReciprocalTails.lean",
+    "oldSha256": "5334a92c176f869e0988cb4bcd391c9e060900a47f10da6725228006ff798a2b",
+    "newSha256": "5ccb107751490f96f628178749133fb60f91a69016034d6cecf28c4a9926af42",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "Reconstruction.lean",
+    "oldSha256": "4c9406d8db0acb79b153800bf78472c8eee349fd7c039f6732d293cb38cde327",
+    "newSha256": "93021e4e9f1f10d380f986cec5d8954c64880bb5d6b061dab4d4a66eec49ec1b",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "RegularAlternatives.lean",
+    "oldSha256": "ef983c5f8b57b7ebd2b8c7bd0a8e9c841ffee5f2fcf4dd441c3edc8bee13a5fb",
+    "newSha256": "c4f70e19369b86d3f2769a0a6dbf9f1cdeb86bf5c35e7fa31ec14a7b5731e604",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "RegularCounting.lean",
+    "oldSha256": "c62baa2c397714f91182a4ac13adae4ceb03ca2f464a031e1b744e458c42414e",
+    "newSha256": "412534696e58420cbef2af67d4197c58be4bba74fa71aa86d62f80cf560e9b1b",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "RegularPair.lean",
+    "oldSha256": "df7e990d216592acbd36ca4286dd6174b246c1368e9f6d33a3f2813dd9abc7c6",
+    "newSha256": "0b72753973f8622a79f2319469df0e60f407ce319f2831ed50b74e39da306adc",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "ResidueCounting.lean",
+    "oldSha256": "0737a42cae7680a84957a871e64672752771849508ec25d81b5ba6d776db4553",
+    "newSha256": "fb5e5009f2e99ae2c5313389cab72f5ae814bb517df97143412e795566260843",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "RoughParts.lean",
+    "oldSha256": "84f82cb376b6b7a93bd6183d91fbc245ed678195b7a39dee1aaa8a0834ee1ce8",
+    "newSha256": "430909cd265226da99b6861ff0e25bcaa63019ba03cf4529e41940fe79092b3b",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "SavingComparison.lean",
+    "oldSha256": "115b76f94d02d64e2f77e9c8999451b85dc55e3c905f5e2d3d0d4d9cabd7c6ba",
+    "newSha256": "0d0322a949e995ca304b08bf1e8afe853f49c545415902398dce7f4c277fcccf",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "ScaleBounds.lean",
+    "oldSha256": "2a593d6873edbcaf6c5996cacfb9e1f1bd92407d2d2e2265042fb47b1485fa9e",
+    "newSha256": "53adc3b415af306352c1e4079fb0bf93bf54b24c8c221a0a27bc3d391ea1f1ac",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "SharpFactorCost.lean",
+    "oldSha256": "4b608fd6f3ca23b9aabf2b4699611019bd9050a3b57d8578f7a9199ebd0592ee",
+    "newSha256": "1fcd07ffe2508a8c61072803d1c20b88c10fec1283de0a46cf8b50b4e8e1af05",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "SieveAsymptotics.lean",
+    "oldSha256": "f62b3e4cb5204bfe394c9d42af59738bd9f40866a67153efd2082ed1b73f49d8",
+    "newSha256": "0c2d66f35c19dde52b9ded0da0746e5dabdb5124aed4e826263b4a40a4f8daf4",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "SieveSupport.lean",
+    "oldSha256": "ecebca402589b307395af4ffcadb253577072c493051d3c5f2ffed6960e64148",
+    "newSha256": "93a4f39baa8507315798454dfb09ae42810a661c1c68a3244e7987357a2f6fde",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "SigmaAverage.lean",
+    "oldSha256": "00a15d1fb0ed3ab27ddf53ccb5767ab5933604a2bb6afce203446f89f67bb0d6",
+    "newSha256": "86de77c0f92b733f002a4d1c770c86cfa89cc709c71fbc71bc0ef9d4c4fdc762",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "SigmaBounds.lean",
+    "oldSha256": "52992aa549053158e0982430c0ea2cb7c5d49cad1ff25491b964c31d40552e76",
+    "newSha256": "483eec9b40ed4f3aa19631ecfadbdb31916b46f2049779d58bf73f18f0a80aab",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "SigmaCountBound.lean",
+    "oldSha256": "639fb3afcbc31aa01eeda26bdbf9aedcd4d6c8f796a3bb80e83dc7970ed19623",
+    "newSha256": "51b064e0593a97d4d2b39298806bf7b8d55ea4a478dc8bab2441d05754020fdb",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "SigmaCounting.lean",
+    "oldSha256": "3099466c1cbb93736660e11ca447a0e0969bf073ca5b7c3c141b4e632c1a7428",
+    "newSha256": "47dec0a355b80d0b2d7df74570f58c06819652d1ed2488d419fa93ab007e35cf",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "SigmaReciprocals.lean",
+    "oldSha256": "67e5e263e2e890d4f531d3205553f9ae15de2037585df0506af84a97866c80f6",
+    "newSha256": "056d61b0d68e3fa7b4984488deb0f9b0161eb5649072332184e0b7b202b04105",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "SigmaUniform.lean",
+    "oldSha256": "dcf472eb1af14213fa4820144629e50eb5e0ecde66576f0e1047ead96e53603e",
+    "newSha256": "84da6d6b199366a6c762c951971d76de89d371712e2ca632eef31968ea660a5e",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "SmallProductCount.lean",
+    "oldSha256": "8ca39c824d959284799a61d306e979ac1c305671b0fd2560bbe68fc9804d1413",
+    "newSha256": "ca5f26ba0852c1feaccbc1a685792a068795956e374dff942afe79963fa69c7a",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "SmallProductSaving.lean",
+    "oldSha256": "e13bc1ea70d4ff1ddefc047d588d16cbb9134ad1cd19a370a03eee1f67577178",
+    "newSha256": "d6d6546ee19add6beae43a75f5eda4ba2cd45f932b8a7a369da4b61ea4ca39f9",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "Solution.lean",
+    "oldSha256": "a1a2e057bab71a652883938699d9c15bdafed25c7db1a204c516a68b31185c61",
+    "newSha256": "6e13cced387558a4d661ffb1bbd8a41792eb7ec44c75c6a550f54838a8fff35a",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "SquarefreeGcd.lean",
+    "oldSha256": "7ee8cfbdce35750121cb5cd63657d4c546f0fd618802070a05186788ffbb7b40",
+    "newSha256": "156abe0f3f419777ecf9b4707023d3b7b01bd6a67cf1722532caf427de204453",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "Squarefull.lean",
+    "oldSha256": "2858b5b8ffb5173c6ec0bd95e56e5a3e946e3763181c66eda73d558e36a9c268",
+    "newSha256": "b257ac32bff51b07ca36fe9a72dd31d510dc3650504d0ac8d949bf55bf4fcf70",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "SquarefullDecomposition.lean",
+    "oldSha256": "b9b5bde692af76be81ca9fa9d467003dc39b927005ccee6878715e5acb8a8c9a",
+    "newSha256": "c7d15bb3c1d70407123639e80eb38bb1441c68cdfb8398b4e57ee7a30fa6ad50",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "StructuralCounting.lean",
+    "oldSha256": "413f8739ea740f19dea770e44fc6922f6cb0532b821d5662bc9b6a03e18a84c7",
+    "newSha256": "1319a5a731dd568a87c938d996deebdc80a55607f02d4c913a5847517d5ae3f9",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "StructuralExceptional.lean",
+    "oldSha256": "90f35053b57408fe205632107aedd78abfb0decda693c0599b670d02b9f4eb18",
+    "newSha256": "99239e2bd18e9ad58dfbc8e4ed78747287cdc6925d26d3fe03c3c55df1af7d44",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "StructuralFactorization.lean",
+    "oldSha256": "2f8ee432662056d6df32bdbcd6678b3f74117024c7d819cc05e312c949bf1d49",
+    "newSha256": "2b4b2e0cdaedf51f97a9363b2d18e29ca653c6656ff178ac0a072945adefa378",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "StructuralLargePrime.lean",
+    "oldSha256": "8cb982e002071a6e116a54c254bdf335dc18d050d28e3d78059a79c81482e854",
+    "newSha256": "fcdf54fc06690f063d71f2a753290bd71892adb4e2af017b3ccd8dacec8c4573",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "StructuralParameters.lean",
+    "oldSha256": "d6091e17e69ffb88027e110fe123da6afac54cb75384d35bf86b662c96a90994",
+    "newSha256": "0bac58e693107442d8a495a88ad9fa770f5fec7d034a85f4b950efed7ed96423",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "StructuralPowerCount.lean",
+    "oldSha256": "4881ff90fe1b6c5ccefbc6df6b564d54a162ec88138c37e0c6a5d9833c99a16d",
+    "newSha256": "0a8a97307fb97a5890d2c600ad3a3ccf26e521c20e9e3ed97d8be79ec2e3e95e",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "StructuralReduction.lean",
+    "oldSha256": "d6a37eb424ef3d717d2db5c64b954b4a0d27da4b80cd3436b11c60fb50f9ff18",
+    "newSha256": "bafcb82a8a390b5aba370baa46cdddf96a4585112c78cfe0a15034297be2c7f6",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "TechnicalExceptionalCount.lean",
+    "oldSha256": "cc9792443b2f8bf555ef4fd49631d8c5918e939c9ac0aab55bd8c5b18991fb3e",
+    "newSha256": "15515e45d31696f39341e99e015cf62f4ba89734f5c2acc525a1cf44a7ae5960",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "TechnicalLemma.lean",
+    "oldSha256": "792b0e21bafbddae8bad524ca94b52e7dbc75631994ff300d79ecaec04bc7946",
+    "newSha256": "64dfed0e6df46080809ab4476218db1fa2ccb1b45f219a684c83d8b4c622d0e8",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "TotientBounds.lean",
+    "oldSha256": "d716009fd8a01305f72ebc64032474d1df94effe8b85c04f8483e65cc0aa6d42",
+    "newSha256": "a377872ec8897b93236f02ddd3a69c1efee87963744175bf23db6fb10ced865d",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "UnitaryFactors.lean",
+    "oldSha256": "bd09005129c09fc33105a09feb3335fade2e92e6d5c812d101cee7e126dd7b93",
+    "newSha256": "5327dfa72c9fbd012f42563546e1be6d548c105bdad3d5c6c9139c7c50219727",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "WeightArithmetic.lean",
+    "oldSha256": "9edbc6a48bc712fc5b0f972bd717dd991e0692041c57f9b7a293036a93fffd65",
+    "newSha256": "783af5a8b237a921151610a055b1b891cb2b9a743e2ac2b20427f2d42d3ebfd9",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "ZetaBounds.lean",
+    "oldSha256": "c513e14837704dc6b1ffe98e56d3676af8ff6c5be7232d9202d59a33411ef216",
+    "newSha256": "e5450d12dd479c291ef2165ec5b8e55e548b3a17255e3e7670c175bebd9fc633",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "lakefile.lean",
+    "oldSha256": "9a7e1f0757d035ad3d9705abc25dacc2e83c20f86bea0060a97b9e8bfc927770",
+    "newSha256": "06c75db3699f6eba4108f5bbc651083939fca170f1de39f6b7355e6f1513f8db",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "verify.ps1",
+    "oldSha256": "7bab06786f2906d4eaa033e376894d4859f38da9b91894f18cd0841cae3872b4",
+    "newSha256": "0d96baab87d468662177a6d38f010f8359cb2e5d7dd13336c7432e7cf6d3ebe0",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "verify-kernel.ps1",
+    "oldSha256": "bd679167dfdd19d5c049c9a88c276e5ae547b62f9d287fc28071c63f8e7a17c1",
+    "newSha256": "edccf6db19b93b52e3cbc07d988087ea145ee563f34fe2c98ec6ea342d57ce79",
+    "change": "Copyright, MIT license, and attribution header only"
+  },
+  {
+    "file": "verify-comparator.sh",
+    "oldSha256": "07afba477fca3c1adcf323e56140230e2b1104e89341675ac12e6b9edd34a73b",
+    "newSha256": "b826998496d06a16c5a928cac6bb104594252f02766de614eb6832d8c22a5d51",
+    "change": "Copyright, MIT license, and attribution header only"
+  }
+]

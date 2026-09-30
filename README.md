@@ -20,6 +20,14 @@ artifacts agree with the freshly rebuilt artifacts for the compared local module
 The reported theorem axioms are only `propext`, `Classical.choice`, and `Quot.sound`.
 No mathematical result is assumed through a custom axiom, `sorry`, or `native_decide`.
 
+The main theorem has also passed the official Lean Comparator against an
+independent, Mathlib-only challenge, with real Linux sandboxing. This checks
+the theorem statement and its definitions, the permitted axioms, and a fresh
+Lean kernel replay of the exported proof. See [COMPARATOR.md](COMPARATOR.md)
+for the result, exact tool revisions, and reproduction instructions. The
+intentional `sorry` in Challenge.lean specifies the question; the checked
+solution does not depend on it.
+
 ## Relation to the manuscript
 
 The current paper is [USER_PROOF_HALF.tex](USER_PROOF_HALF.tex), updated on
@@ -34,8 +42,12 @@ The separately supplied definition L(x)=exp(log(x) log_3(x)/log_2(x)) is include
 This formalization follows the manuscript's argument: the weighted Rankin lemma,
 the squarefree structural reduction and its two eliminations, the two kinds of R
 in Case I, and the common-divisor/weighted-selection/reconstruction count in Case II.
-`PROOF_MAP.md` identifies the corresponding checked declarations and explains the
+[PROOF_MAP.md](PROOF_MAP.md) identifies the corresponding checked declarations and explains the
 finite and asymptotic bookkeeping used to express the prose precisely.
+[formalization.yaml](formalization.yaml) supplies machine-readable release metadata
+and 31 manuscript-to-Lean alignment entries, using stable TeX labels and fully
+qualified Lean names. It explicitly marks the introductory heuristics and
+second-moment discussion as outside the verification's scope.
 `AUDIT.md` records the mathematical review and points worth making explicit in print.
 The original formalization input is preserved separately from the current paper.
 
@@ -106,5 +118,30 @@ kernel-replay records. Its source hashes use repository-relative paths.
 The portable Lake configuration has been checked separately; the original
 verification was performed using the same pinned compiler and dependencies.
 
-Upstream licenses are retained in `vendor-licenses/`; no new blanket license is
-assigned to the manuscript or original project files by this upload.
+## Release metadata and licensing
+
+The original code and verification scripts are MIT-licensed, with Paul Pollack
+as copyright holder and ChatGPT Astra credited for the formalization.
+The five borrowed Lean files retain their Apache-2.0 notices. The manuscript's
+licensing is unchanged. See [LICENSE](LICENSE) and [LICENSE_SCOPE.md](LICENSE_SCOPE.md).
+
+The metadata follows the community [formalization.yaml](https://github.com/mathlib-initiative/formalization.yaml)
+v0.4 schema. [verification/metadata-validation.json](verification/metadata-validation.json)
+records schema validation, manuscript and Comparator source-hash checks, label
+resolution, and Lean checks of all mapped declaration names. To repeat these checks:
+
+```sh
+python3 -m pip install PyYAML jsonschema
+python3 scripts/validate_metadata.py --lean-project .
+```
+
+The validator downloads the schema from its recorded immutable revision and
+verifies its SHA256. Use `--schema /path/to/v0.4.schema.json` for an offline copy,
+or omit `--lean-project` to skip compilation of the declaration-name checks.
+These checks establish metadata consistency; the mathematical correspondence
+remains a separate review task. No independent human review is claimed.
+
+The copyright-header additions are recorded in `verification/header-changes.json`;
+all pre-existing original proof bodies were preserved byte-for-byte. Comparator
+was rerun successfully after these additions. The earlier run is preserved in
+`verification/comparator-initial/`.

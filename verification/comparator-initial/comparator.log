@@ -1,0 +1,884 @@
+Running as unit: run-u0.service; invocation ID: be63db425fa44aaab837681378aa5a78
+Building Challenge
+⚠ [1997/1998] Built Challenge (16s)
+warning: Challenge.lean: imports `Mathlib.NumberTheory.ArithmeticFunction.Misc` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: Challenge.lean: imports `Mathlib.Analysis.SpecialFunctions.Log.Basic` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: Challenge.lean:20:8: declaration uses `sorry`
+Build completed successfully (1998 jobs).
+Exporting #[Quot, Quot.mk, Quot.lift, Quot.ind, AmicableComparator.main_theorem, propext, Classical.choice, Quot.sound, Nat.add, Nat.sub, Nat.mul, Nat.pow, Nat.gcd, Nat.div, Nat.mod, Nat.beq, Nat.ble, Nat.land, Nat.lor, Nat.xor, Nat.shiftLeft, Nat.shiftRight, String.ofList, Char.ofNat, List, eagerReduce, Nat, String, String.mk, Char, optParam, autoParam, semiOutParam, outParam] from Challenge
+Building Solution
+ℹ [3833/3934] Built Reconstruction (2.5s)
+info: Reconstruction.lean:155:0: 'AmicableAudit.eliminatePrime' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Reconstruction.lean:156:0: 'AmicableAudit.eliminatePrimeWithDivisor' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Reconstruction.lean:157:0: 'AmicableAudit.reducedDenominatorsEqual' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Reconstruction.lean:158:0: 'AmicableAudit.determinantDivisible' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Reconstruction.lean:159:0: 'AmicableAudit.smallMultipleIsZero' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Reconstruction.lean:160:0: 'AmicableAudit.reconstructionUnique' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Reconstruction.lean:161:0: 'AmicableAudit.cancelCoprimeFactor' depends on axioms: [propext, Quot.sound]
+info: Reconstruction.lean:162:0: 'AmicableAudit.reducedDenominatorsEqualGcd' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Reconstruction.lean:163:0: 'AmicableAudit.reconstructionUniqueGcd' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Reconstruction.lean:164:0: 'AmicableAudit.linearResidueUnique' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Reconstruction.lean:165:0: 'AmicableAudit.reducedRatioFromPartner' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Reconstruction.lean:166:0: 'AmicableAudit.invertibleCoefficientFromPartner' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3834/3934] Built DivisorAllocation (9.5s)
+warning: DivisorAllocation.lean: imports `Mathlib.NumberTheory.ArithmeticFunction.Misc` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: DivisorAllocation.lean: imports `Mathlib.Tactic` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+info: DivisorAllocation.lean:52:0: 'AmicableAllocation.distributeDivisor' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: DivisorAllocation.lean:53:0: 'AmicableAllocation.quotientGcdDivides' depends on axioms: [propext, Quot.sound]
+⚠ [3835/3934] Built GeometricBounds (9.3s)
+warning: GeometricBounds.lean: imports `Mathlib.NumberTheory.EulerProduct.Basic` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: GeometricBounds.lean: imports `Mathlib.Analysis.SpecialFunctions.Log.Basic` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: GeometricBounds.lean: imports `Mathlib.Tactic` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: GeometricBounds.lean:8:42: Variable name `hu` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hu
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+info: GeometricBounds.lean:48:0: 'AmicableGeometric.neg_log_one_sub_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: GeometricBounds.lean:49:0: 'AmicableGeometric.finiteGeometricBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3836/3934] Built RankinFinite (10s)
+warning: RankinFinite.lean: imports `Mathlib.NumberTheory.ArithmeticFunction.Misc` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: RankinFinite.lean: imports `Mathlib.Analysis.SpecialFunctions.Pow.Real` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: RankinFinite.lean: imports `Mathlib.Algebra.BigOperators.Ring.Finset` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: RankinFinite.lean: imports `Mathlib.Tactic` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+info: RankinFinite.lean:82:0: 'AmicableRankin.squarefreePrimeFactorsInjective' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: RankinFinite.lean:83:0: 'AmicableRankin.finiteSquarefreeEulerBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: RankinFinite.lean:84:0: 'AmicableRankin.finiteEulerExpBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: RankinFinite.lean:85:0: 'AmicableRankin.finiteRankin' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3837/3934] Built PrimeNumberTheoremAnd.Mathlib.NumberTheory.Sieve.AuxResults (10s)
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/AuxResults.lean: imports `Mathlib.Algebra.Order.Antidiag.Nat` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/AuxResults.lean: imports `Mathlib.Analysis.SpecialFunctions.Integrals.Basic` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/AuxResults.lean: imports `Mathlib.Analysis.SumIntegralComparisons` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/AuxResults.lean: imports `Mathlib.NumberTheory.ArithmeticFunction.Moebius` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/AuxResults.lean:71:8: `if_pos` has been deprecated: Use `ite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵p̵o̵s̵i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/AuxResults.lean:73:10: `if_pos` has been deprecated: Use `ite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵p̵o̵s̵i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/AuxResults.lean:77:25: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/AuxResults.lean:79:8: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/AuxResults.lean:80:8: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/AuxResults.lean:210:70: `if_pos` has been deprecated: Use `ite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵p̵o̵s̵i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/AuxResults.lean:216:28: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/AuxResults.lean:217:20: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/AuxResults.lean:220:10: `if_pos` has been deprecated: Use `ite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵p̵o̵s̵i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/AuxResults.lean:221:8: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/AuxResults.lean:228:10: `if_pos` has been deprecated: Use `ite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵p̵o̵s̵i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+⚠ [3838/3934] Built RankinParameters (10s)
+warning: RankinParameters.lean: imports `Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: RankinParameters.lean: imports `Mathlib.Tactic` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: RankinParameters.lean:134:24: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: RankinParameters.lean:134:36: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+info: RankinParameters.lean:137:0: 'AmicableParameters.exponentIdentity' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: RankinParameters.lean:138:0: 'AmicableParameters.momentExponentRatio' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: RankinParameters.lean:139:0: 'AmicableParameters.momentExponent_eventually' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: RankinParameters.lean:140:0: 'AmicableParameters.error_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: RankinParameters.lean:142:0: 'AmicableParameters.paramA_pos' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: RankinParameters.lean:143:0: 'AmicableParameters.paramA_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: RankinParameters.lean:144:0: 'AmicableParameters.delta_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: RankinParameters.lean:145:0: 'AmicableParameters.eta_identity' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: RankinParameters.lean:146:0: 'AmicableParameters.eta_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: RankinParameters.lean:147:0: 'AmicableParameters.eta_eventually_admissible' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: RankinParameters.lean:148:0: 'AmicableParameters.exp_rpow_eta' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3839/3934] Built ManuscriptArithmetic (8.9s)
+warning: ManuscriptArithmetic.lean: imports `Mathlib.NumberTheory.ArithmeticFunction.Misc` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: ManuscriptArithmetic.lean: imports `Mathlib.Analysis.SpecialFunctions.Log.Basic` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: ManuscriptArithmetic.lean: imports `Mathlib.Tactic` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+info: ManuscriptArithmetic.lean:143:0: 'AmicableManuscript.sigma_eq_s_add_self' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ManuscriptArithmetic.lean:144:0: 'AmicableManuscript.sigma_eq_sum_divisors' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ManuscriptArithmetic.lean:145:0: 'AmicableManuscript.sigma_mul' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ManuscriptArithmetic.lean:146:0: 'AmicableManuscript.sigma_prime' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ManuscriptArithmetic.lean:147:0: 'AmicableManuscript.s_mul_prime' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ManuscriptArithmetic.lean:148:0: 'AmicableManuscript.amicable_sigma' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ManuscriptArithmetic.lean:149:0: 'AmicableManuscript.amicable_partner_unique' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ManuscriptArithmetic.lean:150:0: 'AmicableManuscript.amicable_symmetric' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ManuscriptArithmetic.lean:151:0: 'AmicableManuscript.caseOnePartnerEquation' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ManuscriptArithmetic.lean:152:0: 'AmicableManuscript.unitaryPartnerEquationInt' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ManuscriptArithmetic.lean:153:0: 'AmicableManuscript.divisorSumReconstruction' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ManuscriptArithmetic.lean:154:0: 'AmicableManuscript.averagingGapPositive' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ManuscriptArithmetic.lean:155:0: 'AmicableManuscript.caseTwoSavingIdentity' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ManuscriptArithmetic.lean:156:0: 'AmicableManuscript.weightedSelection' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3840/3934] Built ZetaBounds (10s)
+warning: ZetaBounds.lean: imports `Mathlib.NumberTheory.EulerProduct.DirichletLSeries` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: ZetaBounds.lean: imports `Mathlib.Tactic` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: ZetaBounds.lean:72:57: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+info: ZetaBounds.lean:97:0: 'AmicableZeta.logSummand_nonneg' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ZetaBounds.lean:98:0: 'AmicableZeta.logSummand_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ZetaBounds.lean:99:0: 'AmicableZeta.logSummand_summable' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ZetaBounds.lean:100:0: 'AmicableZeta.primeSum_le_log_zeta' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ZetaBounds.lean:101:0: 'AmicableZeta.realZeta_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ZetaBounds.lean:102:0: 'AmicableZeta.log_zeta_near_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3841/3934] Built MertensUpper (18s)
+warning: MertensUpper.lean: imports `Mathlib.Analysis.Real.Pi.Bounds` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: MertensUpper.lean: imports `Mathlib.Analysis.SpecialFunctions.Stirling` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: MertensUpper.lean: imports `Mathlib.NumberTheory.Chebyshev` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: MertensUpper.lean: imports `Mathlib.NumberTheory.AbelSummation` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: MertensUpper.lean: imports `Mathlib.Analysis.SpecialFunctions.Integrals.Basic` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: MertensUpper.lean: imports `Mathlib.Analysis.Complex.ExponentialBounds` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: MertensUpper.lean: imports `Mathlib.Tactic` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: MertensUpper.lean:169:31: `if_pos` has been deprecated: Use `ite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵p̵o̵s̵i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: MertensUpper.lean:170:31: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: MertensUpper.lean:208:35: `if_pos` has been deprecated: Use `ite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵p̵o̵s̵i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: MertensUpper.lean:214:35: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: MertensUpper.lean:223:49: `if_pos` has been deprecated: Use `ite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵p̵o̵s̵i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: MertensUpper.lean:224:37: `if_pos` has been deprecated: Use `ite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵p̵o̵s̵i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: MertensUpper.lean:229:37: `if_pos` has been deprecated: Use `ite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵p̵o̵s̵i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: MertensUpper.lean:284:10: `if_pos` has been deprecated: Use `ite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵p̵o̵s̵i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: MertensUpper.lean:284:21: `if_pos` has been deprecated: Use `ite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵p̵o̵s̵i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: MertensUpper.lean:291:10: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: MertensUpper.lean:291:21: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+info: MertensUpper.lean:556:0: 'AmicableMertens.sum_inv_prime_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: MertensUpper.lean:557:0: 'PrimeGaps.abs_sum_vonMangoldt_div_sub_log' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3842/3934] Built UnitaryFactors (9.4s)
+warning: UnitaryFactors.lean: imports `Mathlib.Data.Nat.MaxPrimeFac` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: UnitaryFactors.lean:25:51: Variable name `ha'` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _ha'
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+info: UnitaryFactors.lean:34:0: 'AmicableStructure.unitarySquarefreeDivisor' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: UnitaryFactors.lean:35:0: 'AmicableStructure.primeUnitaryFactor' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: UnitaryFactors.lean:36:0: 'AmicableStructure.maxPrimesDistinct' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3843/3934] Built FactorizationCounting (11s)
+warning: FactorizationCounting.lean: imports `Mathlib.Algebra.BigOperators.Fin` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: FactorizationCounting.lean: imports `Mathlib.Data.List.GetD` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+info: FactorizationCounting.lean:62:0: 'AmicablePartitions.primeProductAllocation' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: FactorizationCounting.lean:63:0: 'AmicablePartitions.orderedFactorizationsBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: FactorizationCounting.lean:154:0: 'AmicablePartitions.factorListLength' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: FactorizationCounting.lean:155:0: 'AmicablePartitions.paddedProduct' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: FactorizationCounting.lean:156:0: 'AmicablePartitions.paddedInjective' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: FactorizationCounting.lean:157:0: 'AmicablePartitions.allFactorListsBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: FactorizationCounting.lean:183:0: 'AmicablePartitions.factorListLengthNat' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: FactorizationCounting.lean:184:0: 'AmicablePartitions.allFactorListsBoundNat' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3844/3934] Built WeightArithmetic (10s)
+info: WeightArithmetic.lean:140:0: 'AmicableWeight.H_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: WeightArithmetic.lean:141:0: 'AmicableWeight.H_eq_smallPart_mul' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: WeightArithmetic.lean:142:0: 'AmicableWeight.H_mul' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: WeightArithmetic.lean:143:0: 'AmicableWeight.H_pos' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: WeightArithmetic.lean:144:0: 'AmicableWeight.smallPart_pos' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: WeightArithmetic.lean:145:0: 'AmicableWeight.log_H' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: WeightArithmetic.lean:146:0: 'AmicableWeight.H_prime' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: WeightArithmetic.lean:147:0: 'AmicableWeight.H_prod' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: WeightArithmetic.lean:148:0: 'AmicableWeight.sigma_squarefree' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: WeightArithmetic.lean:149:0: 'AmicableWeight.H_sigma_squarefree' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: WeightArithmetic.lean:150:0: 'AmicableWeight.weightedSigmaProduct' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: WeightArithmetic.lean:151:0: 'AmicableWeight.weightedSigmaEulerBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: WeightArithmetic.lean:152:0: 'AmicableWeight.weightedSigmaRankinFinite' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3845/3934] Built SigmaAverage (10s)
+info: SigmaAverage.lean:40:0: 'AmicableSigmaAverage.sumSigmaBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SigmaAverage.lean:41:0: 'AmicableSigmaAverage.sumSigmaRealBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3846/3934] Built TotientBounds (10s)
+info: TotientBounds.lean:48:0: 'AmicableTotient.primeHalf' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: TotientBounds.lean:49:0: 'AmicableTotient.primeListHalf' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: TotientBounds.lean:50:0: 'AmicableTotient.totientHalf' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: TotientBounds.lean:51:0: 'AmicableTotient.factorTotientBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3847/3934] Built DivisorSelection (10s)
+info: DivisorSelection.lean:43:0: 'AmicableSelection.productCrossing' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: DivisorSelection.lean:44:0: 'AmicableSelection.squarefreeDivisorCrossing' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3848/3934] Built ResidueCounting (10s)
+info: ResidueCounting.lean:51:0: 'AmicableResidues.oneResidueCard' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ResidueCounting.lean:52:0: 'AmicableResidues.oneResidueRealBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ResidueCounting.lean:53:0: 'AmicableResidues.oneResidueBelowModulus' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3849/3934] Built CountFibres (10s)
+warning: CountFibres.lean:22:37: Variable name `n` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _n
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+info: CountFibres.lean:64:0: 'AmicableCounting.countFibres' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: CountFibres.lean:65:0: 'AmicableCounting.countImageFibres' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: CountFibres.lean:66:0: 'AmicableCounting.threeWitnessCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3850/3934] Built HarmonicCoprime (11s)
+warning: HarmonicCoprime.lean: imports `Mathlib.Data.Nat.Totient` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: HarmonicCoprime.lean:8:5: Variable name `hpos` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hpos
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+info: HarmonicCoprime.lean:103:0: 'AmicableHarmonic.totientRatioProduct' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: HarmonicCoprime.lean:104:0: 'AmicableHarmonic.coprimePrimeFactors' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: HarmonicCoprime.lean:105:0: 'AmicableHarmonic.coprimeHarmonicLower' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: HarmonicCoprime.lean:106:0: 'AmicableHarmonic.removeMultiples' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: HarmonicCoprime.lean:107:0: 'AmicableHarmonic.sieveHarmonicLower' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3851/3934] Built ScaleBounds (11s)
+info: ScaleBounds.lean:73:0: 'AmicableScale.scale_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ScaleBounds.lean:74:0: 'AmicableScale.S_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ScaleBounds.lean:75:0: 'AmicableScale.S_div_log_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ScaleBounds.lean:76:0: 'AmicableScale.loglog_div_S_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ScaleBounds.lean:77:0: 'AmicableScale.L_power_subpower' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ScaleBounds.lean:78:0: 'AmicableScale.log_power_L_subpower' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3852/3934] Built PrimeNumberTheoremAnd.Mathlib.NumberTheory.Sieve.Basic (12s)
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Basic.lean: imports `Mathlib.NumberTheory.SelbergSieve` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+ℹ [3853/3934] Built AsymptoticAbsorption (13s)
+info: AsymptoticAbsorption.lean:41:0: 'AmicableAbsorption.constantLogAbsorb' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: AsymptoticAbsorption.lean:42:0: 'AmicableAbsorption.dyadicCountAbsorb' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: AsymptoticAbsorption.lean:62:0: 'AmicableAbsorption.constantLogPowerAbsorb' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3854/3934] Built DivisorBound (13s)
+warning: DivisorBound.lean: imports `Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+info: DivisorBound.lean:133:0: 'AmicableDivisors.sigmaDivisorCountUniform' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: DivisorBound.lean:134:0: 'AmicableDivisors.divisorPowerBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: DivisorBound.lean:135:0: 'AmicableDivisors.exponentFactorBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: DivisorBound.lean:136:0: 'AmicableDivisors.largePrimeFactorBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3855/3934] Built Squarefull (15s)
+warning: Squarefull.lean: imports `Mathlib.Analysis.PSeries` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+info: Squarefull.lean:245:0: 'AmicableSquarefull.largeSquarefullDivisorCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Squarefull.lean:246:0: 'AmicableSquarefull.squarefullReciprocalTail' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Squarefull.lean:247:0: 'AmicableSquarefull.squarefullCountReal' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Squarefull.lean:248:0: 'AmicableSquarefull.dyadicShellBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Squarefull.lean:249:0: 'AmicableSquarefull.positiveCardBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Squarefull.lean:250:0: 'AmicableSquarefull.pairFirstBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Squarefull.lean:251:0: 'AmicableSquarefull.squarefullCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Squarefull.lean:252:0: 'AmicableSquarefull.squarefullRepresentation' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Squarefull.lean:253:0: 'AmicableSquarefull.representationBounds' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3856/3934] Built DivisorPartition (8.6s)
+info: DivisorPartition.lean:36:0: 'AmicableSelection.squarefreePartition' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3857/3934] Built CaseTwoSelection (19s)
+info: CaseTwoSelection.lean:66:0: 'AmicableCases.selectionGap_pos' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: CaseTwoSelection.lean:67:0: 'AmicableCases.caseTwoSelectIndex' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: CaseTwoSelection.lean:68:0: 'AmicableCases.caseTwoBudgetFromLog' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3858/3934] Built AnalyticInputs (12s)
+info: AnalyticInputs.lean:33:0: 'AmicableAnalytic.finiteMertens' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: AnalyticInputs.lean:34:0: 'AmicableAnalytic.finitePrimePowersNearOne' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3859/3934] Built CountMultiplicity (8.7s)
+info: CountMultiplicity.lean:46:0: 'AmicableCounting.threeWitnessMultiplicity' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3860/3934] Built RoughParts (9.4s)
+info: RoughParts.lean:103:0: 'AmicableWeight.roughPart_pos' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: RoughParts.lean:104:0: 'AmicableWeight.small_mul_rough' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: RoughParts.lean:105:0: 'AmicableWeight.roughPart_dvd' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: RoughParts.lean:106:0: 'AmicableWeight.roughPart_primes' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: RoughParts.lean:107:0: 'AmicableWeight.omegaProduct' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: RoughParts.lean:108:0: 'AmicableWeight.omegaRoughPart' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: RoughParts.lean:109:0: 'AmicableWeight.omegaDivisor' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: RoughParts.lean:110:0: 'AmicableWeight.omegaLogBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3861/3934] Built MomentWeight (9.4s)
+warning: MomentWeight.lean: imports `Mathlib.NumberTheory.EulerProduct.Basic` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: MomentWeight.lean: imports `Mathlib.Analysis.PSeries` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: MomentWeight.lean:39:32: Variable name `hy` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hy
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+info: MomentWeight.lean:120:0: 'AmicableMoment.term_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: MomentWeight.lean:121:0: 'AmicableMoment.term_of_pos' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: MomentWeight.lean:122:0: 'AmicableMoment.term_nonneg' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: MomentWeight.lean:123:0: 'AmicableMoment.termHom' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: MomentWeight.lean:124:0: 'AmicableMoment.primeWeight_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: MomentWeight.lean:125:0: 'AmicableMoment.primeWeight_le_y' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: MomentWeight.lean:126:0: 'AmicableMoment.term_prime_le_rpow' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: MomentWeight.lean:127:0: 'AmicableMoment.term_prime_lt_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: MomentWeight.lean:128:0: 'AmicableMoment.term_prime_le_y_rpow' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: MomentWeight.lean:129:0: 'AmicableMoment.term_prime_le_y_rpow_div' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: MomentWeight.lean:130:0: 'AmicableMoment.primeTermSquareSumBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: MomentWeight.lean:131:0: 'AmicableMoment.primeTermUniformLtOne' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3862/3934] Built SavingComparison (8.2s)
+info: SavingComparison.lean:35:0: 'AmicableScale.powerSavingL' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SavingComparison.lean:36:0: 'AmicableScale.constantLAbsorb' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SavingComparison.lean:37:0: 'AmicableScale.combineSavings' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3863/3934] Built LinearCongruenceCount (9.3s)
+warning: LinearCongruenceCount.lean: imports `Mathlib.Data.Nat.ModEq` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+info: LinearCongruenceCount.lean:56:0: 'AmicableResidues.linearCongruenceCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: LinearCongruenceCount.lean:57:0: 'AmicableResidues.structuralCongruenceCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3864/3934] Built GoodPrimeProduct (10s)
+warning: GoodPrimeProduct.lean:10:5: Variable name `hI` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hI
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: GoodPrimeProduct.lean:44:5: Variable name `hJ` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hJ
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+info: GoodPrimeProduct.lean:50:0: 'AmicableCases.goodPrimeProduct' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: GoodPrimeProduct.lean:51:0: 'AmicableCases.selectedAllocationProduct' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3865/3934] Built FineTotientBound (10s)
+info: FineTotientBound.lean:78:0: 'AmicableTotient.roughPrimeTotient' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: FineTotientBound.lean:79:0: 'AmicableTotient.roughPrimeListTotient' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: FineTotientBound.lean:80:0: 'AmicableTotient.roughTotient' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: FineTotientBound.lean:81:0: 'AmicableTotient.roughFactorTotient' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3866/3934] Built CoprimeDivisor (11s)
+info: CoprimeDivisor.lean:96:0: 'AmicableCoprimeDivisor.oddPrimeSelection' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: CoprimeDivisor.lean:97:0: 'AmicableCoprimeDivisor.oddSquarefreeDivisor' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: CoprimeDivisor.lean:126:0: 'AmicableCoprimeDivisor.squarefreeDivisorFinite' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3867/3934] Built SquarefullDecomposition (8.2s)
+warning: SquarefullDecomposition.lean: imports `Mathlib.Data.Nat.Factorization.Induction` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+info: SquarefullDecomposition.lean:49:0: 'AmicableSquarefull.squarefullMul' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SquarefullDecomposition.lean:50:0: 'AmicableSquarefull.squarefullPrimePower' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SquarefullDecomposition.lean:51:0: 'AmicableSquarefull.squarefreeSquarefullDecomposition' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3868/3934] Built DyadicRanges (12s)
+warning: DyadicRanges.lean: imports `Mathlib.Data.Nat.Log` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+info: DyadicRanges.lean:80:0: 'AmicableCounting.dyadicRange' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: DyadicRanges.lean:81:0: 'AmicableCounting.dyadicIndexBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: DyadicRanges.lean:82:0: 'AmicableCounting.dyadicPairsCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: DyadicRanges.lean:83:0: 'AmicableCounting.dyadicPairsAbsorb' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3869/3934] Built IndexedPartition (7.2s)
+info: IndexedPartition.lean:69:0: 'AmicableSelection.indexedSquarefreePartition' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: IndexedPartition.lean:70:0: 'AmicableSelection.sigmaProductSquarefree' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: IndexedPartition.lean:71:0: 'AmicableSelection.partitionAllocation' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: IndexedPartition.lean:72:0: 'AmicableSelection.partitionCostSum' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3870/3934] Built CommonDivisor (7.5s)
+warning: CommonDivisor.lean:40:31: Variable name `hB` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hB
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+info: CommonDivisor.lean:68:0: 'AmicableCases.commonDivisorExists' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: CommonDivisor.lean:69:0: 'AmicableCases.commonDivisorCost' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3871/3934] Built CaseOneSelection (6.5s)
+info: CaseOneSelection.lean:41:0: 'AmicableCases.caseOneSelectR' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: CaseOneSelection.lean:42:0: 'AmicableCases.goodProductPowerLower' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3872/3934] Built PrimeNumberTheoremAnd.Mathlib.NumberTheory.Sieve.Selberg (15s)
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean:79:22: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean:87:23: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean:100:6: `if_pos` has been deprecated: Use `ite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵p̵o̵s̵i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean:125:10: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean:138:9: `if_pos` has been deprecated: Use `ite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵p̵o̵s̵i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean:140:12: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean:151:12: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean:163:37: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean:167:8: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean:170:6: `if_pos` has been deprecated: Use `ite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵p̵o̵s̵i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean:196:8: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean:241:6: `if_pos` has been deprecated: Use `ite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵p̵o̵s̵i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean:329:10: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean:341:27: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean:377:37: `if_pos` has been deprecated: Use `ite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵p̵o̵s̵i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean:414:10: `if_pos` has been deprecated: Use `ite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵p̵o̵s̵i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean:414:20: `if_pos` has been deprecated: Use `ite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵p̵o̵s̵i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean:415:12: `mul_le_one₀` has been deprecated: No replacement, use constituent lemmas from proof.
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean:417:8: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean:417:18: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+⚠ [3873/3934] Built OmegaMoment (8.2s)
+warning: OmegaMoment.lean: imports `Mathlib.Data.Nat.ModEq` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+info: OmegaMoment.lean:87:0: 'AmicableOmega.subsetDivisorCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: OmegaMoment.lean:88:0: 'AmicableOmega.omegaExpansion' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: OmegaMoment.lean:89:0: 'AmicableOmega.omegaMoment' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: OmegaMoment.lean:114:0: 'AmicableOmega.omegaTailFinite' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3874/3934] Built ComplementaryDivisor (7.3s)
+info: ComplementaryDivisor.lean:47:0: 'AmicableCases.complementaryDivisor' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3875/3934] Built MomentEuler (8.7s)
+info: MomentEuler.lean:182:0: 'AmicableMoment.prefixGeometricBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: MomentEuler.lean:183:0: 'AmicableMoment.primeTermSumBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: MomentEuler.lean:184:0: 'AmicableMoment.theta_lt_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: MomentEuler.lean:185:0: 'AmicableMoment.uniformPrefixMomentBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: MomentEuler.lean:186:0: 'AmicableMoment.uniformMomentBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: MomentEuler.lean:187:0: 'AmicableMoment.primeShiftBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3876/3934] Built StructuralFactorization (6.1s)
+info: StructuralFactorization.lean:51:0: 'AmicableStructure.structuralFactorization' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: StructuralFactorization.lean:52:0: 'AmicableStructure.boundedStructuralFactorization' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: StructuralFactorization.lean:53:0: 'AmicableStructure.amicablePartnerInjective' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3877/3934] Built SigmaBounds (10s)
+warning: SigmaBounds.lean: imports `Mathlib.Analysis.PSeries` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: SigmaBounds.lean:16:15: This simp argument is unused:
+  one_div_one
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [one_div] at hh
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: SigmaBounds.lean:47:35: `Finset.prod_le_prod'` has been deprecated: Use `Finset.prod_le_prod` instead
+
+Hint: Replace the deprecated name:
+  Finset.prod_le_prod'̵
+info: SigmaBounds.lean:86:0: 'AmicableSigmaBounds.primePowerRatio' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SigmaBounds.lean:87:0: 'AmicableSigmaBounds.sigmaRatioEuler' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SigmaBounds.lean:88:0: 'AmicableSigmaBounds.primeFactorCard' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SigmaBounds.lean:89:0: 'AmicableSigmaBounds.primeFactorReciprocals' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SigmaBounds.lean:180:0: 'AmicableSigmaBounds.primeReciprocalSquares' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SigmaBounds.lean:181:0: 'AmicableSigmaBounds.sigmaLogLogLarge' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SigmaBounds.lean:182:0: 'AmicableSigmaBounds.sigmaLogLog' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3878/3934] Built LargeCoprimeDivisor (8.2s)
+info: LargeCoprimeDivisor.lean:55:0: 'AmicableCoprimeDivisor.sigmaCardBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: LargeCoprimeDivisor.lean:56:0: 'AmicableCoprimeDivisor.largeCoprimeDivisor' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3879/3934] Built PrimeNumberTheoremAnd.Mathlib.NumberTheory.Sieve.SelbergBounds (5.7s)
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/SelbergBounds.lean: imports `Mathlib.NumberTheory.Primorial` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/SelbergBounds.lean: imports `Mathlib.Analysis.Asymptotics.Lemmas` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/SelbergBounds.lean: imports `Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/SelbergBounds.lean:54:70: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/SelbergBounds.lean:59:70: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/SelbergBounds.lean:201:10: `dif_pos` has been deprecated: Use `dite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  d̵i̵f̵_̵p̵o̵s̵d̲i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/SelbergBounds.lean:218:10: `dif_neg` has been deprecated: Use `dite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  d̵i̵f̵_̵n̵e̵g̵d̲i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/SelbergBounds.lean:249:12: `dif_pos` has been deprecated: Use `dite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  d̵i̵f̵_̵p̵o̵s̵d̲i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/SelbergBounds.lean:259:12: `dif_neg` has been deprecated: Use `dite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  d̵i̵f̵_̵n̵e̵g̵d̲i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/SelbergBounds.lean:264:10: `dif_pos` has been deprecated: Use `dite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  d̵i̵f̵_̵p̵o̵s̵d̲i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/SelbergBounds.lean:290:36: `dif_pos` has been deprecated: Use `dite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  d̵i̵f̵_̵p̵o̵s̵d̲i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/SelbergBounds.lean:290:48: `dif_pos` has been deprecated: Use `dite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  d̵i̵f̵_̵p̵o̵s̵d̲i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/SelbergBounds.lean:320:10: `dif_pos` has been deprecated: Use `dite_eq_left` instead
+
+Hint: Replace the deprecated name:
+  d̵i̵f̵_̵p̵o̵s̵d̲i̲t̲e̲_̲e̲q̲_̲l̲e̲f̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/SelbergBounds.lean:321:10: `dif_neg` has been deprecated: Use `dite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  d̵i̵f̵_̵n̵e̵g̵d̲i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+warning: PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/SelbergBounds.lean:484:10: `if_neg` has been deprecated: Use `ite_eq_right` instead
+
+Hint: Replace the deprecated name:
+  i̵f̵_̵n̵e̵g̵i̲t̲e̲_̲e̲q̲_̲r̲i̲g̲h̲t̲
+⚠ [3880/3934] Built TechnicalLemma (6.4s)
+warning: TechnicalLemma.lean:31:24: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+info: TechnicalLemma.lean:137:43: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+warning: TechnicalLemma.lean:137:21: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: TechnicalLemma.lean:137:39: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+info: TechnicalLemma.lean:139:0: 'AmicableTechnical.errorX_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: TechnicalLemma.lean:140:0: 'AmicableTechnical.technicalLemma' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: TechnicalLemma.lean:141:0: 'AmicableTechnical.finiteExceptionalBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: TechnicalLemma.lean:142:0: 'AmicableTechnical.shiftedPrimeMoment' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3881/3934] Built OmegaTail (7.4s)
+info: OmegaTail.lean:76:0: 'AmicableOmega.tailRate_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: OmegaTail.lean:77:0: 'AmicableOmega.tailExponent' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: OmegaTail.lean:78:0: 'AmicableOmega.omegaTailUniform' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3882/3934] Built StructuralLargePrime (15s)
+info: StructuralLargePrime.lean:91:0: 'AmicableStructure.structuralEliminationCongruence' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: StructuralLargePrime.lean:92:0: 'AmicableStructure.structuralLargePrimeWitness' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3883/3934] Built GcdDecomposition (5.4s)
+info: GcdDecomposition.lean:72:0: 'AmicablePollack.gcdSquarefreePart' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: GcdDecomposition.lean:73:0: 'AmicablePollack.gcdDecomposition' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: GcdDecomposition.lean:74:0: 'AmicablePollack.squarefullReciprocalBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3884/3934] Built GcdReduction (5.8s)
+info: GcdReduction.lean:63:0: 'AmicableGcdReduction.sigmaComplement' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: GcdReduction.lean:64:0: 'AmicableGcdReduction.primeSigmaComplement' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: GcdReduction.lean:65:0: 'AmicableGcdReduction.squarefreeGcdAlternatives' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3885/3934] Built SigmaUniform (6.9s)
+info: SigmaUniform.lean:71:0: 'AmicableSigmaBounds.sigmaUniformRatio' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SigmaUniform.lean:72:0: 'AmicableSigmaBounds.determinantUniform' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3886/3934] Built SieveSupport (5.6s)
+warning: SieveSupport.lean: imports `Mathlib.Tactic` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+info: SieveSupport.lean:164:0: 'AmicableSieve.sieveDenominatorCoprime' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SieveSupport.lean:165:0: 'AmicableSieve.sieveDenominatorSupport' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SieveSupport.lean:166:0: 'SelbergSieve.selberg_bound_simple' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SieveSupport.lean:167:0: 'Sieve.rem_sum_le_of_const' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3887/3934] Built CaseReconstruction (5.6s)
+info: CaseReconstruction.lean:73:0: 'AmicableCases.primeReconstruction' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: CaseReconstruction.lean:74:0: 'AmicableCases.reconstructionPowerGap' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3888/3934] Built RegularPair (7.2s)
+info: RegularPair.lean:77:0: 'AmicableStructure.regularSizeBounds' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3889/3934] Built ProgressionSieve (6.5s)
+warning: ProgressionSieve.lean: imports `Mathlib.Data.Int.CardIntervalMod` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: ProgressionSieve.lean: imports `Mathlib.Data.Nat.GCD.BigOperators` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: ProgressionSieve.lean:94:21: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ProgressionSieve.lean:94:35: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+info: ProgressionSieve.lean:180:0: 'AmicableProgressions.primeDivisorProductSmall' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ProgressionSieve.lean:181:0: 'AmicableProgressions.progressionPrimeBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ProgressionSieve.lean:182:0: 'AmicableProgressions.progressionErrorSum' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ProgressionSieve.lean:183:0: 'AmicableProgressions.progressionSiftedBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ProgressionSieve.lean:184:0: 'AmicableProgressions.progressionRemainder' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ProgressionSieve.lean:185:0: 'AmicableProgressions.progressionDenominator' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ProgressionSieve.lean:186:0: 'AmicableProgressions.countResidueError' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ProgressionSieve.lean:187:0: 'AmicableProgressions.congruenceIntersection' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ProgressionSieve.lean:188:0: 'AmicableProgressions.primeProductSquarefree' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ProgressionSieve.lean:189:0: 'AmicableProgressions.primeProductCoprime' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3890/3934] Built CaseOneCount (4.8s)
+info: CaseOneCount.lean:77:0: 'AmicableCases.twoKindsCard' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: CaseOneCount.lean:78:0: 'AmicableCases.caseOneRCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: CaseOneCount.lean:79:0: 'AmicableCases.shiftedDivisorResidue' depends on axioms: [propext, Quot.sound]
+info: CaseOneCount.lean:80:0: 'AmicableCases.caseOnePrimeCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3891/3934] Built SieveAsymptotics (4.6s)
+warning: SieveAsymptotics.lean: imports `Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+info: SieveAsymptotics.lean:95:0: 'AmicableProgressions.brunTitchmarshUniform' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SieveAsymptotics.lean:96:0: 'AmicableProgressions.normalizedError_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SieveAsymptotics.lean:97:0: 'AmicableProgressions.sieveErrorEventually' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SieveAsymptotics.lean:98:0: 'AmicableProgressions.progressionTrivialBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3892/3934] Built CaseTwoSelectedDivisor (13s)
+info: CaseTwoSelectedDivisor.lean:107:0: 'AmicableCases.caseTwoSelectedDivisor' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3893/3934] Built CaseOneRange (5.2s)
+info: CaseOneRange.lean:120:0: 'AmicableCases.caseOneRange' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3894/3934] Built PrimeReciprocals (5.2s)
+warning: PrimeReciprocals.lean: imports `Mathlib.Analysis.Complex.ExponentialBounds` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: PrimeReciprocals.lean:51:45: Variable name `hN` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hN
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+info: PrimeReciprocals.lean:146:0: 'AmicablePrimeReciprocals.shiftedHarmonicBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: PrimeReciprocals.lean:147:0: 'AmicablePrimeReciprocals.harmonicConstant_pos' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: PrimeReciprocals.lean:148:0: 'AmicablePrimeReciprocals.dyadicHarmonicBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: PrimeReciprocals.lean:149:0: 'AmicablePrimeReciprocals.shellReciprocalBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: PrimeReciprocals.lean:150:0: 'AmicablePrimeReciprocals.reciprocalAboveModulus' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: PrimeReciprocals.lean:229:0: 'AmicablePrimeReciprocals.belowModulus' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: PrimeReciprocals.lean:230:0: 'AmicablePrimeReciprocals.minusOneResidue' depends on axioms: [propext]
+info: PrimeReciprocals.lean:231:0: 'AmicablePrimeReciprocals.primeReciprocalUniform' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3895/3934] Built SigmaCounting (4.4s)
+warning: SigmaCounting.lean:15:33: Variable name `hd` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hd
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+info: SigmaCounting.lean:114:0: 'AmicableSigmaCounting.existsWitness' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SigmaCounting.lean:115:0: 'AmicableSigmaCounting.multiplesCard' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SigmaCounting.lean:116:0: 'AmicableSigmaCounting.fixedFactorizationCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3896/3934] Built PartialSummation (4.3s)
+warning: PartialSummation.lean:6:60: Variable name `hE` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hE
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+info: PartialSummation.lean:47:0: 'AmicablePartialSummation.reciprocalFromCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3897/3934] Built CaseOneWitness (9.2s)
+info: CaseOneWitness.lean:111:29: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+warning: CaseOneWitness.lean:111:25: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+info: CaseOneWitness.lean:114:0: 'AmicableCases.caseOneWitness' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3898/3934] Built ReciprocalTails (4.6s)
+info: ReciprocalTails.lean:51:0: 'AmicableTails.inverseSquareStep' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ReciprocalTails.lean:52:0: 'AmicableTails.reciprocalSquareTailNat' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ReciprocalTails.lean:53:0: 'AmicableTails.reciprocalSquareTail' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3899/3934] Built CaseOneCountingSharp (12s)
+info: CaseOneCountingSharp.lean:107:0: 'AmicableCases.caseOneCountingSharp' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3900/3934] Built SigmaCountBound (5.5s)
+info: SigmaCountBound.lean:84:0: 'AmicableSigmaCounting.fixedWitnessBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SigmaCountBound.lean:85:0: 'AmicableSigmaCounting.sigmaDivisibilityBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3901/3934] Built CaseOneCounting (14s)
+info: CaseOneCounting.lean:73:31: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+warning: CaseOneCounting.lean:73:27: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+info: CaseOneCounting.lean:108:0: 'AmicableCases.caseOneCounting' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3902/3934] Built StructuralCounting (4.5s)
+warning: StructuralCounting.lean:68:17: This simp argument is unused:
+  Prod.fst
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Prod.snd] at hm0 hD0
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: StructuralCounting.lean:68:27: This simp argument is unused:
+  Prod.snd
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Prod.fst] at hm0 hD0
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: StructuralCounting.lean:79:19: This simp argument is unused:
+  Prod.snd
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only at hd1 hd2
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+info: StructuralCounting.lean:101:0: 'AmicableStructure.structuralDoubleSum' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: StructuralCounting.lean:102:0: 'AmicableStructure.structuralCongruenceTotal' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3903/3934] Built SigmaReciprocals (4.2s)
+info: SigmaReciprocals.lean:54:0: 'AmicableSigmaCounting.sigmaReciprocalBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SigmaReciprocals.lean:55:0: 'AmicableSigmaCounting.primeReciprocalInput' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3904/3934] Built GcdCounting (4.3s)
+info: GcdCounting.lean:83:0: 'AmicableGcdCounting.fixedDivisorCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: GcdCounting.lean:84:0: 'AmicableGcdCounting.divisorFamilyCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: GcdCounting.lean:85:0: 'AmicableGcdCounting.primeDivisorFamilyCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: GcdCounting.lean:113:0: 'AmicableGcdCounting.boundedCostFamilyCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3905/3934] Built SharpFactorCost (6.0s)
+info: SharpFactorCost.lean:37:0: 'AmicableGcdCounting.sharpFactorCost' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3906/3934] Built PrimeInputUniform (7.1s)
+info: PrimeInputUniform.lean:50:0: 'AmicableSigmaCounting.primeInputUniform' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: PrimeInputUniform.lean:51:0: 'AmicableSigmaCounting.partitionErrorAbsorb' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3907/3934] Built ManyPrimeDivisors (7.3s)
+warning: ManyPrimeDivisors.lean:69:44: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+info: ManyPrimeDivisors.lean:75:0: 'AmicableGcdCounting.divisorMultipleFamilyCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ManyPrimeDivisors.lean:76:0: 'AmicableGcdCounting.manyPrimeDivisorCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3908/3934] Built StructuralPowerCount (8.4s)
+info: StructuralPowerCount.lean:51:0: 'AmicableStructure.structuralPowerCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3909/3934] Built GcdCost (10s)
+info: GcdCost.lean:70:0: 'AmicableGcdCost.smallConstant_pos' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: GcdCost.lean:71:0: 'AmicableGcdCost.costBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: GcdCost.lean:82:0: 'AmicableGcdCost.omegaSquarefree' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3910/3934] Built CaseTwoBudget (5.1s)
+warning: CaseTwoBudget.lean:53:6: Unused tactic linter: `ring` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+warning: CaseTwoBudget.lean:53:6: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+info: CaseTwoBudget.lean:55:0: 'AmicableCases.caseTwoBudgetCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3911/3934] Built TechnicalExceptionalCount (4.9s)
+info: TechnicalExceptionalCount.lean:61:0: 'AmicableTechnical.exceptionalMultiples' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3912/3934] Built SmallProductCount (22s)
+info: SmallProductCount.lean:94:0: 'AmicableStructure.smallProductCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: SmallProductCount.lean:95:0: 'AmicableStructure.pairPrimeReconstruction' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3913/3934] Built SquarefreeGcd (7.7s)
+info: SquarefreeGcd.lean:130:0: 'AmicablePollack.squarefreeGcdBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3914/3934] Built LogarithmicFactors (5.8s)
+warning: LogarithmicFactors.lean:22:29: Variable name `hx0` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hx0
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+info: LogarithmicFactors.lean:61:0: 'AmicableScale.constantLogPowerL' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: LogarithmicFactors.lean:62:0: 'AmicableScale.dyadicLogBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: LogarithmicFactors.lean:63:0: 'AmicableScale.logarithmicFactorL' depends on axioms: [propext, Classical.choice, Quot.sound]
+warning: LogarithmicFactors.lean:88:57: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+info: LogarithmicFactors.lean:94:0: 'AmicableTechnical.exceptionalMultiplesSaving' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3915/3934] Built CaseTwoUniform (8.5s)
+info: CaseTwoUniform.lean:72:0: 'AmicableCases.caseTwoBudgetUniform' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3916/3934] Built GcdLift (3.7s)
+info: GcdLift.lean:79:0: 'AmicablePollack.squarefreeFactorCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: GcdLift.lean:80:0: 'AmicablePollack.gcdLift' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3917/3934] Built SmallProductSaving (4.5s)
+info: SmallProductSaving.lean:49:0: 'AmicableStructure.smallProductSaving' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3918/3934] Built CaseTwoCounting (5.1s)
+info: CaseTwoCounting.lean:129:0: 'AmicableCases.caseTwoCounting' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3919/3934] Built PollackUniform (5.5s)
+info: PollackUniform.lean:70:0: 'AmicablePollack.gcdUniform' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3920/3934] Built CaseTwoWitness (5.1s)
+info: CaseTwoWitness.lean:68:27: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+warning: CaseTwoWitness.lean:68:23: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+info: CaseTwoWitness.lean:78:0: 'AmicableCases.caseTwoWitness' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3921/3934] Built PollackTheorem (3.9s)
+info: PollackTheorem.lean:64:0: 'AmicablePollack.pollack' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3922/3934] Built StructuralParameters (4.0s)
+info: StructuralParameters.lean:92:0: 'AmicableStructure.pollackThreshold' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: StructuralParameters.lean:93:0: 'AmicableStructure.sigmaBelowX' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: StructuralParameters.lean:94:0: 'AmicableStructure.partnerBelowX' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3923/3934] Built StructuralExceptional (4.5s)
+warning: StructuralExceptional.lean:62:6: `push_neg` has been deprecated. Prefer using `push Not` instead.
+If you'd rather continue using `push_neg` in your project, you can implement it as follows:
+```
+open Lean.Parser.Tactic in
+macro "push_neg" cfg:optConfig loc:(location)? : tactic =>
+  `(tactic| push $cfg:optConfig Not $[$loc]?)
+```
+info: StructuralExceptional.lean:84:0: 'AmicableStructure.basicExceptional' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3924/3934] Built CaseTwoPairWitness (12s)
+info: CaseTwoPairWitness.lean:101:0: 'AmicableCases.caseTwoPairWitness' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [3925/3934] Built PreparedPair (4.8s)
+warning: PreparedPair.lean:18:38: Variable name `hrho` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hrho
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+info: PreparedPair.lean:83:0: 'AmicableStructure.basicFactorization' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: PreparedPair.lean:84:0: 'AmicableStructure.preparePair' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3926/3934] Built PreparedPrimeData (3.7s)
+info: PreparedPrimeData.lean:70:0: 'AmicableStructure.preparedPrimeData' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3927/3934] Built RegularAlternatives (4.8s)
+info: RegularAlternatives.lean:79:0: 'AmicableCases.regularAlternatives' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3928/3934] Built PreparedExceptional (4.4s)
+info: PreparedExceptional.lean:81:0: 'AmicableStructure.preparedExceptional' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3929/3934] Built RegularCounting (4.3s)
+info: RegularCounting.lean:76:0: 'AmicableCases.regularCounting' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3930/3934] Built FinalReduction (4.1s)
+info: FinalReduction.lean:87:0: 'AmicableManuscript.mainBoundOfStructuralReduction' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3931/3934] Built StructuralReduction (3.7s)
+info: StructuralReduction.lean:90:0: 'AmicableManuscript.structuralReduction' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: StructuralReduction.lean:91:0: 'AmicableManuscript.amicableUpperBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3932/3934] Built Certificate (3.2s)
+info: Certificate.lean:45:0: 'AmicableCertificate.amicable_count_upper_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Certificate.lean:46:0: 'AmicableCertificate.explicit_count_upper_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Certificate.lean:47:0: 'AmicableTechnical.technicalLemma' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Certificate.lean:48:0: 'AmicablePollack.pollack' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Certificate.lean:49:0: 'AmicableProgressions.brunTitchmarshUniform' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Certificate.lean:50:0: 'AmicablePrimeReciprocals.primeReciprocalUniform' depends on axioms: [propext, Classical.choice, Quot.sound]
+✔ [3933/3934] Built Solution (3.2s)
+Build completed successfully (3934 jobs).
+Exporting #[Quot, Quot.mk, Quot.lift, Quot.ind, AmicableComparator.main_theorem, propext, Classical.choice, Quot.sound, Nat.add, Nat.sub, Nat.mul, Nat.pow, Nat.gcd, Nat.div, Nat.mod, Nat.beq, Nat.ble, Nat.land, Nat.lor, Nat.xor, Nat.shiftLeft, Nat.shiftRight, String.ofList, Char.ofNat, List, eagerReduce, Nat, String, String.mk, Char, optParam, autoParam, semiOutParam, outParam] from Solution
+Running Lean default kernel on solution.
+Lean default kernel accepts the solution
+Your solution is okay!
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 4min 57.226s
+CPU time consumed: 17min 7.399s
+Memory peak: 256.0K
+Memory swap peak: 0B

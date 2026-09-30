@@ -3,8 +3,11 @@
 The frozen input is `manuscript-input.txt`, from attachment
 8d1dc442-c142-4799-a616-78ee8072be7e. Its SHA256 is
 `6324e9e9cac2f6324a6b2213c8f20fcd8c206f7388b951af5d3f039212516fa7`.
-The user's separately supplied definition of L(x) is included. The TeX has not
-been changed. This map distinguishes mathematical steps from implementation details;
+The user's separately supplied definition of L(x) is included. The current paper
+is `USER_PROOF_HALF.tex`; the frozen input remains unchanged. The machine-readable
+map in [formalization.yaml](formalization.yaml) records the current paper's hash,
+stable TeX labels, and corresponding Lean declarations.
+This map distinguishes mathematical steps from implementation details;
 it does not assert that every sentence of prose is itself a Lean declaration.
 
 ## Definitions and final statement

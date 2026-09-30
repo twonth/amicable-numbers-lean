@@ -1,0 +1,61 @@
+{
+  "status": "passed",
+  "exitCode": 0,
+  "startedAtUtc": "2026-09-30T00:38:22Z",
+  "completedAtUtc": "2026-09-30T00:43:25Z",
+  "manuscriptLabel": "thm:main",
+  "certificateTheorem": "AmicableCertificate.amicable_count_upper_bound",
+  "solutionUses": "AmicableCertificate.explicit_count_upper_bound",
+  "configuration": {
+    "challenge_module": "Challenge",
+    "solution_module": "Solution",
+    "theorem_names": [
+      "AmicableComparator.main_theorem"
+    ],
+    "permitted_axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  "checks": {
+    "statementAndDefinitionComparison": "passed",
+    "permittedAxiomCheck": "passed",
+    "leanKernelReplay": "passed",
+    "sourceHashesUnchanged": true
+  },
+  "execution": {
+    "operatingSystem": "Ubuntu under WSL2",
+    "kernel": "6.6.114.1-microsoft-standard-WSL2",
+    "userId": "1000",
+    "landrun": "real upstream Landrun; no fake-landrun wrapper",
+    "systemdProtection": "RestrictAddressFamilies=~AF_UNIX",
+    "freshProjectBuild": true,
+    "dependencyCache": "Official Mathlib cache at the pinned revision",
+    "externalKernels": []
+  },
+  "leanVersion": "Lean (version 4.35.0-rc3, x86_64-unknown-linux-gnu, commit 470d5ce1400764999581fd26d5d72b00d990b0f4, Release)",
+  "tools": {
+    "comparator": {
+      "repository": "https://github.com/leanprover/comparator.git",
+      "revision": "fd5d5bcf14177b187f66d4502071268d877887c3"
+    },
+    "lean4export": {
+      "repository": "https://github.com/leanprover/lean4export",
+      "revision": "66f1fb4bc256072069767fce52d39480e4524869"
+    },
+    "landrun": {
+      "repository": "https://github.com/Zouuup/landrun.git",
+      "revision": "811cfff51ceaf3d9843708aa6d22e9b84ccac8b4"
+    },
+    "mathlib": {
+      "repository": "https://github.com/leanprover-community/mathlib4.git",
+      "revision": "3f6737de4761ec7bf368491fe9faccc991ebd6ca"
+    }
+  },
+  "inputHashFile": "comparator-source-hashes.json",
+  "log": "comparator.log",
+  "logSha256": "1b2d91b8525ab238a5441639f49ba4365bd0c19fb2909c08628bf50daa34629c",
+  "statementReview": "Agent-reviewed against the manuscript; no separate human review recorded.",
+  "scope": "Main theorem and its transitive proof dependencies; introductory heuristics are not checked."
+}

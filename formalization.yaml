@@ -1,0 +1,330 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "Amicable numbers: the exponent-1/2 upper bound"
+  description: >-
+    Lean formalization of the main theorem in Paul Pollack's Amicable numbers:
+    for every real c < 1/2, eventually A(x) <= x exp(-c log(x) log_3(x)/log_2(x)).
+    A(x) counts positive integers belonging to distinct amicable pairs, with
+    no upper bound imposed on their partners.
+  authors:
+    - "ChatGPT Astra"
+  responsible_maintainers:
+    - "Paul Pollack"
+  license: "MIT"
+  license_scope: "Original code and verification scripts; see LICENSE_SCOPE.md for Apache-2.0 third-party files and the exclusion of the manuscript."
+  copyright_holder: "Paul Pollack"
+  authorship_note: >-
+    ChatGPT Astra is credited for generating the formalization. Paul Pollack is
+    the responsible human maintainer and manuscript author; this does not
+    attribute discovery of the proof to him. Third-party authors retain their credits.
+
+repository:
+  role: "substantive-development"
+  url: "https://github.com/twonth/amicable-numbers-lean"
+
+sources:
+  - title: "Amicable numbers"
+    authors: ["Paul Pollack"]
+    contributors:
+      - name: "ChatGPT Astra"
+        role: "Discovery of the main proof, as credited in the manuscript"
+    id: "manuscript"
+    type: "article"
+    file: "USER_PROOF_HALF.tex"
+    location: "Theorem 1 (thm:main) and its proof in Section 2 (sec:main-proof)"
+    relationship: "formalizes"
+    author_endorsement: "participated"
+    note: >-
+      The manuscript author directed the project and revised the exposition.
+      The frozen original formalization input is manuscript-input.txt;
+      PROOF_MAP.md documents its relationship with the current manuscript.
+      The manuscript has not been licensed under the repository's MIT grant.
+  - title: "On the greatest common divisor of a number and its sum of divisors"
+    authors: ["Paul Pollack"]
+    id: "https://www.pollack-math.net/combined3.pdf"
+    type: "article"
+    location: "Theorem 1.1 and Lemma 2.4; manuscript citation Pollack2011"
+    relationship: "formalizes"
+    note: "The gcd bound is proved in PollackTheorem.lean; it is not assumed as an axiom."
+
+related_formalizations:
+  - id: "https://github.com/AlexKontorovich/PrimeNumberTheoremAnd"
+    relationship: "builds-on"
+    revision: "650d31264be65f4cd6e70c45d8b25d86d482a761"
+    note: "Four unchanged Apache-2.0 Selberg-sieve modules by Arend Mellendijk; see vendor-provenance.json."
+  - id: "https://github.com/AxiomMath/PrimeGapsLib"
+    relationship: "adapts"
+    revision: "1faa7b14e82ddebc2772dfb9153922f01b106477"
+    note: "Attributed Apache-2.0 extraction of the Mertens upper estimate in MertensUpper.lean."
+
+classification:
+  arxiv: ["math.NT"]
+  msc2020: ["11A25", "11N37"]
+
+status:
+  scope: >-
+    The main upper bound, its structural reduction and two counting cases, and
+    the required analytic inputs. The introductory heuristics, second-moment
+    discussion, historical claims, and translation are outside this formalization.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: ["propext", "Classical.choice", "Quot.sound"]
+  challenge_placeholders:
+    - file: "Challenge.lean"
+      declaration: "AmicableComparator.main_theorem"
+      count: 1
+      note: "Intentional Comparator question placeholder; excluded from unresolved proof-development counts."
+  main_results:
+    - declaration: "AmicableCertificate.amicable_count_upper_bound"
+      file: "Certificate.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      literature_dependencies: []
+      note: "The quantified main theorem. Required outside estimates are proved locally or supplied by checked library proofs."
+    - declaration: "AmicableComparator.main_theorem"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+      literature_dependencies: []
+      note: "Fully expanded challenge statement, proved from the certificate without importing Challenge.lean."
+  verification:
+    comparator_report: "verification/comparator-status.json"
+    comparator_log: "verification/comparator.log"
+    source_hashes: "verification/comparator-source-hashes.json"
+    original_kernel_report: "verification/status.json"
+    additional_external_kernel: false
+
+automation:
+  methods:
+    - method: "agent"
+      models: ["ChatGPT Astra"]
+      framework: "Interactive AI assistant with Lean tooling"
+      tool_setup: "Pinned Lean and Mathlib, iterative compilation, declaration axiom reports, and fresh Lean kernel replay."
+      prompting_notes: "Formalize the supplied amicable-number proof, including its analytic inputs, without unproved mathematical assumptions."
+    - method: "agent"
+      models: ["ChatGPT Astra"]
+      framework: "Codex"
+      tool_setup: "Independent Mathlib-only Comparator challenge, real Landrun sandbox, systemd protection, and metadata/schema validation."
+      prompting_notes: "Prepare the community release artifacts and check the main theorem with upstream Comparator."
+  notes: >-
+    Paul Pollack directed the work and edited the manuscript. ChatGPT Astra is
+    the model name used in the manuscript and project record; exact backend
+    revisions and reliable total token, time, or cost records are not recorded
+    here. Review and formal checking are reported separately below.
+
+fidelity:
+  divergences: >-
+    The asymptotic main theorem is expressed as an eventual bound for every
+    fixed coefficient c < 1/2. Intermediate asymptotic errors and uniformity
+    are made explicit. Some finite reciprocal sums use dyadic decomposition
+    in place of partial summation. The final assembly uses weaker sufficient
+    power savings in Case I and the large-prime structural exception; the
+    sharper Case I estimate is separately proved. The main reciprocal count
+    uses the sufficient totient loss 2^Omega(d); FineTotientBound.lean separately
+    proves the sharper rough-prime loss. These differences do not weaken the
+    main theorem. See PROOF_MAP.md for details.
+
+review:
+  status: "agent-reviewed"
+  reviewers: ["ChatGPT Astra"]
+  notes: >-
+    The theorem-to-manuscript correspondence has been reviewed by the agent;
+    no separate human review of the full Lean development or peer review is
+    claimed. The author has participated in preparing the manuscript.
+    Comparator checks statement/definition agreement, permitted axioms, and
+    Lean kernel acceptance; it does not establish the fidelity of the initial
+    challenge to the prose. No independent external kernel has been run.
+
+alignment:
+  source_file: "USER_PROOF_HALF.tex"
+  source_sha256: "f106bae2f492a683021c65c8afb3bca37ea5ab8f783d9e60af69b4f93a56c4fb"
+  original_input:
+    file: "manuscript-input.txt"
+    sha256: "6324e9e9cac2f6324a6b2213c8f20fcd8c206f7388b951af5d3f039212516fa7"
+  conventions: >-
+    source_label is a stable TeX label when available. Named paragraphs locate
+    unlabelled statements without relying on equation numbers. A component
+    mapping identifies the implementing lemma and does not assert a literal
+    one-to-one translation of every displayed equation. The module field is
+    a repository-relative Lean source path.
+  statements:
+    - source: "Introduction: sigma(n), s(n), and amicable pairs"
+      source_label: "sec:introduction"
+      lean: "AmicableManuscript.s"
+      module: "ManuscriptArithmetic.lean"
+      status: "defined"
+      related_declarations: ["AmicableManuscript.sigma", "AmicableManuscript.Amicable"]
+    - source: "Introduction: counting function A(x)"
+      source_label: "sec:introduction"
+      lean: "AmicableManuscript.A"
+      module: "ManuscriptArithmetic.lean"
+      status: "defined"
+      note: "Positive integers up to floor(x), with an unrestricted distinct positive partner."
+    - source: "Introduction: L(x) before Theorem 1"
+      source_label: "thm:main"
+      lean: "AmicableManuscript.L"
+      module: "ManuscriptArithmetic.lean"
+      status: "defined"
+    - source: "Theorem 1"
+      source_label: "thm:main"
+      lean: "AmicableCertificate.amicable_count_upper_bound"
+      module: "Certificate.lean"
+      status: "proved"
+      note: "Equivalent eventual coefficient formulation; see fidelity.divergences."
+      related_declarations: ["AmicableCertificate.explicit_count_upper_bound"]
+    - source: "Theorem 1: Comparator interface"
+      source_label: "thm:main"
+      lean: "AmicableComparator.main_theorem"
+      module: "Solution.lean"
+      status: "proved"
+      comparator_config: "comparator.json"
+    - source: "Lemma 1: Pollack's gcd estimate"
+      source_label: "lem:pollack"
+      lean: "AmicablePollack.pollack"
+      module: "PollackTheorem.lean"
+      status: "proved"
+    - source: "Lemma 2: uniform weighted exceptional-set bound"
+      source_label: "lem:technical-A"
+      lean: "AmicableTechnical.technicalLemma"
+      module: "TechnicalLemma.lean"
+      status: "proved"
+      related_declarations: ["AmicableTechnical.errorX_tendsto"]
+    - source: "Lemma 2 proof: multiplicative weight H"
+      source_label: "lem:technical-A"
+      lean: "AmicableWeight.H_eq_smallPart_mul"
+      module: "WeightArithmetic.lean"
+      status: "proved"
+      related_declarations: ["AmicableWeight.H_mul"]
+    - source: "Lemma 2 proof: required Mertens upper estimate"
+      source_label: "lem:technical-A"
+      lean: "AmicableMertens.sum_inv_prime_le"
+      module: "MertensUpper.lean"
+      status: "proved"
+      note: "Only the coefficient-one upper bound used by the paper is asserted."
+    - source: "Proposition 3: structural reduction"
+      source_label: "prop:structural"
+      lean: "AmicableManuscript.structuralReduction"
+      module: "StructuralReduction.lean"
+      status: "proved"
+    - source: "Proposition 3 proof: congruence count for the large-prime exception"
+      source_label: "prop:structural"
+      lean: "AmicableStructure.structuralCongruenceTotal"
+      module: "StructuralCounting.lean"
+      status: "proved"
+      related_declarations: ["AmicableStructure.structuralDoubleSum"]
+    - source: "Case I: construction of R and d"
+      source_label: "sec:main-proof"
+      lean: "AmicableCases.caseOneWitness"
+      module: "CaseOneWitness.lean"
+      status: "proved"
+    - source: "Case I: uniqueness for prime R below p"
+      source_label: "eq:Rsmcong"
+      lean: "AmicableCases.primeReconstruction"
+      module: "CaseReconstruction.lean"
+      status: "proved"
+      correspondence: "Congruence and its uniqueness consequence"
+    - source: "Case I: final power-saving count"
+      source_label: "sec:main-proof"
+      lean: "AmicableCases.caseOneCountingSharp"
+      module: "CaseOneCountingSharp.lean"
+      status: "proved"
+      note: "Checks the sharper manuscript estimate; the main assembly uses a weaker sufficient saving."
+    - source: "Case II: discard exceptional b using Lemma 2"
+      source_label: "eq:case-II-mass"
+      lean: "AmicableTechnical.exceptionalMultiples"
+      module: "TechnicalExceptionalCount.lean"
+      status: "proved"
+      correspondence: "Exceptional-set component used to obtain the mass restriction"
+    - source: "Case II: total logarithmic cost"
+      source_label: "eq:total-cost"
+      lean: "AmicableCases.commonDivisorCost"
+      module: "CommonDivisor.lean"
+      status: "proved"
+      correspondence: "Cost inequality component; asymptotic estimates are assembled in CaseTwoWitness.lean"
+    - source: "Case II: choice of an index by averaging"
+      source_label: "eq:choice-dV"
+      lean: "AmicableCases.caseTwoSelectIndex"
+      module: "CaseTwoSelection.lean"
+      status: "proved"
+      related_declarations: ["AmicableCases.selectionGap_pos"]
+    - source: "Case II: contradiction between the two total-cost estimates"
+      source_label: "eq:contradict1"
+      related_source_labels: ["eq:contradict2"]
+      lean: "AmicableCases.caseTwoSelectIndex"
+      module: "CaseTwoSelection.lean"
+      status: "proved"
+      correspondence: "The averaging proof makes the positive margin and error bounds explicit"
+    - source: "Case II: selected divisor budget"
+      source_label: "eq:dVstuff"
+      lean: "AmicableCases.caseTwoBudgetFromLog"
+      module: "CaseTwoSelection.lean"
+      status: "proved"
+    - source: "Case II: selection from actual divisor partitions"
+      source_label: "eq:dVstuff"
+      lean: "AmicableCases.caseTwoSelectedDivisor"
+      module: "CaseTwoSelectedDivisor.lean"
+      status: "proved"
+    - source: "Case II: uniqueness of R from the congruence and determinant bound"
+      source_label: "eq:congruence-R"
+      lean: "AmicableAudit.reconstructionUniqueGcd"
+      module: "Reconstruction.lean"
+      status: "proved"
+      correspondence: "Integer reconstruction lemma, applied to actual sigma values in the counting argument"
+    - source: "Case II: uniform reciprocal-prime estimate"
+      source_label: "eq:prime-reciprocals"
+      lean: "AmicablePrimeReciprocals.primeReciprocalUniform"
+      module: "PrimeReciprocals.lean"
+      status: "proved"
+    - source: "Case II: reciprocal sum over V"
+      source_label: "eq:reciprocal-b"
+      lean: "AmicableSigmaCounting.sigmaReciprocalBound"
+      module: "SigmaReciprocals.lean"
+      status: "proved"
+      correspondence: "Finite reciprocal-bound component, combined with sharpFactorCost for the logarithmic exponent"
+      note: "The sufficient totient loss 2^Omega(d) is used here; see fidelity.divergences."
+    - source: "Case II: multiplicative-partition logarithmic cost"
+      source_label: "eq:reciprocal-b"
+      lean: "AmicableGcdCounting.sharpFactorCost"
+      module: "SharpFactorCost.lean"
+      status: "proved"
+    - source: "Case II: sharper rough-prime totient loss"
+      source_label: "eq:reciprocal-b"
+      lean: "AmicableTotient.roughFactorTotient"
+      module: "FineTotientBound.lean"
+      status: "proved"
+    - source: "Case II: uniform count of admissible V"
+      source_label: "sec:main-proof"
+      lean: "AmicableCases.caseTwoBudgetUniform"
+      module: "CaseTwoUniform.lean"
+      status: "proved"
+    - source: "Case II: data from actual amicable pairs"
+      source_label: "sec:main-proof"
+      lean: "AmicableCases.caseTwoPairWitness"
+      module: "CaseTwoPairWitness.lean"
+      status: "proved"
+    - source: "Case II: final count"
+      source_label: "sec:main-proof"
+      lean: "AmicableCases.caseTwoCounting"
+      module: "CaseTwoCounting.lean"
+      status: "proved"
+    - source: "Closing the main proof"
+      source_label: "thm:main"
+      lean: "AmicableManuscript.amicableUpperBound"
+      module: "StructuralReduction.lean"
+      status: "proved"
+    - source: "Introduction: conjectured exponent 2 and the amicable-pair heuristic"
+      source_label: "sec:introduction"
+      status: "not-formalized"
+      note: "Heuristic discussion; not a premise of the main theorem."
+    - source: "Introduction: second-moment discussion for N_phi and N_sigma"
+      source_label: "sec:introduction"
+      status: "not-formalized"
+      note: "Outside the main-theorem verification; no proof of this discussion is claimed here."
+
+acknowledgements: >-
+  The Lean and Mathlib communities; Arend Mellendijk and the
+  PrimeNumberTheoremAnd project; Axiom Math and PrimeGapsLib; the developers
+  of Comparator, lean4export, and Landrun. Upstream notices are preserved.

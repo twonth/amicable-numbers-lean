@@ -1,0 +1,6 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": ["AmicableComparator.main_theorem"],
+  "permitted_axioms": ["propext", "Classical.choice", "Quot.sound"]
+}
